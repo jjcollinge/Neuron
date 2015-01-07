@@ -6,6 +6,7 @@
   <artifactId>parent-project</artifactId>
   <modules>
   	<module>thing-api</module>
-  	<module>thing-app</module>
+  	<module>thing-web</module>
+  	<module>thing-core</module>
   </modules>
 </project>
