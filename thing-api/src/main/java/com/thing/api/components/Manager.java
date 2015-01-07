@@ -1,19 +1,35 @@
-package com.thing.registration;
+package com.thing.api.components;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Controller implements CompletionEventListener {
+import com.thing.api.events.workCompleteEventListener;
 
-	private static final Logger log = Logger.getLogger( Controller.class.getName() );
+/**
+ * Name: Manager
+ * ---------------------------------------------------------------
+ * Desc: The Manager class is an abstract class which handles
+ * 		 the delegation of tasks to workers. The Manager is 
+ * 		 responsible for throttling the number of workers working
+ * 		 at any one time. 
+ * 
+ * @author jcollinge
+ *
+ */
+public abstract class Manager implements workCompleteEventListener {
+
+	private static final Logger log = Logger.getLogger( Manager.class.getName() );
 	
-	private int MAX_NUMBER_OF_WORKERS = 0;
+	protected int MAX_NUMBER_OF_WORKERS;
 	private int numberOfWorkers;
 	
-	public Controller(int max) {
-		this.MAX_NUMBER_OF_WORKERS = max;
-		this.numberOfWorkers = 0;	
+	public Manager() {	
+		initialise();
 	}
+	
+	// Clients must implement this method to set the max number of workers
+	protected abstract void initialise();
+	
 	@SuppressWarnings("unused")
 	private synchronized int getNumberOfWorkers() {
 		return numberOfWorkers;
@@ -38,8 +54,7 @@ public class Controller implements CompletionEventListener {
 			log.log(Level.INFO, "Dropped worker request, maximum number of workers (" + this.MAX_NUMBER_OF_WORKERS + ") has been reached");
 		}
 	}
-	
-	public void onCompletionEventReceived(Worker worker) {
+	public void onWorkComplete(Worker worker) {
 		// work completed by worker, reallocate
 		log.log(Level.INFO, "Worker has finished, reallocating...");
 		worker.removeCompletionEventListener(this);

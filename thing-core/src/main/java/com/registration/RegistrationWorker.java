@@ -4,13 +4,14 @@ import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.thing.api.components.Worker;
+import com.thing.api.messaging.Message;
+import com.thing.api.messaging.Parcel;
+import com.thing.api.messaging.ParcelPacker;
+import com.thing.api.model.DeviceWrapper;
 import com.thing.management.ManagementService;
-import com.thing.management.model.DeviceWrapper;
-import com.thing.messaging.Message;
-import com.thing.messaging.MessagePayload;
 import com.thing.messaging.MessagingService;
-import com.thing.registration.ParameterList;
-import com.thing.registration.Worker;
+import com.thing.messaging.SerialMessage;
 
 
 public class RegistrationWorker extends Worker {
@@ -20,48 +21,37 @@ public class RegistrationWorker extends Worker {
 	private RegistrationValidator validator;
 	private Message message;
 	
-	public RegistrationWorker(ParameterList params) {
+	public RegistrationWorker(Message message) {
 		validator = new RegistrationValidator();
-		
-		try {
-			message = params.getParameter(0);
-		} catch(IndexOutOfBoundsException e) {
-			log.log(Level.SEVERE, "Number of parameter(s) passed does not match expected");
-			return;
-		} catch(ClassCastException e) {
-			log.log(Level.SEVERE, "Type of parameter(s) passed does not match expected");
-			return;
-		}
 	}
 	
-	private void doWork() {
-	
-		MessagePayload payload = message.getPayload();
+	protected void doWork() {
 		
-		if(payload.getFormat().equals("JSON")) {
+		int id = message.getId();
+		String msg = message.getPayload();
+		String format = message.getFormat();
+		
+		if(format.equals("JSON")) {
 			// validate against schema
 			
-			DeviceWrapper wrapper = null;
+			Registration registration = null;
 			try {
 				Gson gson = new Gson();
-				log.log(Level.INFO, "PAYLOAD: " + payload.getData());
-				wrapper = gson.fromJson(payload.getData(), DeviceWrapper.class);
-			} catch(JsonSyntaxException e) {
-				log.log(Level.SEVERE, "Could not transform nested payload to device wrapper", e);
+				registration = gson.fromJson(msg, Registration.class);
+			} catch(JsonSyntaxException e1) {
+				log.log(Level.FINEST, "Couldn't extract registration");
 				return;
 			}
 			
-			String responseTopic = wrapper.getTopic();
-			Message response = new Message();
-			response.setId(message.getId());
-			MessagePayload pl = new MessagePayload();
-			pl.setData(String.valueOf(message.getId()));
-			pl.setTopic(responseTopic);
-			response.setMessagePayload(pl);
-			MessagingService.getService().SendMessage(response);
+			String returnTopic = registration.getReturnAddress();
+			
+			Message response = new Message(id, String.valueOf(id), "JSON");
+			Parcel parcel = ParcelPacker.makeParcel(response, returnTopic);
+			
+			MessagingService.getService().sendMessage(parcel);
 			log.log(Level.INFO, "Sending registration response");
 			
-			ManagementService.getService().add(message.getId(), wrapper.getDevice());
+			ManagementService.getService().add(message.getId(), registration.getDevice());
 			log.log(Level.INFO, "Stored adapter in registry");
 			// Store device too
 			

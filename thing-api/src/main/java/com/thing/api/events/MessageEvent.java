@@ -1,13 +1,15 @@
-package com.thing.messaging;
+package com.thing.api.events;
 import java.util.EventObject;
+
+import com.thing.api.messaging.Message;
 
 
 public class MessageEvent extends EventObject {
 
 	private Message msg;
 	
-	public MessageEvent(Message m) {
-		super(m);
+	public MessageEvent(Object source, Message m) {
+		super(source);
 		this.msg = m;
 	}
 	

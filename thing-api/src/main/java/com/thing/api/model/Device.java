@@ -1,4 +1,4 @@
-package com.thing.management.model;
+package com.thing.api.model;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;

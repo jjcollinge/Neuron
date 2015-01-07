@@ -1,6 +1,6 @@
 package com.registration;
 
-import com.thing.registration.Validator;
+import com.thing.api.components.Validator;
 
 
 public class RegistrationValidator {

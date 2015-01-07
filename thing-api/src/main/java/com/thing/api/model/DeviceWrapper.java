@@ -1,4 +1,4 @@
-package com.thing.management.model;
+package com.thing.api.model;
 
 public class DeviceWrapper {
 

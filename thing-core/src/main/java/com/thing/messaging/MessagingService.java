@@ -7,20 +7,25 @@ import java.util.logging.Logger;
 
 import sessions.SessionManager;
 
-import com.google.gson.Gson;
+import com.thing.api.events.MessageEvent;
+import com.thing.api.events.MessageEventListener;
+import com.thing.api.messaging.Message;
+import com.thing.api.messaging.Messenger;
+import com.thing.api.messaging.Parcel;
+import com.thing.api.messaging.ParcelPacker;
 
-public class MessagingService implements MessageEventListener {
+public class MessagingService implements TopicMessageEventListener {
 
 	private static final Logger log = Logger.getLogger( MessagingService.class.getName() );
 	
-	private HashMap<Integer, Messanger> messangers;
-	private HashMap<String, ArrayList<MessageListener>> subscriptions;
+	private HashMap<Integer, Messenger> messangers;
+	private HashMap<String, ArrayList<MessageEventListener>> subscriptions;
 	private static MessagingService instance;
 	
 	private MessagingService() {
 		log.log(Level.INFO, "Creating MessagingService");
-		messangers = new HashMap<Integer, Messanger>();
-		subscriptions = new HashMap<String, ArrayList<MessageListener>>();
+		messangers = new HashMap<Integer, Messenger>();
+		subscriptions = new HashMap<String, ArrayList<MessageEventListener>>();
 		instance = new MessagingService();
 	}
 	
@@ -33,9 +38,9 @@ public class MessagingService implements MessageEventListener {
 	
 	public void start() {
 		
-		Messanger serial = new SerialMessanger(SessionManager.generateId());
+		Messenger serial = new SerialMessanger(SessionManager.generateId());
 		serial.connect("", "/dev/ttyACM0");
-		Messanger mqtt = new MqttMessanger(SessionManager.generateId());
+		Messenger mqtt = new MqttMessanger(SessionManager.generateId());
 		mqtt.connect("localhost", "1883");
 		messangers.put(serial.getId(), serial);
 		messangers.put(mqtt.getId(), mqtt);
@@ -53,15 +58,21 @@ public class MessagingService implements MessageEventListener {
 		
 	}
 
-	public void SendMessage(Message message) {
-		messangers.get(message.getId()).send(message.getPayload());
+	public void sendMessage(Parcel message) {
+		int id = message.getMessage().getId();
+		messangers.get(id).send(message);
 	}
 	
-	public void subscribe(String topic, int qos, MessageListener subscriber) {
-		ArrayList<MessageListener> topicSubscribers = subscriptions.get(topic);
+	public void sendMessage(Message message, String topic) {
+		Parcel parcel = ParcelPacker.makeParcel(message, topic);
+		sendMessage(parcel);
+	}
+	
+	public void subscribe(String topic, int qos, MessageEventListener subscriber) {
+		ArrayList<MessageEventListener> topicSubscribers = subscriptions.get(topic);
 		if(topicSubscribers == null) {
 			// No subscribers for the topic yet
-			topicSubscribers = new ArrayList<MessageListener>();
+			topicSubscribers = new ArrayList<MessageEventListener>();
 		}
 		topicSubscribers.add(subscriber);
 		subscriptions.put(topic, topicSubscribers);
@@ -73,8 +84,8 @@ public class MessagingService implements MessageEventListener {
 		log.log(Level.INFO, "Successfully subscribed " +  subscriber.getClass().getSimpleName() + " to topic " + topic);
 	}
 	
-	public void unsubscribe(String topic, MessageListener subscriber) {
-		ArrayList<MessageListener> subscribers = subscriptions.get(topic);
+	public void unsubscribe(String topic, MessageEventListener subscriber) {
+		ArrayList<MessageEventListener> subscribers = subscriptions.get(topic);
 		if(subscribers == null) {
 			// No subscribers for the topic yet
 			return;
@@ -93,21 +104,18 @@ public class MessagingService implements MessageEventListener {
 		}
 		log.log(Level.INFO, "Successfully unsubscribed " +  subscriber.getClass().getSimpleName() + " from topic " + topic);
 	}
-	
-	public void messageEventReceived(MessageEvent event) {
+
+	public void onMessageArrived(MessageEvent event, String topic) {
 		
-		String topic = event.getMessage().getPayload().getTopic();
-		ArrayList<MessageListener> subscribers = subscriptions.get(topic);
-		if(subscribers == null) {
-			// drop message
-			return;
-		}
+		for(MessageEventListener subscriber : subscriptions.get(topic)) {
+			if(subscriber == null) return;
+			subscriber.onMessageArrived(event);
+		}		
+	}
+
+	public void onMessageArrived(MessageEvent event) {
 		
-		log.log(Level.INFO, "Firing new Message to subscribers");
-		for(MessageListener subscriber : subscribers) {
-			subscriber.onMessageArrived(event.getMessage());
-		}
-		
+		// Do not know topic so cannot forward
 	}
 
 }

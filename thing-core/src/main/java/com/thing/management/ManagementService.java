@@ -5,13 +5,16 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.thing.management.model.Device;
-import com.thing.messaging.Message;
-import com.thing.messaging.MessageListener;
-import com.thing.messaging.MessagePayload;
+import com.thing.api.events.DeviceEvent;
+import com.thing.api.events.DeviceEventListener;
+import com.thing.api.events.MessageEvent;
+import com.thing.api.events.MessageEventListener;
+import com.thing.api.messaging.Parcel;
+import com.thing.api.messaging.ParcelPacker;
+import com.thing.api.model.Device;
 import com.thing.messaging.MessagingService;
 
-public class ManagementService implements Runnable, MessageListener {
+public class ManagementService implements Runnable, MessageEventListener {
 
 	private static final Logger log = Logger.getLogger( ManagementService.class.getName() );
 	
@@ -19,7 +22,7 @@ public class ManagementService implements Runnable, MessageListener {
 	private HashMap<Integer, Device> devices;
 	private HashMap<Integer, Long> timestamps;
 	private MessagingService msgService;
-	private ArrayList<DeviceListener> subscribers;
+	private ArrayList<DeviceEventListener> subscribers;
 	private static ManagementService instance;
 	
 	private ManagementService() {
@@ -27,7 +30,7 @@ public class ManagementService implements Runnable, MessageListener {
 		devices = new HashMap<Integer, Device>();
 		timestamps = new HashMap<Integer, Long>();
 		msgService = MessagingService.getService();
-		subscribers = new ArrayList<DeviceListener>();
+		subscribers = new ArrayList<DeviceEventListener>();
 		
 		new Thread(this).start();
 	}
@@ -45,36 +48,33 @@ public class ManagementService implements Runnable, MessageListener {
 		String topic = "device/"+id+"/ping/response";
 		msgService.subscribe(topic, 2, this);
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
-		fireChangeNotification(id);
+		this.notifyListeners(id, "ADD");
 	}
 	
 	public synchronized void remove(int id) {
 		log.log(Level.INFO, "Removing an adapter to registry");
 		devices.remove(id);
 		timestamps.remove(id);
-		fireChangeNotification(id);
+		this.notifyListeners(id, "SUB");
 	}
 	
 	public synchronized HashMap<Integer, Device> getDevices() {
 		return this.devices;
 	}
 	
-	public void addDeviceListener(DeviceListener listener) {
+	public void addDeviceListener(DeviceEventListener listener) {
 		this.subscribers.add(listener);
 	}
 	
-	public void removeDeviceListener(DeviceListener listener) {
+	public void removeDeviceListener(DeviceEventListener listener) {
 		this.subscribers.remove(listener);
 	}
 	
 	private void pingDevice(int id) {
-		MessagePayload payload = new MessagePayload();
-		payload.setTopic("device/"+id+"/ping/request");
-		payload.setData("PING");
-		Message msg = new Message();
-		msg.setId(id);
-		msg.setMessagePayload(payload);
-		msgService.SendMessage(msg);
+		String message = "PING";
+		String topic = "device/"+id+"/ping/request";
+		Parcel parcel = ParcelPacker.makeParcel(id, message, topic, "JSON");
+		msgService.sendMessage(parcel);
 	}
 
 	public void run() {
@@ -109,7 +109,7 @@ public class ManagementService implements Runnable, MessageListener {
 				if(timestamps.get(id) < threshold) {
 					log.log(Level.WARNING, "Device " + id + " timed out");
 					set.add(id);
-					fireChangeNotification(id);
+					notifyListeners(id, "SUB");
 				}
 			}
 			for(Integer i : set) {
@@ -118,14 +118,15 @@ public class ManagementService implements Runnable, MessageListener {
 		}
 	}
 	
-	public void fireChangeNotification(int deviceId) {
-		for(DeviceListener subscriber : this.subscribers) {
-			subscriber.onDevicesChanged(deviceId);
+	public void notifyListeners(int deviceId, String operation) {
+		DeviceEvent event = new DeviceEvent(this, deviceId, operation);
+		for(DeviceEventListener subscriber : this.subscribers) {
+			subscriber.onDevicesChanged(event);
 		}
 	}
 
-	public void onMessageArrived(Message message) {
-		int id = message.getId();
+	public void onMessageArrived(MessageEvent event) {
+		int id = event.getMessage().getId();
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
 	}
 	

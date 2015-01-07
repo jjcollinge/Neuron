@@ -16,9 +16,13 @@ import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.thing.api.events.MessageEvent;
+import com.thing.api.messaging.Message;
+import com.thing.api.messaging.Messenger;
+import com.thing.api.messaging.Parcel;
 
 
-public class SerialMessanger extends Messanger implements SerialPortEventListener {
+public class SerialMessanger extends Messenger implements SerialPortEventListener {
 
 	private static final Logger log = Logger.getLogger( SerialMessanger.class.getName() );
 	
@@ -116,32 +120,30 @@ public class SerialMessanger extends Messanger implements SerialPortEventListene
 	}
 
 	@Override
-	public void send(MessagePayload message) {
+	public void send(Parcel message) {
 		
-		if(message.getData() == null || message.getTopic() == null) {
-			log.log(Level.WARNING, "Message not sent, message payload was not complete");
-			return;
-		}
-		if(!connected) {
-			log.log(Level.WARNING, "Message not sent because the messanger is not connected");
+		if(!isConnected()) {
+			log.log(Level.WARNING, "Cannot send message as Messanger is not connected!");
 			return;
 		}
 		
+		// Convert POJO to JSON
+		String jsonMessage = null;
 		try {
-			String jsonMessage = null;
-			try {
-				Gson gson = new Gson();
-				jsonMessage = gson.toJson(message);
-			} catch(JsonSyntaxException e) {
-				log.log(Level.SEVERE, "Couldn't transform out going message to JSON format", e);
-				return;
-			}
+			Gson gson = new Gson();
+			jsonMessage = gson.toJson(message);
+		} catch(JsonSyntaxException e) {
+			log.log(Level.SEVERE, "Couldn't transform outgoing message to JSON format");
+			return; //drop troublesome message
+		}
+		
+		// Write over serial
+		try {
 			output.write(jsonMessage.getBytes());
 			output.write('\n');
-			log.log(Level.INFO, "Sent message " + jsonMessage);
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "An exception has been thrown", e);
-			connected = false;
+			log.log(Level.SEVERE, "Couldn't write to serial port", e);
+			return;
 		}
 		
 	}
@@ -207,32 +209,48 @@ public class SerialMessanger extends Messanger implements SerialPortEventListene
 			
 			boolean forward = false;
 			
-			msg = "{ \"messangerId\": " + this.getId() + ", \"payload\": " + msg + " }";
-			
-			/** WARNING : Will log all serial correspondance **/
 			log.log(Level.INFO, msg);
-			Message message = null;
 			
+			SerialMessage message = null;
+			
+			// Pack JSON into POJO to strip additional metadata
 			try {
 				Gson gson = new Gson();
-				message = gson.fromJson(msg, Message.class);
+				message = gson.fromJson(msg, SerialMessage.class);
 			} catch(JsonSyntaxException e1) {
-				log.log(Level.FINEST, "Couldn't transform incoming SERIAL message to internal message");
+				log.log(Level.FINEST, "Couldn't not strip JSON metadata, wrong format");
 				return;
 			}
 			
-			String topic = message.getPayload().getTopic();
+			// Filter messages on subscription
+			String topic = message.getTopic();
 			for(String subscription : this.subscriptions) {
 				if(topic.equals(subscription)){
 					forward = true;
 				}
 			}
 			
-			if(forward) {
-				log.log(Level.INFO, "Forwarding message");
-				MessageEvent event = new MessageEvent(message);
-				this.fireChangeEvent(event);
+			// Only continue with messages on topics of interest
+			if(!forward) return;
+			
+			// Add required metadata to message payload
+			String messageString = message.getPayload();
+			messageString = "{ \"messangerId\": " + this.getId() + ", \"payload\": " + messageString + " }";
+			
+			Message m = null;
+			// Now pack the raw JSON into a message POJO
+			try {
+				Gson gson = new Gson();
+				m = gson.fromJson(msg, Message.class);
+			} catch(JsonSyntaxException e1) {
+				log.log(Level.FINEST, "Couldn't transform incoming SERIAL message to internal message");
+				return;
 			}
+			
+			// Forward message to listeners
+			log.log(Level.INFO, "Forwarding message");
+			MessageEvent event = new MessageEvent(this, message);
+			this.notifyListeners(event);
 		
 		}
 		

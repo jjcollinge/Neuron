@@ -1,27 +1,27 @@
 package com.registration;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.thing.messaging.Message;
-import com.thing.messaging.MessageListener;
+import com.thing.api.components.Manager;
+import com.thing.api.events.MessageEvent;
+import com.thing.api.events.MessageEventListener;
+import com.thing.api.messaging.Message;
 import com.thing.messaging.MessagingService;
-import com.thing.registration.Controller;
-import com.thing.registration.ParameterList;
 
 
-public class RegistrationService extends Controller implements MessageListener {
+public class RegistrationManager extends Manager implements MessageEventListener {
 	
-	private static final Logger log = Logger.getLogger( RegistrationService.class.getName() );
+	private static final Logger log = Logger.getLogger( RegistrationManager.class.getName() );
 	
 	private final String REGISTRATION_TOPIC = "register";
 	private MessagingService msgService;
 	
-	public RegistrationService(int maxNumWorkers) {
-		super(maxNumWorkers);
+	public RegistrationManager() {
 		msgService = MessagingService.getService();
 	}
-	
+	protected void initialise() {
+		this.MAX_NUMBER_OF_WORKERS = 5;
+	}
 	public void start() {
 		
 		if(msgService == null) {
@@ -30,22 +30,17 @@ public class RegistrationService extends Controller implements MessageListener {
 		msgService.subscribe(this.REGISTRATION_TOPIC, 2, this);
 		
 	}
-	
 	public void stop() {
 		msgService.unsubscribe(this.REGISTRATION_TOPIC, this);
 	}
-	
 	private synchronized void register(Message message) {
 		
 		log.log(Level.INFO, "New registration");	
 		log.log(Level.INFO,  message.toString());
-		ParameterList params = new ParameterList();
-		params.addParameters(message, message.getClass());
-		doWork(new RegistrationWorker(params));
+		doWork(new RegistrationWorker(message));
 		
 	}
-
-	public void onMessageArrived(Message message) {
-		register(message);
+	public void onMessageArrived(MessageEvent event) {
+		register(event.getMessage());
 	}
 }
