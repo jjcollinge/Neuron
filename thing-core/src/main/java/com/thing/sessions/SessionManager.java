@@ -1,6 +1,8 @@
-package sessions;
+package com.thing.sessions;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.thing.api.components.Service;
 
 
 public class SessionManager {
@@ -10,8 +12,7 @@ public class SessionManager {
 	private static int counter = 0;
 	
 	public static synchronized int generateId() {
-		log.log(Level.FINE, "Generated new id " + counter);
 		return counter++;
 	}
-	
+
 }

@@ -23,7 +23,7 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 	private static final Logger log = Logger.getLogger( MqttMessanger.class.getName() );
 	
 	private MqttAsyncClient client; 
-	private final String protocol = "tcp"; 
+	private final String protocol = "tcp";
 	
 	public MqttMessanger(int id) {
 		super("MQTT", id);
@@ -44,19 +44,30 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 		
 	}
 
+	
+	/**
+	 * Mqtt Device expects data in the following format:  {  "data": "..."  } on predefined topic
+	 */
 	@Override
-	public void send(Parcel message) {
+	public void send(Parcel parcel) {
 		
 		if(!isConnected()) {
 			log.log(Level.WARNING, "Cannot send message as Messanger is not connected!");
 			return;
 		}
 		
+		Message m = parcel.getMessage();
+		String messageString = m.getPayload();
+		
+		// Pack for device
+		String pack = "{ \"data\": \"" + messageString + "\" }";
+		
 		// Convert POJO to JSON
 		String jsonMessage = null;
 		try {
 			Gson gson = new Gson();
-			jsonMessage = gson.toJson(message);
+			jsonMessage = gson.toJson(pack);
+			jsonMessage = jsonMessage.substring(1, jsonMessage.length() -1).replace("\\\"", "\"");
 		} catch(JsonSyntaxException e) {
 			log.log(Level.SEVERE, "Couldn't transform outgoing message to JSON format");
 			return; //drop troublesome message
@@ -68,8 +79,8 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 		
 		// Publish to topic
 		try {
-			client.publish(message.getTopic(), msg);
-			log.log(Level.INFO, "Sent message " + jsonMessage + " on topic " + message.getTopic());
+			client.publish(parcel.getTopic(), msg);
+			log.log(Level.INFO, "Sent message " + jsonMessage + " on topic " + parcel.getTopic());
 		} catch (MqttException e) {
 			log.log(Level.SEVERE, "An exception has been thrown", e);
 		}
@@ -128,7 +139,7 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 		
 		// New MqttMessage has arrived. Traffic is already filtered by topics so forward all incoming data
 		String messageString = message.toString();
-		messageString = "{ \"messangerId\": " + this.getId() + ", \"payload\": " + messageString + " }";
+		messageString = "{ \"messangerId\": " + this.getId() + ", \"payload\": \"" + messageString.replaceAll("\"", "\\\\\"") + "\", \"format\":\"JSON\" }";
 		log.log(Level.INFO, "Received new message " + messageString + " on topic " + topic);
 		
 		// Pack message into internal message
@@ -137,12 +148,12 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 			Gson gson = new Gson();
 			msg = gson.fromJson(messageString, Message.class);
 		} catch(JsonSyntaxException e1) {
-			log.log(Level.FINEST, "Couldn't transform incoming SERIAL message to internal message");
+			log.log(Level.INFO, "Couldn't transform incoming SERIAL message to internal message");
 			return;
 		}
 		
 		// Notify listeners of new message
-		MessageEvent event = new MessageEvent(this, msg);
+		RoutedMessageEvent event = new RoutedMessageEvent(this, msg, topic);
 		this.notifyListeners(event);
 	}
 

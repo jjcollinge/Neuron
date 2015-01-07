@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
@@ -22,12 +23,11 @@ import com.thing.api.messaging.Messenger;
 import com.thing.api.messaging.Parcel;
 
 
-public class SerialMessanger extends Messenger implements SerialPortEventListener {
+public class SerialMessanger<T> extends Messenger implements SerialPortEventListener {
 
 	private static final Logger log = Logger.getLogger( SerialMessanger.class.getName() );
 	
-	private Stack<Character> characterBuffer;
-	
+	private Stack<Character> characterBuffer;	
 	SerialPort serialPort;
   
     /** The port we're normally going to use. */
@@ -119,19 +119,29 @@ public class SerialMessanger extends Messenger implements SerialPortEventListene
 		}
 	}
 
+	/**
+	 * Serial Device expects data in the following format:  {  "data": "...", "topic": "..." }
+	 */
 	@Override
-	public void send(Parcel message) {
+	public void send(Parcel parcel) {
 		
 		if(!isConnected()) {
 			log.log(Level.WARNING, "Cannot send message as Messanger is not connected!");
 			return;
 		}
 		
+		Message m = parcel.getMessage();
+		String messageString = m.getPayload();
+		
+		// Pack for device
+		String pack = "{ \"data\": \"" + messageString + "\", \"topic\": \"" + parcel.getTopic() + "\" }";
+		
 		// Convert POJO to JSON
 		String jsonMessage = null;
 		try {
 			Gson gson = new Gson();
-			jsonMessage = gson.toJson(message);
+			jsonMessage = gson.toJson(pack);
+			jsonMessage = jsonMessage.substring(1, jsonMessage.length() -1).replace("\\\"", "\"");
 		} catch(JsonSyntaxException e) {
 			log.log(Level.SEVERE, "Couldn't transform outgoing message to JSON format");
 			return; //drop troublesome message
@@ -211,12 +221,12 @@ public class SerialMessanger extends Messenger implements SerialPortEventListene
 			
 			log.log(Level.INFO, msg);
 			
-			SerialMessage message = null;
+			SerialMessageWrapper message = null;
 			
 			// Pack JSON into POJO to strip additional metadata
 			try {
 				Gson gson = new Gson();
-				message = gson.fromJson(msg, SerialMessage.class);
+				message = gson.fromJson(msg, SerialMessageWrapper.class);
 			} catch(JsonSyntaxException e1) {
 				log.log(Level.FINEST, "Couldn't not strip JSON metadata, wrong format");
 				return;
@@ -234,14 +244,15 @@ public class SerialMessanger extends Messenger implements SerialPortEventListene
 			if(!forward) return;
 			
 			// Add required metadata to message payload
-			String messageString = message.getPayload();
-			messageString = "{ \"messangerId\": " + this.getId() + ", \"payload\": " + messageString + " }";
+			String messageString = message.getData();
+			messageString = messageString.replaceAll("\"", "\\\\\"");
+			messageString = "{ \"messengerId\": " + this.getId() + ", \"payload\": \"" + messageString + "\", \"format\":\"JSON\" }";
 			
 			Message m = null;
 			// Now pack the raw JSON into a message POJO
 			try {
 				Gson gson = new Gson();
-				m = gson.fromJson(msg, Message.class);
+				m = gson.fromJson(messageString, Message.class);
 			} catch(JsonSyntaxException e1) {
 				log.log(Level.FINEST, "Couldn't transform incoming SERIAL message to internal message");
 				return;
@@ -249,7 +260,8 @@ public class SerialMessanger extends Messenger implements SerialPortEventListene
 			
 			// Forward message to listeners
 			log.log(Level.INFO, "Forwarding message");
-			MessageEvent event = new MessageEvent(this, message);
+			
+			RoutedMessageEvent event = new RoutedMessageEvent(this, m, topic);
 			this.notifyListeners(event);
 		
 		}

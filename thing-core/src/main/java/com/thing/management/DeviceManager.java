@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.thing.api.components.Service;
 import com.thing.api.events.DeviceEvent;
 import com.thing.api.events.DeviceEventListener;
 import com.thing.api.events.MessageEvent;
@@ -14,30 +15,28 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
 import com.thing.messaging.MessagingService;
 
-public class ManagementService implements Runnable, MessageEventListener {
+public class DeviceManager implements Runnable, MessageEventListener, Service {
 
-	private static final Logger log = Logger.getLogger( ManagementService.class.getName() );
+	private static final Logger log = Logger.getLogger( DeviceManager.class.getName() );
 	
 	// Stores messanger id's with device descriptors
 	private HashMap<Integer, Device> devices;
 	private HashMap<Integer, Long> timestamps;
 	private MessagingService msgService;
 	private ArrayList<DeviceEventListener> subscribers;
-	private static ManagementService instance;
+	private static DeviceManager instance;
 	
-	private ManagementService() {
+	private DeviceManager() {
 		// hidden
 		devices = new HashMap<Integer, Device>();
 		timestamps = new HashMap<Integer, Long>();
-		msgService = MessagingService.getService();
 		subscribers = new ArrayList<DeviceEventListener>();
-		
-		new Thread(this).start();
+	
 	}
 	
-	public static ManagementService getService() {
+	public static DeviceManager getInstance() {
 		if(instance == null) {
-			instance = new ManagementService();
+			instance = new DeviceManager();
 		}
 		return instance;
 	}
@@ -73,7 +72,7 @@ public class ManagementService implements Runnable, MessageEventListener {
 	private void pingDevice(int id) {
 		String message = "PING";
 		String topic = "device/"+id+"/ping/request";
-		Parcel parcel = ParcelPacker.makeParcel(id, message, topic, "JSON");
+		Parcel parcel = ParcelPacker.makeParcel(id, message, "JSON", topic);
 		msgService.sendMessage(parcel);
 	}
 
@@ -128,6 +127,18 @@ public class ManagementService implements Runnable, MessageEventListener {
 	public void onMessageArrived(MessageEvent event) {
 		int id = event.getMessage().getId();
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
+		log.log(Level.INFO, "Updated timestamp for device " + id);
+	}
+
+	public void start() {
+		log.log(Level.INFO, "Starting service...");
+		
+		new Thread(this).start();
+		msgService = MessagingService.getInstance();
+	}
+
+	public void stop() {
+		log.log(Level.INFO, "Stopping service...");
 	}
 	
 }

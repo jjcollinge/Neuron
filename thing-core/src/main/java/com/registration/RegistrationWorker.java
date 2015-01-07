@@ -9,9 +9,9 @@ import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.DeviceWrapper;
-import com.thing.management.ManagementService;
+import com.thing.management.DeviceManager;
 import com.thing.messaging.MessagingService;
-import com.thing.messaging.SerialMessage;
+import com.thing.messaging.SerialMessageWrapper;
 
 
 public class RegistrationWorker extends Worker {
@@ -22,6 +22,7 @@ public class RegistrationWorker extends Worker {
 	private Message message;
 	
 	public RegistrationWorker(Message message) {
+		this.message = message;
 		validator = new RegistrationValidator();
 	}
 	
@@ -48,10 +49,10 @@ public class RegistrationWorker extends Worker {
 			Message response = new Message(id, String.valueOf(id), "JSON");
 			Parcel parcel = ParcelPacker.makeParcel(response, returnTopic);
 			
-			MessagingService.getService().sendMessage(parcel);
+			MessagingService.getInstance().sendMessage(parcel);
 			log.log(Level.INFO, "Sending registration response");
 			
-			ManagementService.getService().add(message.getId(), registration.getDevice());
+			DeviceManager.getInstance().add(message.getId(), registration.getDevice());
 			log.log(Level.INFO, "Stored adapter in registry");
 			// Store device too
 			

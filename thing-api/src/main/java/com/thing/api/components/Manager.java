@@ -24,7 +24,7 @@ public abstract class Manager implements workCompleteEventListener {
 	private int numberOfWorkers;
 	
 	public Manager() {	
-		initialise();
+		
 	}
 	
 	// Clients must implement this method to set the max number of workers

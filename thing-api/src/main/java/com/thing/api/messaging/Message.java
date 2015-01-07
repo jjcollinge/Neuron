@@ -12,16 +12,17 @@ package com.thing.api.messaging;
  */
 public class Message {
 
-	private int messangerId;
+	private int messengarId;
 	private String payload;
 	private String format;
 	
 	public Message(int id, String payload, String format) {
-		this.messangerId = id;
+		this.messengarId = id;
 		this.payload = payload;
+		this.format = format;
 	}
 	public int getId() {
-		return this.messangerId;
+		return this.messengarId;
 	}
 	public String getPayload() {
 		return this.payload;
