@@ -23,9 +23,9 @@ import com.thing.api.messaging.Messenger;
 import com.thing.api.messaging.Parcel;
 
 
-public class SerialMessanger<T> extends Messenger implements SerialPortEventListener {
+public class SerialMessenger<T> extends Messenger implements SerialPortEventListener {
 
-	private static final Logger log = Logger.getLogger( SerialMessanger.class.getName() );
+	private static final Logger log = Logger.getLogger( SerialMessenger.class.getName() );
 	
 	private Stack<Character> characterBuffer;	
 	SerialPort serialPort;
@@ -50,7 +50,7 @@ public class SerialMessanger<T> extends Messenger implements SerialPortEventList
 	private ArrayList<String> subscriptions;
 	private boolean connected = false;
 	
-	public SerialMessanger(int id) {
+	public SerialMessenger(int id) {
 		
 		super("SERIAL", id);
 		subscriptions = new ArrayList<String>();

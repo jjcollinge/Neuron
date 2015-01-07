@@ -1,5 +1,8 @@
 package com.thing.runner;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.registration.RegistrationManager;
 import com.thing.api.components.ServiceContainer;
 import com.thing.management.DeviceManager;
@@ -20,7 +23,11 @@ public class ThingMiddleware {
 
 class Runner implements Runnable {
 
+	private static final Logger log = Logger.getLogger( Runner.class.getName() );
+	
 	public void run() {
+		
+		log.log(Level.INFO, "Started running application");
 		
 		ServiceContainer container = new ServiceContainer();
 		container.addService(MessagingService.getInstance());

@@ -39,9 +39,9 @@ public class MessagingService implements MessageEventListener, Service {
 	public void start() {
 
 		log.log(Level.INFO, "Starting service...");
-		Messenger serial = new SerialMessanger(SessionManager.generateId());
+		Messenger serial = new SerialMessenger(SessionManager.generateId());
 		serial.connect("", "/dev/ttyACM0");
-		Messenger mqtt = new MqttMessanger(SessionManager.generateId());
+		Messenger mqtt = new MqttMessenger(SessionManager.generateId());
 		mqtt.connect("localhost", "1883");
 		messangers.put(serial.getId(), serial);
 		messangers.put(mqtt.getId(), mqtt);

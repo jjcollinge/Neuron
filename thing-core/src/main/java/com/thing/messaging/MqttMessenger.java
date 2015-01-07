@@ -18,14 +18,14 @@ import com.thing.api.messaging.Messenger;
 import com.thing.api.messaging.Parcel;
 
 
-public class MqttMessanger extends Messenger implements  MqttCallback {
+public class MqttMessenger extends Messenger implements  MqttCallback {
 
-	private static final Logger log = Logger.getLogger( MqttMessanger.class.getName() );
+	private static final Logger log = Logger.getLogger( MqttMessenger.class.getName() );
 	
 	private MqttAsyncClient client; 
 	private final String protocol = "tcp";
 	
-	public MqttMessanger(int id) {
+	public MqttMessenger(int id) {
 		super("MQTT", id);
 	}
 	
@@ -139,7 +139,7 @@ public class MqttMessanger extends Messenger implements  MqttCallback {
 		
 		// New MqttMessage has arrived. Traffic is already filtered by topics so forward all incoming data
 		String messageString = message.toString();
-		messageString = "{ \"messangerId\": " + this.getId() + ", \"payload\": \"" + messageString.replaceAll("\"", "\\\\\"") + "\", \"format\":\"JSON\" }";
+		messageString = "{ \"messengerId\": " + this.getId() + ", \"payload\": \"" + messageString.replaceAll("\"", "\\\\\"") + "\", \"format\":\"JSON\" }";
 		log.log(Level.INFO, "Received new message " + messageString + " on topic " + topic);
 		
 		// Pack message into internal message
