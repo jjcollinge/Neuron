@@ -14,13 +14,14 @@ import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
 import com.thing.messaging.MessagingService;
+import com.thing.model.ActiveDevice;
 
 public class DeviceManager implements Runnable, MessageEventListener, Service {
 
 	private static final Logger log = Logger.getLogger( DeviceManager.class.getName() );
 	
 	// Stores messanger id's with device descriptors
-	private HashMap<Integer, Device> devices;
+	private HashMap<Integer, ActiveDevice> devices;
 	private HashMap<Integer, Long> timestamps;
 	private MessagingService msgService;
 	private ArrayList<DeviceEventListener> subscribers;
@@ -28,7 +29,7 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 	
 	private DeviceManager() {
 		// hidden
-		devices = new HashMap<Integer, Device>();
+		devices = new HashMap<Integer, ActiveDevice>();
 		timestamps = new HashMap<Integer, Long>();
 		subscribers = new ArrayList<DeviceEventListener>();
 	
@@ -41,12 +42,13 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 		return instance;
 	}
 
-	public synchronized void add(int id, Device device) {
+	public synchronized void add(int id, ActiveDevice device) {
 		log.log(Level.INFO, "Adding an device to registry");
 		devices.put(id, device);
 		String topic = "device/"+id+"/ping/response";
 		msgService.subscribe(topic, 2, this);
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
+		device.activate(id);
 		this.notifyListeners(id, "ADD");
 	}
 	
@@ -57,7 +59,7 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 		this.notifyListeners(id, "SUB");
 	}
 	
-	public synchronized HashMap<Integer, Device> getDevices() {
+	public synchronized HashMap<Integer, ActiveDevice> getDevices() {
 		return this.devices;
 	}
 	

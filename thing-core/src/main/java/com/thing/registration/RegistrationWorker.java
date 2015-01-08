@@ -1,4 +1,4 @@
-package com.registration;
+package com.thing.registration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +33,9 @@ public class RegistrationWorker extends Worker {
 		String format = message.getFormat();
 		
 		if(format.equals("JSON")) {
+			
 			// validate against schema
+			if(!validator.isValid(msg)) return;
 			
 			Registration registration = null;
 			try {

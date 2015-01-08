@@ -12,7 +12,7 @@ package com.thing.api.components;
  */
 public interface Validator {
 
-	public String isValid(String source);
+	public boolean isValid(String source);
 	public void setSchema(String location);
 	
 }

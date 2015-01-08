@@ -6,7 +6,7 @@ pom.xml.next
 release.properties
 
 *.class
-*-tcp
+*-tcp*
 
 *.pyc
 

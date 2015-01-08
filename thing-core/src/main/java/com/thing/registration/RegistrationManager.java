@@ -1,4 +1,4 @@
-package com.registration;
+package com.thing.registration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

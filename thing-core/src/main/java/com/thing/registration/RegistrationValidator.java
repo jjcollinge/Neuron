@@ -1,6 +1,7 @@
-package com.registration;
+package com.thing.registration;
 
 import com.thing.api.components.Validator;
+import com.thing.api.model.Device;
 
 
 public class RegistrationValidator {
@@ -15,7 +16,7 @@ public class RegistrationValidator {
 		this.validator.setSchema(location);
 	}
 	
-	public String isValid(String source) {
+	public boolean isValid(String source) {
 		return this.validator.isValid(source);
 	}
 }

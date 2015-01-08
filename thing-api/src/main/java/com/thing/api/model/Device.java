@@ -9,8 +9,8 @@ public class Device {
 	private String manufacturer;
 	private String model;
 	private ArrayList<Float> gps;
-	private ArrayList<Sensor> sensors;
-	private ArrayList<Actuator> actuators;
+	protected ArrayList<Sensor> sensors;
+	protected ArrayList<Actuator> actuators;
 	
 	public ArrayList<Sensor> getSensors() {
 		return this.sensors;
@@ -31,4 +31,5 @@ public class Device {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
+
 }
