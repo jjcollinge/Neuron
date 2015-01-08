@@ -24,17 +24,17 @@ def on_message(client, userdata, msg):
 		pyObj = json.loads(jsonData)
 		devId = pyObj["data"]
 		client.subscribe("device/"+str(devId)+"/ping/request")
-		client.subscribe("device/"+str(devId)+"/job/request")
+		client.subscribe("device/"+str(devId)+"/sensor/0")
 	if(msg.topic == "device/"+str(devId)+"/ping/request"):
 		client.publish("device/"+str(devId)+"/ping/response", "PONG")
-	if(msg.topic == "device/"+str(devId)+"/job/request"):
+	if(msg.topic == "device/"+str(devId)+"/sensor/0"):
 		print("Handling job")
 		jsonData = str(msg.payload)
 		pyObj = json.loads(jsonData)
 		request = pyObj["data"]
-		if(request == "SENSOR:0:GET"):
+		if(request == "GET"):
 			print("Getting sensor 0")
-			client.publish("device/"+str(devId)+"/job/response", value);
+			client.publish("device/"+str(devId)+"/sensor/0/response", value);
 			value = value + 0.2
 
 def on_publish(client, userdata, mid):

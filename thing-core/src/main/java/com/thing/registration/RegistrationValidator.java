@@ -1,7 +1,6 @@
 package com.thing.registration;
 
 import com.thing.api.components.Validator;
-import com.thing.api.model.Device;
 
 
 public class RegistrationValidator {

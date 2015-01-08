@@ -1,6 +1,5 @@
 package com.thing.registration;
 
-import com.thing.api.model.Device;
 import com.thing.model.ActiveDevice;
 
 public class Registration {

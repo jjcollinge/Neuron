@@ -37,7 +37,7 @@ class Runner implements Runnable {
 		container.startServices();
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -2,6 +2,7 @@ package com.thing.management;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,7 +13,6 @@ import com.thing.api.events.MessageEvent;
 import com.thing.api.events.MessageEventListener;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
-import com.thing.api.model.Device;
 import com.thing.messaging.MessagingService;
 import com.thing.model.ActiveDevice;
 
@@ -26,13 +26,14 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 	private MessagingService msgService;
 	private ArrayList<DeviceEventListener> subscribers;
 	private static DeviceManager instance;
+	private Set<Integer> pendingDevices;
 	
 	private DeviceManager() {
 		// hidden
 		devices = new HashMap<Integer, ActiveDevice>();
 		timestamps = new HashMap<Integer, Long>();
 		subscribers = new ArrayList<DeviceEventListener>();
-	
+		pendingDevices = new HashSet<Integer>();
 	}
 	
 	public static DeviceManager getInstance() {
@@ -48,7 +49,7 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 		String topic = "device/"+id+"/ping/response";
 		msgService.subscribe(topic, 2, this);
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
-		device.activate(id);
+		pendingDevices.add(id);
 		this.notifyListeners(id, "ADD");
 	}
 	
@@ -56,6 +57,7 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 		log.log(Level.INFO, "Removing an adapter to registry");
 		devices.remove(id);
 		timestamps.remove(id);
+		pendingDevices.remove(id);
 		this.notifyListeners(id, "SUB");
 	}
 	
@@ -84,7 +86,7 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 		final int SEC = 1000;
 		
 		int TIMEOUT = SEC * 10;
-		int POLLING_PERIOD = SEC * 10;
+		int POLLING_PERIOD = SEC * 60;
 		long threshold;
 		
 		while(true) {
@@ -129,6 +131,10 @@ public class DeviceManager implements Runnable, MessageEventListener, Service {
 	public void onMessageArrived(MessageEvent event) {
 		int id = event.getMessage().getId();
 		timestamps.put(id, System.currentTimeMillis() / 1000L);
+		if(pendingDevices.contains(id)) {
+			devices.get(id).activate(id);
+			pendingDevices.remove(id);
+		}
 		log.log(Level.INFO, "Updated timestamp for device " + id);
 	}
 

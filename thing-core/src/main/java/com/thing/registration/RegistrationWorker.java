@@ -8,10 +8,8 @@ import com.thing.api.components.Worker;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
-import com.thing.api.model.DeviceWrapper;
 import com.thing.management.DeviceManager;
 import com.thing.messaging.MessagingService;
-import com.thing.messaging.SerialMessageWrapper;
 
 
 public class RegistrationWorker extends Worker {
