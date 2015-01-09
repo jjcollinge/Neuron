@@ -19,13 +19,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
-import com.thing.api.messaging.Messenger;
 import com.thing.api.messaging.Parcel;
 
 
-public class SerialMessenger<T> extends Messenger implements SerialPortEventListener {
+public class SerialConnector extends Connector implements SerialPortEventListener {
 
-	private static final Logger log = Logger.getLogger( SerialMessenger.class.getName() );
+	private static final Logger log = Logger.getLogger( SerialConnector.class.getName() );
 	
 	private Stack<Character> characterBuffer;	
 	SerialPort serialPort;
@@ -50,13 +49,12 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 	private ArrayList<String> subscriptions;
 	private boolean connected = false;
 	
-	public SerialMessenger(int id) {
+	public SerialConnector() {
 		
-		super("SERIAL", id);
+		super("SERIAL");
 		subscriptions = new ArrayList<String>();
 		characterBuffer = new Stack<Character>();
 	}
-	
 	/**
 	 * This should be called when you stop using the port.
 	 * This will prevent port locking on platforms like Linux.
@@ -68,7 +66,6 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 		}
 		connected = false;
 	}
-	
 	@Override
 	public void connect(String host, String port) {
 		// the next line is for Raspberry Pi and 
@@ -118,7 +115,6 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 			System.err.println(e.toString());
 		}
 	}
-
 	/**
 	 * Serial Device expects data in the following format:  {  "data": "...", "topic": "..." }
 	 */
@@ -157,22 +153,18 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 		}
 		
 	}
-
 	@Override
 	public void subscribe(String topic, int qos) {
 		this.subscriptions.add(topic);
 	}
-
 	@Override
 	public void unsubscribe(String topic) {
 		this.subscriptions.remove(topic);
 	}
-
 	@Override
 	public boolean isConnected() {
 		return connected;
 	}
-	
 	private synchronized String readSerialStream() {
 		int c;
 		StringBuilder sb = new StringBuilder();
@@ -209,7 +201,6 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 		}
 		return sb.toString();
 	}
-	
 	public void serialEvent(SerialPortEvent e) {
 		
 		if (e.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
@@ -246,7 +237,7 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 			// Add required metadata to message payload
 			String messageString = message.getData();
 			messageString = messageString.replaceAll("\"", "\\\\\"");
-			messageString = "{ \"messengerId\": " + this.getId() + ", \"payload\": \"" + messageString + "\", \"format\":\"JSON\" }";
+			messageString = "{ \"payload\": \"" + messageString + "\", \"format\":\"JSON\" }";
 			
 			Message m = null;
 			// Now pack the raw JSON into a message POJO
@@ -263,9 +254,6 @@ public class SerialMessenger<T> extends Messenger implements SerialPortEventList
 			
 			RoutedMessageEvent event = new RoutedMessageEvent(this, m, topic);
 			this.notifyListeners(event);
-		
 		}
-		
 	}
-
 }

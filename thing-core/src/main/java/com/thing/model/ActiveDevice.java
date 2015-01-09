@@ -16,9 +16,9 @@ public class ActiveDevice {
 	
 	public ActiveDevice() {
 	}
-	public void activate(int deviceId) {
-		for(ActiveSensor sensor : sensors) {
-			sensor.updateValue(deviceId);
+	public void initialise() {
+		for(int i = 0; i < sensors.size(); i++) {
+			sensors.get(i).setId(i);
 		}
 	}
 	public String getManufacturer() {
@@ -34,15 +34,11 @@ public class ActiveDevice {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
-	public String getSensorValue(int sensorId) {
-		return sensors.get(sensorId).getValue();
+	public ArrayList<ActiveSensor> getSensors() {
+		return this.sensors;
 	}
-	public void listenToSensor(int sensorId, MessageEventListener listener) {
-		sensors.get(sensorId).addSensorEventListener(listener);
+	public ArrayList<Actuator> getActuator() {
+		return this.actuators;
 	}
-	public void bindToSensor(int sensorId, int deviceId, MessageEventListener listener) {
-		sensors.get(sensorId).bind(deviceId, listener);
-	}
-	
 }
 

@@ -1,5 +1,7 @@
 package com.thing.messaging;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,21 +16,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
-import com.thing.api.messaging.Messenger;
 import com.thing.api.messaging.Parcel;
+import com.thing.sessions.Session;
 
 
-public class MqttMessenger extends Messenger implements  MqttCallback {
+public class MqttConnector extends Connector implements  MqttCallback, Runnable {
 
-	private static final Logger log = Logger.getLogger( MqttMessenger.class.getName() );
+	private static final Logger log = Logger.getLogger( MqttConnector.class.getName() );
 	
 	private MqttAsyncClient client; 
 	private final String protocol = "tcp";
 	
-	public MqttMessenger(int id) {
-		super("MQTT", id);
+	public MqttConnector() {
+		super("MQTT");
 	}
-	
 	@Override
 	public void connect(String host, String port) {
 		
@@ -43,16 +44,13 @@ public class MqttMessenger extends Messenger implements  MqttCallback {
 		}
 		
 	}
-
-	
 	/**
 	 * Mqtt Device expects data in the following format:  {  "data": "..."  } on predefined topic
 	 */
-	@Override
-	public void send(Parcel parcel) {
+	protected void send(Parcel parcel) {
 		
 		if(!isConnected()) {
-			log.log(Level.WARNING, "Cannot send message as Messanger is not connected!");
+			log.log(Level.WARNING, "Cannot send message as Connector is not connected!");
 			return;
 		}
 		
@@ -84,12 +82,9 @@ public class MqttMessenger extends Messenger implements  MqttCallback {
 		} catch (MqttException e) {
 			log.log(Level.SEVERE, "An exception has been thrown", e);
 		}
-		
 	}
-
 	@Override
 	public void subscribe(String topic, int qos) {
-		
 		if(client.isConnected()) {
 			try {
 				client.subscribe(topic, qos);
@@ -100,12 +95,9 @@ public class MqttMessenger extends Messenger implements  MqttCallback {
 		} else {
 			log.log(Level.WARNING, "Couldn't subscribe to topic " + topic + " as client is not connected to broker");
 		}
-		
 	}
-
 	@Override
 	public void unsubscribe(String topic) {
-		
 		if(client.isConnected()) {
 			try {
 				client.unsubscribe(topic);
@@ -117,29 +109,24 @@ public class MqttMessenger extends Messenger implements  MqttCallback {
 			log.log(Level.WARNING, "Couldn't unsubscribe to topic " + topic + " as client is not connected to broker");
 		}
 	}
-
 	@Override
 	public boolean isConnected() {
-		
 		return client.isConnected();
-		
 	}
 
 	public void connectionLost(Throwable arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	public void deliveryComplete(IMqttDeliveryToken arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		
 		// New MqttMessage has arrived. Traffic is already filtered by topics so forward all incoming data
 		String messageString = message.toString();
-		messageString = "{ \"messengerId\": " + this.getId() + ", \"payload\": \"" + messageString.replaceAll("\"", "\\\\\"") + "\", \"format\":\"JSON\" }";
+		messageString = "{ \"payload\": \"" + messageString.replaceAll("\"", "\\\\\"") + "\", \"format\":\"JSON\", \"protocol\":\"MQTT\" }";
 		log.log(Level.INFO, "Received new message " + messageString + " on topic " + topic);
 		
 		// Pack message into internal message
@@ -153,8 +140,7 @@ public class MqttMessenger extends Messenger implements  MqttCallback {
 		}
 		
 		// Notify listeners of new message
-		RoutedMessageEvent event = new RoutedMessageEvent(this, msg, topic);
+		MessageEvent event = new MessageEvent(this, msg);
 		this.notifyListeners(event);
 	}
-
 }

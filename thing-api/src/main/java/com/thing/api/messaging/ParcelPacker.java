@@ -11,8 +11,8 @@ package com.thing.api.messaging;
  */
 public class ParcelPacker {
 
-	public static Parcel makeParcel(int id, String message, String format, String topic) {
-		Message m = new Message(id, message, format);
+	public static Parcel makeParcel(String message, String format, String topic, String protocol) {
+		Message m = new Message(message, format, protocol);
 		Parcel p = new Parcel(m, topic);
 		return p;
 	}

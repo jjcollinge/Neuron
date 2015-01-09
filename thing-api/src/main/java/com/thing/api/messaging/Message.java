@@ -12,22 +12,22 @@ package com.thing.api.messaging;
  */
 public class Message {
 
-	private int messengerId;
 	private String payload;
 	private String format;
+	private String protocol;
 	
-	public Message(int id, String payload, String format) {
-		this.messengerId = id;
+	public Message(String payload, String format, String protocol) {
 		this.payload = payload;
 		this.format = format;
-	}
-	public int getId() {
-		return this.messengerId;
+		this.protocol = protocol;
 	}
 	public String getPayload() {
 		return this.payload;
 	}
 	public String getFormat() {
 		return this.format;
+	}
+	public String getProtocol() {
+		return this.protocol;
 	}
 }

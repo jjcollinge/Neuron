@@ -23,18 +23,18 @@ def on_message(client, userdata, msg):
 		jsonData = str(msg.payload)
 		pyObj = json.loads(jsonData)
 		devId = pyObj["data"]
-		client.subscribe("device/"+str(devId)+"/ping/request")
-		client.subscribe("device/"+str(devId)+"/sensor/0")
-	if(msg.topic == "device/"+str(devId)+"/ping/request"):
-		client.publish("device/"+str(devId)+"/ping/response", "PONG")
-	if(msg.topic == "device/"+str(devId)+"/sensor/0"):
+		client.subscribe("devices/"+str(devId)+"/ping/request")
+		client.subscribe("devices/"+str(devId)+"/sensors/0")
+	if(msg.topic == "devices/"+str(devId)+"/ping/request"):
+		client.publish("devices/"+str(devId)+"/ping/response", "{\"id\":"+str(devId)+"}")
+	if(msg.topic == "devices/"+str(devId)+"/sensors/0"):
 		print("Handling job")
 		jsonData = str(msg.payload)
 		pyObj = json.loads(jsonData)
 		request = pyObj["data"]
 		if(request == "GET"):
 			print("Getting sensor 0")
-			client.publish("device/"+str(devId)+"/sensor/0/response", value);
+			client.publish("devices/"+str(devId)+"/sensors/0/response", value);
 			value = value + 0.2
 
 def on_publish(client, userdata, mid):
@@ -59,7 +59,7 @@ client.connect(HOST, PORT, 60)
 # Subscribe to registration response topic
 client.subscribe(REG_RESPONSE)
 # Build registration json string
-registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":{ \"manufacturer\":\"Raspberry Pi\",\"model\":\"B+\",\"gps\":[123.4,567.8,910.1],\"sensors\":[{\"id\":0,\"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\"}],\"actuators\":[]}}"
+registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":{ \"manufacturer\":\"Raspberry Pi\",\"model\":\"B+\",\"gps\":[123.4,567.8,910.1],\"sensors\":[{\"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\"}],\"actuators\":[]}}"
 print("Registration: " + registration)
 # Publish registration json string to registration topic
 client.publish(REG_REQUEST, registration)
