@@ -3,7 +3,6 @@ package com.thing.registration;
 import com.thing.api.components.Validator;
 
 
-
 public class JSONValidator implements Validator {
 
 	//private JsonSchema schema;

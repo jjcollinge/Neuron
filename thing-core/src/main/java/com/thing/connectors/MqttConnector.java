@@ -1,7 +1,5 @@
-package com.thing.messaging;
+package com.thing.connectors;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,10 +15,16 @@ import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
-import com.thing.sessions.Session;
 
-
-public class MqttConnector extends Connector implements  MqttCallback, Runnable {
+/**
+ * Name: MqttConnector
+ * ---------------------------------------------------------------
+ * Desc: Implementation of a Connector for handling Mqtt devices
+ * 
+ * @author jcollinge
+ *
+ */
+public class MqttConnector extends Connector implements  MqttCallback {
 
 	private static final Logger log = Logger.getLogger( MqttConnector.class.getName() );
 	
@@ -43,6 +47,14 @@ public class MqttConnector extends Connector implements  MqttCallback, Runnable 
 			e.printStackTrace();
 		}
 		
+	}
+	public void disconnect() {
+		try {
+			log.log(Level.INFO, "Disconnected from broker");
+			client.disconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * Mqtt Device expects data in the following format:  {  "data": "..."  } on predefined topic

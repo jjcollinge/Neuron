@@ -1,11 +1,12 @@
 package com.thing.runner;
 
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import com.thing.api.components.ServiceContainer;
-import com.thing.management.SessionManager;
 import com.thing.registration.RegistrationManager;
+import com.thing.sessions.SessionManager;
 
 public class ThingMiddleware {
 
@@ -27,19 +28,15 @@ class Runner implements Runnable {
 		
 		log.log(Level.INFO, "Started running application");
 		
+//		LogManager.getLogManager().reset();
+//        Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+//        globalLogger.setLevel(java.util.logging.Level.OFF);
+		
 		ServiceContainer container = new ServiceContainer();
 		container.addService(SessionManager.getInstance());
 		container.addService(RegistrationManager.getInstance());
 		
 		container.startServices();
-		
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		new Thread(new MockClient()).start();;
 		
 	}
 	

@@ -1,6 +1,8 @@
 package com.thing.api.components;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.thing.api.events.workCompleteEventListener;
+import com.thing.api.messaging.Parcel;
 
 /**
  * Name: Worker
@@ -27,13 +29,13 @@ public abstract class Worker implements Runnable {
 	}
 	protected abstract void doWork();
 	
-	protected void finishWork() {
-		fireOnWorkComplete();
+	protected void finishWork(Parcel response) {
+		fireOnWorkComplete(response);
 	}
-	private void fireOnWorkComplete() {
+	private void fireOnWorkComplete(Parcel response) {
 		
 		for(workCompleteEventListener listener : workListeners) {
-			listener.onWorkComplete(this);
+			listener.onWorkComplete(this, response);
 		}	
 	}
 }

@@ -4,6 +4,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.thing.api.events.workCompleteEventListener;
+import com.thing.api.messaging.Message;
+import com.thing.api.messaging.Parcel;
 
 /**
  * Name: Manager
@@ -16,14 +18,14 @@ import com.thing.api.events.workCompleteEventListener;
  * @author jcollinge
  *
  */
-public abstract class Manager implements workCompleteEventListener {
+public abstract class RequestResponseController implements workCompleteEventListener {
 
-	private static final Logger log = Logger.getLogger( Manager.class.getName() );
+	private static final Logger log = Logger.getLogger( RequestResponseController.class.getName() );
 	
 	protected int MAX_NUMBER_OF_WORKERS;
 	private int numberOfWorkers;
 	
-	public Manager() {	
+	public RequestResponseController() {	
 		
 	}
 	
@@ -54,9 +56,12 @@ public abstract class Manager implements workCompleteEventListener {
 			log.log(Level.INFO, "Dropped worker request, maximum number of workers (" + this.MAX_NUMBER_OF_WORKERS + ") has been reached");
 		}
 	}
-	public void onWorkComplete(Worker worker) {
+	public abstract void handleRequest(Message req);
+	public abstract void handleResponse(Parcel res);
+	public void onWorkComplete(Worker worker, Parcel parcel) {
 		// work completed by worker, reallocate
 		log.log(Level.INFO, "Worker has finished, reallocating...");
+		handleResponse(parcel);
 		worker.removeCompletionEventListener(this);
 		this.numberOfWorkers--;
 	}

@@ -8,5 +8,6 @@
   	<module>thing-api</module>
   	<module>thing-web</module>
   	<module>thing-core</module>
+  	<module>thing-dao</module>
   </modules>
 </project>

@@ -1,4 +1,4 @@
-package com.thing.messaging;
+package com.thing.connectors;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -15,13 +15,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
 
-
+/**
+ * Name: SerialConnector
+ * ---------------------------------------------------------------
+ * Desc: Implementation of a connector for handling Serial Devices
+ * 
+ * @author jcollinge
+ *
+ */
 public class SerialConnector extends Connector implements SerialPortEventListener {
 
 	private static final Logger log = Logger.getLogger( SerialConnector.class.getName() );
@@ -59,12 +65,13 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 	 * This should be called when you stop using the port.
 	 * This will prevent port locking on platforms like Linux.
 	 */
-	public synchronized void close() {
+	public synchronized void disconnect() {
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
 		}
 		connected = false;
+		log.log(Level.INFO, "Disconnected from serial port");
 	}
 	@Override
 	public void connect(String host, String port) {
@@ -155,10 +162,12 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 	}
 	@Override
 	public void subscribe(String topic, int qos) {
+		log.log(Level.INFO, "Subscribed to topic " + topic);
 		this.subscriptions.add(topic);
 	}
 	@Override
 	public void unsubscribe(String topic) {
+		log.log(Level.INFO, "Unsubscribed to topic " + topic);
 		this.subscriptions.remove(topic);
 	}
 	@Override
@@ -237,7 +246,7 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 			// Add required metadata to message payload
 			String messageString = message.getData();
 			messageString = messageString.replaceAll("\"", "\\\\\"");
-			messageString = "{ \"payload\": \"" + messageString + "\", \"format\":\"JSON\" }";
+			messageString = "{ \"payload\": \"" + messageString + "\", \"format\":\"JSON\", \"protocol\":\"SERIAL\" }";
 			
 			Message m = null;
 			// Now pack the raw JSON into a message POJO
@@ -252,7 +261,7 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 			// Forward message to listeners
 			log.log(Level.INFO, "Forwarding message");
 			
-			RoutedMessageEvent event = new RoutedMessageEvent(this, m, topic);
+			MessageEvent event = new MessageEvent(this, m);
 			this.notifyListeners(event);
 		}
 	}

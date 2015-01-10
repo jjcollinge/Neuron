@@ -1,21 +1,28 @@
 package com.thing.registration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.thing.api.components.Manager;
+import com.thing.api.components.RequestResponseController;
 import com.thing.api.components.Service;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.events.MessageEventListener;
 import com.thing.api.messaging.Message;
-import com.thing.messaging.Connector;
-import com.thing.messaging.MqttConnector;
-import com.thing.messaging.SerialConnector;
-import com.thing.sessions.IdGenerator;
+import com.thing.api.messaging.Parcel;
+import com.thing.connectors.Connector;
+import com.thing.connectors.MqttConnector;
+import com.thing.connectors.SerialConnector;
 
-
-public class RegistrationManager extends Manager implements MessageEventListener, Service {
+/**
+ * Name: RegistrationManager
+ * ---------------------------------------------------------------
+ * Desc: RegistrationManager is responsible for allocating workers
+ * 		 to register individual registration requests
+ * 
+ * @author jcollinge
+ *
+ */
+public class RegistrationManager extends RequestResponseController implements MessageEventListener, Service {
 	
 	private static final Logger log = Logger.getLogger( RegistrationManager.class.getName() );
 	
@@ -53,14 +60,18 @@ public class RegistrationManager extends Manager implements MessageEventListener
 			connectors.get(protocol).unsubscribe(this.REGISTRATION_TOPIC);
 		}
 	}
-	private synchronized void register(Message message) {	
-		log.log(Level.INFO, "New registration event");	
+	public synchronized void handleRequest(Message message) {	
+		log.log(Level.INFO, "Handling registration request");	
 		doWork(new RegistrationWorker(message));
+	}
+	public synchronized void handleResponse(Parcel parcel) {
+		log.log(Level.INFO, "Handling registration response");
+		connectors.get(parcel.getMessage().getProtocol()).sendMessage(parcel);
 	}
 	public synchronized Connector getConnector(String protocol) {
 		return connectors.get(protocol);
 	}
 	public void onMessageArrived(MessageEvent event) {
-		register(event.getMessage());
+		handleRequest(event.getMessage());
 	}
 }

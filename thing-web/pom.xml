@@ -1,31 +1,53 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>thing</groupId>
-    <artifactId>parent-project</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
   <artifactId>thing-web</artifactId>
-  <repositories>
-    <repository>
-        <id>maven-restlet</id>
-        <name>Restlet repository</name>
-        <url>http://maven.restlet.com</url>
-    </repository>
-  </repositories>
-  <properties>
-    <restlet-version>2.0.15</restlet-version>
-</properties>
-<dependencies>
-    <dependency>
-        <groupId>org.restlet.jse</groupId>
-        <artifactId>org.restlet</artifactId>
-        <version>${restlet-version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.restlet.jse</groupId>
-        <artifactId>org.restlet.ext.jackson</artifactId>
-        <version>${restlet-version}</version>
-    </dependency>
-</dependencies>
+  <packaging>war</packaging>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <warSourceDirectory>WebContent</warSourceDirectory>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+  	<groupId>thing</groupId>
+  	<artifactId>parent-project</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <dependencies>
+  	<dependency>
+  		<groupId>asm</groupId>
+  		<artifactId>asm</artifactId>
+  		<version>3.3.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-bundle</artifactId>
+  		<version>1.18.3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-core</artifactId>
+  		<version>1.18.3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20140107</version>
+  	</dependency>
+  </dependencies>
 </project>

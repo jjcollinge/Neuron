@@ -18,7 +18,7 @@ void setup() {
   digitalWrite(LEDPIN, LOW); 
 
   //Register
-  sendMessage(String("register"), String("{\"returnAddress\":\"9999\",\"device\":{\"manufacturer\":\"Arduino\",\"model\":\"Uno\",\"gps\":[1,2,3],\"sensors\": [{\"pin\":3, \"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\"}],\"actuators\":[]}}"));
+  sendMessage(String("register"), String("{\"returnAddress\":\"9999\",\"device\":{\"manufacturer\":\"Arduino\",\"model\":\"Uno\",\"gps\":[1,2,3],\"sensors\": [{\"pin\":3, \"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\", \"value\":\"0.0\"}],\"actuators\":[]}}"));
 }
 
 void sendMessage(String topic, String msg) {
@@ -69,8 +69,8 @@ void handleRegistrationResponse(String res) {
   ID = res.toInt();
   sID = res;
   
-  PING_TOPIC = "device/"+sID+"/ping/request";
-  JOB_TOPIC = "device/"+sID+"/job/request";
+  PING_TOPIC = "devices/"+sID+"/ping/request";
+  JOB_TOPIC = "devices/"+sID+"/job/request";
   
   Serial.println("Set my PING topic to: " + PING_TOPIC);
   Serial.println("Set my JOB topic to: " + JOB_TOPIC);
@@ -92,7 +92,6 @@ double convertVoltsToTemp(int RawADC) {  //Function to perform the fancy math of
  Temp = log(((10240000/RawADC) - 10000));
  Temp = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * Temp * Temp ))* Temp );
  Temp = Temp - 273.15;              // Convert Kelvin to Celsius
- Temp = (Temp * 9.0)/ 5.0 + 32.0; // Celsius to Fahrenheit - comment out this line if you need Celsius
  return Temp;
 }
 void loop() {
@@ -114,30 +113,16 @@ void loop() {
      handleRegistrationResponse(msg);
    } else if(topic == PING_TOPIC) {
      handlePingRequest(msg);
-   } else if(topic == "device/"+sID+"/sensor/"+pin) {
+   } else if(topic == "devices/"+sID+"/sensors/"+pin) {
       // Get sensor value
       if(msg == "GET") {
          int volt = analogRead(TEMPPIN);
-         String v = String(v);
-         Serial.println("Volts: " + v);
          float floatTemp = convertVoltsToTemp(volt);
          static char out[15];
          dtostrf(floatTemp, 6, 2, out);
          String s = String(out);
-         sendMessage("device/"+sID+"/sensor/"+pin+"/response", s); 
-      } else if(msg == "GET_BIND") {
-         while(true) {
-           int volt = analogRead(TEMPPIN);
-           String v = String(v);
-           Serial.println("Volts: " + v);
-           float floatTemp = convertVoltsToTemp(volt);
-           static char out[15];
-           dtostrf(floatTemp, 6, 2, out);
-           String s = String(out);
-           sendMessage("device/"+sID+"/sensor/"+pin+"/response", s); 
-           delay(1000);
-         } 
-      }
+         sendMessage("devices/"+sID+"/sensors/"+pin+"/response", s); 
+      } 
    }
    
  }

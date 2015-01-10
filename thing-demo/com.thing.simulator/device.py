@@ -59,7 +59,7 @@ client.connect(HOST, PORT, 60)
 # Subscribe to registration response topic
 client.subscribe(REG_RESPONSE)
 # Build registration json string
-registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":{ \"manufacturer\":\"Raspberry Pi\",\"model\":\"B+\",\"gps\":[123.4,567.8,910.1],\"sensors\":[{\"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\"}],\"actuators\":[]}}"
+registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":{ \"id\":0,\"manufacturer\":\"Raspberry Pi\",\"model\":\"B+\",\"gps\":[123.4,567.8,910.1],\"sensors\":[{\"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\", \"value\":\"0.0\"}],\"actuators\":[]}}"
 print("Registration: " + registration)
 # Publish registration json string to registration topic
 client.publish(REG_REQUEST, registration)

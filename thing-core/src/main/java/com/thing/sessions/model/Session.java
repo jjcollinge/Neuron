@@ -1,32 +1,34 @@
-package com.thing.sessions;
+package com.thing.sessions.model;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.thing.model.ActiveDevice;
+import com.thing.sessions.IdGenerator;
 
+/**
+ * Name: Session
+ * ---------------------------------------------------------------
+ * Desc: The Session class holds information about a devices
+ * 		 current state in the system.
+ * 
+ * @author jcollinge
+ *
+ */
 public class Session {
 	
 	private int deviceId;
 	private long timestamp;
-	private ActiveDevice device;
 	private String protocol;
 	private String format;
-	private boolean lockOnSend;
-	private boolean lock;
 	private byte[] hash;
 	
-	public Session(ActiveDevice device, String protocol, String format) {
-		this.deviceId = IdGenerator.generateId();
-		this.device = device;
-		
+	public Session(int deviceId, String protocol, String format) {
+		this.deviceId = deviceId;
 		this.protocol = protocol;
 		this.format = format;
 		this.timestamp = System.currentTimeMillis() / 1000L;
 		this.hash = generateHash();
-		this.lock = false;
-		this.lockOnSend = false;
 	}
 	public int getDeviceId() {
 		return this.deviceId;
@@ -36,9 +38,6 @@ public class Session {
 	}
 	public String getFormat() {
 		return this.format;
-	}
-	public ActiveDevice getDevice() {
-		return this.device;
 	}
 	public byte[] getHash() {
 		return this.hash;
@@ -52,21 +51,8 @@ public class Session {
 	public boolean after(long timestamp) {
 		return (this.timestamp > timestamp);
 	}
-	public boolean isLocked() {
-		return this.lock;
-	}
-	public boolean shouldLockOnSend() {
-		return this.lockOnSend;
-	}
-	public synchronized void lockOnSend() {
-		this.lockOnSend = true;
-	}
-	public synchronized void unlock() {
-		this.lock = false;
-		this.lockOnSend = false;
-	}
-	public synchronized void lock() {
-		this.lock = true;
+	public String getPingAddress() {
+		return "devices/"+deviceId+"/ping";
 	}
 	private byte[] generateHash() {
 		MessageDigest digest = null;
