@@ -30,6 +30,37 @@
   </parent>
   <dependencies>
   	<dependency>
+	   <groupId>com.fasterxml.jackson.core</groupId>
+	   <artifactId>jackson-core</artifactId>
+	   <version>2.5.0</version>
+	 </dependency>
+	 <dependency>
+	   <groupId>com.fasterxml.jackson.core</groupId>
+	   <artifactId>jackson-annotations</artifactId>
+	   <version>2.5.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.fasterxml.jackson.core</groupId>
+	  <artifactId>jackson-databind</artifactId>
+	  <version>2.5.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.fasterxml.jackson.dataformat</groupId>
+	  <artifactId>jackson-dataformat-smile</artifactId>
+	  <version>2.5.0</version>
+	</dependency>
+	<!-- JAX-RS provider -->
+	<dependency>
+	   <groupId>com.fasterxml.jackson.jaxrs</groupId>
+	   <artifactId>jackson-jaxrs-json-provider</artifactId>
+	   <version>2.5.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.fasterxml.jackson.module</groupId>
+	  <artifactId>jackson-module-jaxb-annotations</artifactId>
+	  <version>2.5.0</version>
+	</dependency>
+	<dependency>
   		<groupId>asm</groupId>
   		<artifactId>asm</artifactId>
   		<version>3.3.1</version>
@@ -48,6 +79,21 @@
   		<groupId>org.json</groupId>
 		<artifactId>json</artifactId>
 		<version>20140107</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>thing</groupId>
+  		<artifactId>thing-api</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>thing</groupId>
+  		<artifactId>thing-dao</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>thing</groupId>
+  		<artifactId>thing-core</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   </dependencies>
 </project>

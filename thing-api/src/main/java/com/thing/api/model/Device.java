@@ -43,6 +43,10 @@ public class Device {
 	public void setManufacurer(String manufacturer) {
 		this.manufacturer = manufacturer;
 	}
+	
+	public void setModel(String model) {
+		this.model = model;
+	}
 
 	public void setGps(ArrayList<Float> gps) {
 		this.gps = gps;

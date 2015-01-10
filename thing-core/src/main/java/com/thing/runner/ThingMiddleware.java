@@ -1,7 +1,6 @@
 package com.thing.runner;
 
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import com.thing.api.components.ServiceContainer;

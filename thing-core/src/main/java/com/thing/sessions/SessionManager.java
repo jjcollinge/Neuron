@@ -38,8 +38,7 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 	// Session storage
 	private HashMap<Integer, Session> sessions;
 	// Subscribers who get forwarded messages about device additions and
-	// removals
-	private ArrayList<DeviceEventListener> subscribers;
+	
 	// New devices which have not yet responded to a ping
 	private Set<Integer> pendingDevices;
 	// Connectors to devices
@@ -47,7 +46,6 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 
 	private SessionManager() {
 		// hidden
-		subscribers = new ArrayList<DeviceEventListener>();
 		pendingDevices = new HashSet<Integer>();
 		connectors = new HashMap<String, Connector>();
 		sessions = new HashMap<Integer, Session>();
@@ -82,7 +80,6 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 		connectors.get(session.getProtocol()).subscribe(
 				session.getPingAddress() + "/response", 2);
 		pendingDevices.add(deviceId);
-		this.notifyListeners(deviceId, "ADD");
 	}
 
 	private synchronized void forgetSession(int deviceId) {
@@ -90,15 +87,6 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 		sessions.remove(deviceId);
 		if (pendingDevices.contains(deviceId))
 			pendingDevices.remove(deviceId);
-		this.notifyListeners(deviceId, "SUB");
-	}
-
-	public synchronized void addDeviceListener(DeviceEventListener listener) {
-		this.subscribers.add(listener);
-	}
-
-	public synchronized void removeDeviceListener(DeviceEventListener listener) {
-		this.subscribers.remove(listener);
 	}
 
 	// Sends a ping to a device. onMessageArrvied will be called in response
@@ -149,19 +137,11 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 							"Session for device " + session.getDeviceId()
 									+ " timed out");
 					set.add(sessionKey);
-					notifyListeners(session.getDeviceId(), "SUB");
 				}
 			}
 			for (Integer key : set) {
 				forgetSession(key);
 			}
-		}
-	}
-
-	public void notifyListeners(int deviceId, String operation) {
-		DeviceEvent event = new DeviceEvent(this, deviceId, operation);
-		for (DeviceEventListener subscriber : this.subscribers) {
-			subscriber.onDevicesChanged(event);
 		}
 	}
 
