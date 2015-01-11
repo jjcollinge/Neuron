@@ -1,0 +1,20 @@
+{
+    "id": 0,
+    "manufacturer": "RaspberryPi",
+    "model": "B+",
+    "geo": {
+        "latitude": 23.1,
+        "longitude": 34.1
+    },
+    "sensors": [
+        {
+            "sense": "temperature",
+            "unit": "celcius",
+            "type": "float",
+            "value": "0.0"
+        }
+    ],
+    "actuators": [
+        
+    ]
+}

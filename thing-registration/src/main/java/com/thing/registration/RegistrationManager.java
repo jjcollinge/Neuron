@@ -27,60 +27,71 @@ public class RegistrationManager extends RequestResponseController implements
 	private static RegistrationManager instance;
 
 	private RegistrationManager() {
+
 		connectors = new HashMap<String, BaseConnector>();
+
 	}
 
 	public static RegistrationManager getInstance() {
+
 		if (instance == null) {
 			instance = new RegistrationManager();
 		}
 		return instance;
-	}
 
-	protected void initialise() {
-		this.MAX_NUMBER_OF_WORKERS = 5;
-		connectors.put("SERIAL", new SerialConnector());
-		connectors.put("MQTT", new MqttConnector());
-		
-		for(BaseConnector connector : connectors.values()) {
-			SessionManager.getInstance().getMonitor().registerConnector(connector);
-		}
-		
 	}
 
 	public void start() {
+
 		log.log(Level.INFO, "Starting service...");
-		initialise();
-		for (String protocol : connectors.keySet()) {
-			connectors.get(protocol).connect("localhost", "1883");
-			connectors.get(protocol).addMessageEventListener(this);
-			connectors.get(protocol).subscribe(this.REGISTRATION_TOPIC, 2);
+
+		this.MAX_NUMBER_OF_WORKERS = 5;
+		connectors.put("SERIAL", new SerialConnector());
+		connectors.put("MQTT", new MqttConnector());
+
+		for (BaseConnector connector : connectors.values()) {
+			SessionManager.getInstance().getMonitor()
+					.registerConnector(connector);
+			connector.connect("localhost", "1883");
+			connector.addMessageEventListener(this);
+			connector.subscribe(this.REGISTRATION_TOPIC, 2);
 		}
+
 	}
 
 	public void stop() {
+
 		log.log(Level.INFO, "Stopping service...");
 		for (String protocol : connectors.keySet()) {
 			connectors.get(protocol).removeMessageEventListener(this);
 			connectors.get(protocol).unsubscribe(this.REGISTRATION_TOPIC);
 		}
+
 	}
 
 	public synchronized void handleRequest(Message message) {
+
 		log.log(Level.INFO, "Handling registration request");
 		doWork(new RegistrationWorker(message));
+
 	}
 
 	public synchronized void handleResponse(Parcel parcel) {
+
 		log.log(Level.INFO, "Handling registration response");
 		connectors.get(parcel.getMessage().getProtocol()).sendMessage(parcel);
+
 	}
 
 	public synchronized BaseConnector getConnector(String protocol) {
+
 		return connectors.get(protocol);
+
 	}
 
 	public void onMessageArrived(MessageEvent event) {
+
 		handleRequest(event.getMessage());
+
 	}
 }

@@ -13,6 +13,7 @@ import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
+import com.thing.registration.model.Registration;
 import com.thing.sessions.IdGenerator;
 import com.thing.sessions.SessionManager;
 import com.thing.sessions.model.Session;

@@ -12,5 +12,7 @@
 		<module>thing-dao</module>
 		<module>thing-registration</module>
 		<module>thing-messaging</module>
+		<module>thing-demonstration</module>
+		<module>thing-demo</module>
 	</modules>
 </project>

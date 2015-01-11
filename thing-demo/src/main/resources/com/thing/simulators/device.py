@@ -46,6 +46,8 @@ def on_log(client, obj, level, string):
 def on_subscribe(client, obj, mid, granted_qos):
 	print("Subscribed: "+str(mid)+" "+str(granted_qos))
 
+# Start script
+
 client = mqtt.Client()
 
 client.on_connect = on_connect
@@ -54,12 +56,15 @@ client.on_publish = on_publish
 client.on_log = on_log
 client.on_subscribe = on_subscribe
 
+file = open("device.json", 'r');
+device = file.read();
+
 # Connect to broker
 client.connect(HOST, PORT, 60)
 # Subscribe to registration response topic
 client.subscribe(REG_RESPONSE)
 # Build registration json string
-registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":{ \"id\":0,\"manufacturer\":\"Raspberry Pi\",\"model\":\"B+\",\"geo\":{\"latitude\":23.1,\"longitude\":34.1},\"sensors\":[{\"sense\":\"temperature\",\"unit\":\"celcius\",\"type\":\"float\", \"value\":\"0.0\"}],\"actuators\":[]}}"
+registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":"+ device +"}"
 print("Registration: " + registration)
 # Publish registration json string to registration topic
 client.publish(REG_REQUEST, registration)
