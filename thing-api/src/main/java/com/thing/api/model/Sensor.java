@@ -44,6 +44,10 @@ public class Sensor {
 		this.type = type;
 	}
 	
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 	// Getters
 	public int getId() {
 		return this.id;

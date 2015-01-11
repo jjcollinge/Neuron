@@ -12,6 +12,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteResult;
 import com.thing.api.events.DeviceEvent;
 import com.thing.api.events.DeviceEventListener;
 import com.thing.api.model.Device;
@@ -47,14 +48,27 @@ public class DataHandler {
 		}
 		return instance;
 	}
+	
+	public void clearDevices() {
+		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
+		WriteResult result = collection.remove(new BasicDBObject());
+		if(result.getN() > 0) {
+			log.log(Level.INFO, "Cleared " + result.getN() + " documents");
+		} else {
+			log.log(Level.INFO, "No documents to clear");
+		}
+	}
 
 	public void insertDevice(Device device) {
 		log.log(Level.INFO, "Inserting new document");
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		DeviceMapper mapper = new DeviceMapper();
 		DBObject obj = mapper.toBson(device);
-		collection.insert(obj);
-		notifyListeners(new DeviceEvent(this, device.getId(), "ADD"));
+		if(obj != null) {
+			WriteResult result = collection.insert(obj);
+			log.log(Level.INFO, "Inserted new document");
+			notifyListeners(new DeviceEvent(this, device.getId(), "ADD"));
+		}
 	}
 
 	public void removeDevice(Device device) {
@@ -62,8 +76,17 @@ public class DataHandler {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		DeviceMapper mapper = new DeviceMapper();
 		DBObject obj = mapper.toBson(device);
-		collection.remove(obj);
-		notifyListeners(new DeviceEvent(this, device.getId(), "SUB"));
+		if(obj != null) {
+			WriteResult result = collection.remove(obj);
+			if(result.getN() > 0) {
+				log.log(Level.INFO, "Removed document");
+				notifyListeners(new DeviceEvent(this, device.getId(), "SUB"));
+			} else {
+				log.log(Level.INFO, "Couldn't remove document");
+			}
+		} else {
+			log.log(Level.INFO, "Couldn't find document to remove");
+		}
 	}
 	
 	public Device getDevice(int deviceId) {
@@ -71,8 +94,14 @@ public class DataHandler {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		BasicDBObject query = new BasicDBObject("id", deviceId);
 		DBObject response = collection.findOne(query);
-		DeviceMapper mapper = new DeviceMapper();
-		Device device = mapper.fromBson(response);
+		Device device = null;
+		if(response != null) {
+			DeviceMapper mapper = new DeviceMapper();
+			device = mapper.fromBson(response);
+			log.log(Level.INFO, "Returning found document");
+		} else {
+			log.log(Level.INFO, "No document found");
+		}
 		return device;
 	}
 	

@@ -9,10 +9,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
+import com.thing.api.model.GeoPoint;
 import com.thing.api.model.Sensor;
 
 public class DeviceMapper {
@@ -35,18 +38,34 @@ public class DeviceMapper {
 	
 	public Device fromBson(DBObject obj) {
 		ObjectMapper mapper = new ObjectMapper();
-		HashMap map = (HashMap) obj.toMap();
+		System.out.println(obj);
+		//HashMap map = (HashMap) obj.toMap();
 		Device device = new Device();
-		device.setId((Integer) map.get("id"));
-		device.setManufacurer((String) map.get("manufacturer"));
-		device.setModel((String) map.get("model"));
-		device.setGps( (ArrayList<Float>) map.get("gps"));
-		device.setSensors( (ArrayList<Sensor>) map.get("sensors"));
-		device.setActuators( (ArrayList<Actuator>) map.get("actuators"));
-		device.setUri((String) map.get("uri"));
+		device.setId((Integer) obj.get("id"));
+		device.setManufacurer((String) obj.get("manufacturer"));
+		device.setModel((String) obj.get("model"));
+		double lat = (Double)((DBObject)obj.get("geo")).get("latitude");
+		double lon = (Double)((DBObject)obj.get("geo")).get("longitude");
+		device.setGeo(lon, lat);
+		BasicDBList dbSensors = (BasicDBList) obj.get("sensors");
+		BasicDBObject[] dbSensorsArray = dbSensors.toArray(new BasicDBObject[0]);
+		for(DBObject dbSensor : dbSensorsArray) {
+			int sensorId = (Integer) dbSensor.get("id");
+			String sense = (String) dbSensor.get("sense");
+			String unit = (String) dbSensor.get("unit");
+			String value = (String) dbSensor.get("value");
+			String type = (String) dbSensor.get("type");
+			Sensor s = new Sensor();
+			s.setId(sensorId);
+			s.setSense(sense);
+			s.setType(type);
+			s.setUnit(unit);
+			s.setValue(value);
+			device.addSensor(s);
+		}
+		device.setUri((String) obj.get("uri"));
 		return device;
 	}
-	
 
 	private int id;
 	@JsonProperty("manufacturer")
@@ -55,8 +74,8 @@ public class DeviceMapper {
 	private String model;
 	@JsonProperty("uri")
 	private String uri;
-	@JsonProperty("gps")
-	private ArrayList<Float> gps;
+	@JsonProperty("geo")
+	private GeoPoint geo;
 	@JsonProperty("sensors")
 	protected ArrayList<Sensor> sensors;
 	@JsonProperty("actuators")

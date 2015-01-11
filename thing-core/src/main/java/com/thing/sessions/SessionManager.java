@@ -29,7 +29,7 @@ import com.thing.sessions.model.Session;
  * @author jcollinge
  *
  */
-public class SessionManager implements Runnable, MessageEventListener, Service {
+public class SessionManager implements Runnable, Service {
 
 	private static final Logger log = Logger.getLogger(SessionManager.class
 			.getName());
@@ -43,12 +43,15 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 	private Set<Integer> pendingDevices;
 	// Connectors to devices
 	private HashMap<String, Connector> connectors;
+	
+	private ActivityListener monitor;
 
 	private SessionManager() {
 		// hidden
 		pendingDevices = new HashSet<Integer>();
 		connectors = new HashMap<String, Connector>();
 		sessions = new HashMap<Integer, Session>();
+		monitor = new ActivityListener(this);
 	}
 
 	public static SessionManager getInstance() {
@@ -62,7 +65,6 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 		log.log(Level.INFO, "Starting service...");
 		Connector c = new MqttConnector();
 		c.connect("localhost", "1883");
-		c.addMessageEventListener(this);
 		connectors.put("MQTT", c);
 		new Thread(this).start();
 	}
@@ -97,70 +99,66 @@ public class SessionManager implements Runnable, MessageEventListener, Service {
 		Connector connector = connectors.get(session.getProtocol());
 		connector.sendMessage(parcel);
 	}
+	
+	public ActivityListener getMonitor() {
+		return this.monitor;
+	}
 
 	private synchronized void updateTimestamp(int deviceId) {
+		log.log(Level.INFO, "Updating device " + deviceId + "'s session timestamp");
 		sessions.get(deviceId).updateTimeStamp();
 	}
 
 	public void run() {
 		final int MIN = 60000;
 		final int SEC = 1000;
-		int TIMEOUT = SEC * 10;
-		int POLLING_PERIOD = SEC * 15;
-		long threshold;
+		int THRESHOLD = SEC * 30;
+		int POLLING_PERIOD = SEC * 60;
+		long pingLimit;
+		
 
 		while (true) {
-			// Check each device timestamps every x seconds
-			threshold = (System.currentTimeMillis() - TIMEOUT) / 1000L;
-
+			
+			HashSet<Integer> pingedDevices = new HashSet<Integer>();
+			
+			pingLimit = (System.currentTimeMillis() - THRESHOLD) / 1000L;
+			long timeoutLimit = (System.currentTimeMillis()) / 1000L;
+			
+			// Check each device timestamp and ping the ones which exceed the PING_THRESHOLD value
+			for (Integer sessionKey : sessions.keySet()) {
+				if(sessions.get(sessionKey).before(pingLimit)) {
+					pingDevice(sessions.get(sessionKey));
+					pingedDevices.add(sessionKey);
+				}
+			}
+			
+			// delay for POLLING_PERIOD value; this allows devices time to respond to any pings
+			try {Thread.sleep(POLLING_PERIOD);} catch (InterruptedException e) {}
+			
 			/*
 			 * By adding each id from the registry to a set and removing
 			 * afterwards you avoid the read / write conflict associated with
 			 * removing items during iteration directly.
 			 */
-			HashSet<Integer> set = new HashSet<Integer>();
-
-			for (Integer sessionKey : sessions.keySet()) {
-				pingDevice(sessions.get(sessionKey));
-			}
-
-			// delay for response
-			try {
-				Thread.sleep(POLLING_PERIOD);
-			} catch (InterruptedException e) {
-			}
-
-			for (Integer sessionKey : sessions.keySet()) {
-				Session session = sessions.get(sessionKey);
-				if (!session.after(threshold)) {
+			HashSet<Integer> deviceToRemove = new HashSet<Integer>();
+			
+			// Check each device timestamp against the same threshold to see if they've updated
+			for (Integer sessionKey : pingedDevices) {
+				if(sessions.get(sessionKey).before(timeoutLimit)) {
 					log.log(Level.WARNING,
-							"Session for device " + session.getDeviceId()
+							"Session for device " + sessionKey
 									+ " timed out");
-					set.add(sessionKey);
+					deviceToRemove.add(sessionKey);
 				}
 			}
-			for (Integer key : set) {
+			
+			for (Integer key : deviceToRemove) {
 				forgetSession(key);
 			}
 		}
 	}
-
-	public void onMessageArrived(MessageEvent event) {
-		ObjectMapper mapper = new ObjectMapper();
-		Ping ping = null;
-		try {
-			ping = mapper
-					.readValue(event.getMessage().getPayload(), Ping.class);
-		} catch (Exception e) {
-			log.log(Level.INFO, "Corrupted ping response received");
-		}
-		if (ping != null) {
-			int deviceId = ping.getId();
-			updateTimestamp(deviceId);
-			if (pendingDevices.contains(deviceId)) {
-				pendingDevices.remove(deviceId);
-			}
-			log.log(Level.INFO, "Updated timestamp for device " + deviceId);
-		}
+	
+	public void onSessionActivity(int deviceId) {
+		updateTimestamp(deviceId);
 	}
 }

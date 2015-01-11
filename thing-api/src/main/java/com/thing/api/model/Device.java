@@ -24,8 +24,8 @@ public class Device {
 	private String model;
 	@JsonProperty("uri")
 	private String uri;
-	@JsonProperty("gps")
-	private ArrayList<Float> gps;
+	@JsonProperty("geo")
+	private GeoPoint geo;
 	@JsonProperty("sensors")
 	protected ArrayList<Sensor> sensors;
 	@JsonProperty("actuators")
@@ -48,8 +48,15 @@ public class Device {
 		this.model = model;
 	}
 
-	public void setGps(ArrayList<Float> gps) {
-		this.gps = gps;
+	public void setGeo(GeoPoint geo) {
+		this.geo = geo;
+	}
+	
+	public void setGeo(double lon, double lat) {
+		GeoPoint point = new GeoPoint();
+		point.setLatitude(lat);
+		point.setLongitude(lon);
+		this.geo = point;
 	}
 
 	public void setSensors(ArrayList<Sensor> sensors) {
@@ -58,6 +65,19 @@ public class Device {
 
 	public void setActuators(ArrayList<Actuator> actuators) {
 		this.actuators = actuators;
+	}
+	
+	public void addSensor(Sensor sensor) {
+		if(sensors == null)
+			sensors = new ArrayList<Sensor>();
+		sensors.add(sensor);			
+	}
+	
+	public void addActuator(Actuator actuator) {
+		if(actuators == null)
+			actuators = new ArrayList<Actuator>();
+		actuators.add(actuator);
+		
 	}
 
 	// Getters
@@ -77,8 +97,8 @@ public class Device {
 		return this.model;
 	}
 
-	public ArrayList<Float> getGps() {
-		return this.gps;
+	public GeoPoint getGeo() {
+		return this.geo;
 	}
 
 	public ArrayList<Sensor> getSensors() {

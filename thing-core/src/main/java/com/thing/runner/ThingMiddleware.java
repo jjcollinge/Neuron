@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import com.thing.api.components.ServiceContainer;
 import com.thing.registration.RegistrationManager;
 import com.thing.sessions.SessionManager;
+import com.thing.storage.DataHandler;
+import com.thing.storage.TestClass;
 
 public class ThingMiddleware {
 
@@ -31,11 +33,15 @@ class Runner implements Runnable {
 //        Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
 //        globalLogger.setLevel(java.util.logging.Level.OFF);
 		
+		DataHandler.getInstance().clearDevices();
+		
 		ServiceContainer container = new ServiceContainer();
 		container.addService(SessionManager.getInstance());
 		container.addService(RegistrationManager.getInstance());
 		
 		container.startServices();
+		
+		//TestClass test = new TestClass();
 		
 	}
 	

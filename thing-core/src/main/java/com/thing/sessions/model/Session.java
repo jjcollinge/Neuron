@@ -51,6 +51,9 @@ public class Session {
 	public boolean after(long timestamp) {
 		return (this.timestamp > timestamp);
 	}
+	public boolean before(long timestamp) {
+		return (this.timestamp < timestamp);
+	}
 	public String getPingAddress() {
 		return "devices/"+deviceId+"/ping";
 	}
