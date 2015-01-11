@@ -1,4 +1,4 @@
-package com.thing.connectors;
+package com.thing.connectors.impl;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -19,6 +19,7 @@ import com.google.gson.JsonSyntaxException;
 import com.thing.api.events.MessageEvent;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
+import com.thing.connectors.BaseConnector;
 
 /**
  * Name: SerialConnector
@@ -28,7 +29,7 @@ import com.thing.api.messaging.Parcel;
  * @author jcollinge
  *
  */
-public class SerialConnector extends Connector implements SerialPortEventListener {
+public class SerialConnector extends BaseConnector implements SerialPortEventListener {
 
 	private static final Logger log = Logger.getLogger( SerialConnector.class.getName() );
 	
@@ -57,9 +58,9 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 	
 	public SerialConnector() {
 		
-		super("SERIAL");
 		subscriptions = new ArrayList<String>();
 		characterBuffer = new Stack<Character>();
+		
 	}
 	/**
 	 * This should be called when you stop using the port.
@@ -73,8 +74,9 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 		connected = false;
 		log.log(Level.INFO, "Disconnected from serial port");
 	}
-	@Override
+
 	public void connect(String host, String port) {
+		
 		// the next line is for Raspberry Pi and 
         // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
         System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
@@ -122,11 +124,9 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 			System.err.println(e.toString());
 		}
 	}
-	/**
-	 * Serial Device expects data in the following format:  {  "data": "...", "topic": "..." }
-	 */
-	@Override
-	public void send(Parcel parcel) {
+	
+	// Serial Device expects data in the following format:  {  "data": "...", "topic": "..." }
+	public void sendMessage(Parcel parcel) {
 		
 		if(!isConnected()) {
 			log.log(Level.WARNING, "Cannot send message as Messanger is not connected!");
@@ -160,20 +160,21 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 		}
 		
 	}
-	@Override
+
 	public void subscribe(String topic, int qos) {
 		log.log(Level.INFO, "Subscribed to topic " + topic);
 		this.subscriptions.add(topic);
 	}
-	@Override
+
 	public void unsubscribe(String topic) {
 		log.log(Level.INFO, "Unsubscribed to topic " + topic);
 		this.subscriptions.remove(topic);
 	}
-	@Override
+
 	public boolean isConnected() {
 		return connected;
 	}
+	
 	private synchronized String readSerialStream() {
 		int c;
 		StringBuilder sb = new StringBuilder();
@@ -210,6 +211,7 @@ public class SerialConnector extends Connector implements SerialPortEventListene
 		}
 		return sb.toString();
 	}
+	
 	public void serialEvent(SerialPortEvent e) {
 		
 		if (e.getEventType() == SerialPortEvent.DATA_AVAILABLE) {

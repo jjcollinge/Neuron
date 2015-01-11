@@ -1,4 +1,4 @@
-package com.thing.registration.model;
+package com.thing.registration;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;

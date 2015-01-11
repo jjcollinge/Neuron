@@ -1,6 +1,5 @@
 package com.thing.storage;
 
-import java.awt.Cursor;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -29,7 +28,7 @@ public class DataHandler {
 	private static DataHandler instance;
 	private MongoClient client;
 	private DB database;
-	
+
 	private ArrayList<DeviceEventListener> listeners;
 
 	private DataHandler() {
@@ -48,11 +47,11 @@ public class DataHandler {
 		}
 		return instance;
 	}
-	
+
 	public void clearDevices() {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		WriteResult result = collection.remove(new BasicDBObject());
-		if(result.getN() > 0) {
+		if (result.getN() > 0) {
 			log.log(Level.INFO, "Cleared " + result.getN() + " documents");
 		} else {
 			log.log(Level.INFO, "No documents to clear");
@@ -64,7 +63,7 @@ public class DataHandler {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		DeviceMapper mapper = new DeviceMapper();
 		DBObject obj = mapper.toBson(device);
-		if(obj != null) {
+		if (obj != null) {
 			WriteResult result = collection.insert(obj);
 			log.log(Level.INFO, "Inserted new document");
 			notifyListeners(new DeviceEvent(this, device.getId(), "ADD"));
@@ -76,9 +75,9 @@ public class DataHandler {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		DeviceMapper mapper = new DeviceMapper();
 		DBObject obj = mapper.toBson(device);
-		if(obj != null) {
+		if (obj != null) {
 			WriteResult result = collection.remove(obj);
-			if(result.getN() > 0) {
+			if (result.getN() > 0) {
 				log.log(Level.INFO, "Removed document");
 				notifyListeners(new DeviceEvent(this, device.getId(), "SUB"));
 			} else {
@@ -88,14 +87,14 @@ public class DataHandler {
 			log.log(Level.INFO, "Couldn't find document to remove");
 		}
 	}
-	
+
 	public Device getDevice(int deviceId) {
 		log.log(Level.INFO, "Searching for document");
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		BasicDBObject query = new BasicDBObject("id", deviceId);
 		DBObject response = collection.findOne(query);
 		Device device = null;
-		if(response != null) {
+		if (response != null) {
 			DeviceMapper mapper = new DeviceMapper();
 			device = mapper.fromBson(response);
 			log.log(Level.INFO, "Returning found document");
@@ -104,19 +103,19 @@ public class DataHandler {
 		}
 		return device;
 	}
-	
+
 	public ArrayList<Device> getDevices() {
 		DBCollection collection = database.getCollection(DEVICE_COLLECTION);
 		DBCursor cursor = collection.find();
 		ArrayList<Device> devices = new ArrayList<Device>();
 		DeviceMapper mapper = new DeviceMapper();
-		while(cursor.hasNext()) {
+		while (cursor.hasNext()) {
 			Device device = mapper.fromBson(cursor.next());
 			devices.add(device);
 		}
 		return devices;
 	}
-	
+
 	public void addDeviceEventListener(DeviceEventListener listener) {
 		this.listeners.add(listener);
 	}
@@ -124,11 +123,11 @@ public class DataHandler {
 	public void removeDeviceEventListener(DeviceEventListener listener) {
 		this.listeners.remove(listener);
 	}
-	
+
 	public void notifyListeners(DeviceEvent event) {
-		for(DeviceEventListener listener : listeners) {
+		for (DeviceEventListener listener : listeners) {
 			listener.onDevicesChanged(event);
 		}
 	}
-	
+
 }

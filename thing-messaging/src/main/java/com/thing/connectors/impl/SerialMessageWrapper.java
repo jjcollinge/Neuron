@@ -1,4 +1,4 @@
-package com.thing.connectors;
+package com.thing.connectors.impl;
 
 /**
  * Name: SerialMessageWrapper

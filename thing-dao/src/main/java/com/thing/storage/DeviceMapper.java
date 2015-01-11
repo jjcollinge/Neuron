@@ -37,9 +37,6 @@ public class DeviceMapper {
 	}
 	
 	public Device fromBson(DBObject obj) {
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println(obj);
-		//HashMap map = (HashMap) obj.toMap();
 		Device device = new Device();
 		device.setId((Integer) obj.get("id"));
 		device.setManufacurer((String) obj.get("manufacturer"));
