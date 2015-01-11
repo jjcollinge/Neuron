@@ -21,8 +21,6 @@ import com.thing.storage.DataHandler;
 
 public class DevicesResource {
 
-	// Allows to insert contextual objects into the class,
-    // e.g. ServletContext, Request, Response, UriInfo
     @Context
     UriInfo uriInfo;
     @Context
@@ -39,10 +37,6 @@ public class DevicesResource {
 		return devices;
 	}
 	
-	//Defines that the next path parameter after todos is
-	// treated as a parameter and passed to the TodoResources
-	// Allows to type http://localhost:8080/de.vogella.jersey.todo/rest/todos/1
-	// 1 will be treaded as parameter todo and passed to TodoResource
 	@Path("{device}")
 	public DeviceResource getDevice(@PathParam("device") String id) {
 		return new DeviceResource(uriInfo, request, id);
