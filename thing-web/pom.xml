@@ -81,11 +81,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>thing</groupId>
-			<artifactId>thing-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
 			<version>1.0</version>
@@ -120,6 +115,11 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>thing</groupId>
+			<artifactId>thing-sessions</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

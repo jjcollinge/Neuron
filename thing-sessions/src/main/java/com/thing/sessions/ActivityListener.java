@@ -15,22 +15,22 @@ public class ActivityListener implements MessageEventListener {
 	private static final Logger log = Logger.getLogger(ActivityListener.class
 			.getName());
 	
-	private ArrayList<MessageEventProducer> connectors;
+	private ArrayList<MessageEventProducer> producers;
 	private SessionManager sessionManager;
 	
 	public ActivityListener(SessionManager manager) {
-		connectors = new ArrayList<MessageEventProducer>();
+		producers = new ArrayList<MessageEventProducer>();
 		sessionManager = manager;
 	}
 	
 	public void registerConnector(MessageEventProducer connector) {
-		connectors.add(connector);
+		producers.add(connector);
 		connector.addMessageEventListener(this);
 	}
 	
 	public void unregisterConnector(MessageEventProducer connector) {
 		connector.removeMessageEventListener(this);
-		connectors.remove(connector);
+		producers.remove(connector);
 	}
 
 	public void onMessageArrived(MessageEvent event) {

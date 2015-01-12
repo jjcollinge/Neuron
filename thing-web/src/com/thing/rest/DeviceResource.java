@@ -1,12 +1,8 @@
 package com.thing.rest;
 
 
-import java.util.ArrayList;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -14,7 +10,6 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
 import com.thing.api.model.Device;
-import com.thing.api.model.Sensor;
 import com.thing.storage.DataHandler;
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,7 +27,6 @@ public class DeviceResource {
        this.uriInfo = uriInfo;
        this.request = request;
        this.id = id;
-       
     }
 	
 	@GET
@@ -45,7 +39,6 @@ public class DeviceResource {
 			throw new RuntimeException("Device " + id + " not found");
 		}
 		return device;
-		
 	}
 
 }

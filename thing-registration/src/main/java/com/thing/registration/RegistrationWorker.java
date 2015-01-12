@@ -1,11 +1,8 @@
 package com.thing.registration;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.thing.api.components.Worker;
@@ -13,22 +10,12 @@ import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
+import com.thing.api.model.Session;
 import com.thing.registration.model.Registration;
 import com.thing.sessions.IdGenerator;
 import com.thing.sessions.SessionManager;
-import com.thing.sessions.model.Session;
-import com.thing.storage.DataHandler;
+import com.thing.storage.MongoDBDeviceDAO;
 
-/**
- * Name: RegistrationWorker
- * --------------------------------------------------------------- 
- * Desc:
- * RegistrationWorker is responsible for conducting a single atomic routine to
- * register new devices
- * 
- * @author jcollinge
- *
- */
 public class RegistrationWorker extends Worker {
 
 	private static final Logger log = Logger.getLogger(RegistrationWorker.class
@@ -79,8 +66,8 @@ public class RegistrationWorker extends Worker {
 			SessionManager.getInstance().trackDevice(id, protocol, format);
 
 			// Store device
-			DataHandler dh = DataHandler.getInstance();
-			dh.insertDevice(device);
+			MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+			dao.insert(device);
 
 			// Create response
 			String returnTopic = registration.getReturnAddress();

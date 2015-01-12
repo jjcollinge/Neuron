@@ -53,10 +53,7 @@ public class Device {
 	}
 	
 	public void setGeo(double lon, double lat) {
-		GeoPoint point = new GeoPoint();
-		point.setLatitude(lat);
-		point.setLongitude(lon);
-		this.geo = point;
+		this.geo = new GeoPoint(lon, lat);
 	}
 
 	public void setSensors(ArrayList<Sensor> sensors) {
@@ -116,4 +113,5 @@ public class Device {
 	public Actuator getActuator(int index) {
 		return this.actuators.get(index);
 	}
+	
 }

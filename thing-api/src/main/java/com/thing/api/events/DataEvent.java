@@ -14,5 +14,5 @@ public class DataEvent extends EventObject {
 	public String getData() {
 		return this.data;
 	}
-
+	
 }
