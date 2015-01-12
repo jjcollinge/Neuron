@@ -24,15 +24,16 @@ public class ConnectorFactory {
 		types.put(type, connectorClass);
 	}
 	
-	public Connector getConnector(Session session) {
+	public BaseConnector getConnector(Session session) {
 		
 		String protocol = session.getProtocol();
 		
-		Connector connector;
+		BaseConnector connector;
 		for(String type : types.keySet()) {
 			if(protocol.equals(type)) {
 				try {
-					connector = (Connector) types.get(type).newInstance();
+					connector = (BaseConnector) types.get(type).newInstance();
+					connector.connect("localhost", "1883");
 					return connector;
 				} catch (InstantiationException e) {
 					e.printStackTrace();

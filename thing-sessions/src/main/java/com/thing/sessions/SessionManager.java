@@ -11,7 +11,7 @@ import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
-import com.thing.connectors.impl.MqttConnector;
+import com.thing.connectors.ConnectorFactory;
 import com.thing.storage.MongoDBSessionDAO;
 
 public class SessionManager implements Runnable, Service {
@@ -24,8 +24,6 @@ public class SessionManager implements Runnable, Service {
 	private HashMap<Integer, Session> sessions;
 	// New devices which have not yet responded to a ping
 	private Set<Integer> pendingDevices;
-	// Connectors to devices
-	private HashMap<String, BaseConnector> connectors;
 	// Monitor which forwards all session message activity to this manager
 	private ActivityListener monitor;
 	// Persistent storage
@@ -34,7 +32,6 @@ public class SessionManager implements Runnable, Service {
 	private SessionManager() {
 		// hidden
 		pendingDevices = new HashSet<Integer>();
-		connectors = new HashMap<String, BaseConnector>();
 		sessions = new HashMap<Integer, Session>();
 		monitor = new ActivityListener(this);
 		dao = new MongoDBSessionDAO();
@@ -49,31 +46,24 @@ public class SessionManager implements Runnable, Service {
 
 	public void start() {
 		log.log(Level.INFO, "Starting service...");
-		BaseConnector c = new MqttConnector();
-		c.connect("localhost", "1883");
-		connectors.put("MQTT", c);
-
-		for (BaseConnector connector : connectors.values()) {
-			SessionManager.getInstance().getMonitor()
-					.registerConnector(connector);
-		}
-
 		new Thread(this).start();
 	}
 
 	public void stop() {
 		log.log(Level.INFO, "Stopping service...");
 	}
-	
+
 	public synchronized void trackDevice(int deviceId, String protocol,
 			String format) {
-		
+
 		log.log(Level.INFO, "Tracking a new device");
 
 		Session session = new Session(deviceId, protocol, format);
 		sessions.put(deviceId, session);
-		connectors.get(session.getProtocol()).subscribe(
-				session.getPingAddress() + "/response", 2);
+		BaseConnector connector = ConnectorFactory.getInstance().getConnector(
+				session);
+		monitor.registerConnector(connector);
+		connector.subscribe(session.getPingAddress() + "/response", 2);
 		pendingDevices.add(deviceId);
 	}
 
@@ -86,32 +76,32 @@ public class SessionManager implements Runnable, Service {
 	}
 
 	// Sends a ping to a device. onMessageArrvied will be called in response
-	private synchronized void pingDevice(Session session) {	
+	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());
 		Parcel parcel = ParcelPacker.makeParcel("PING", session.getFormat(),
 				session.getPingAddress() + "/request", session.getProtocol());
-		BaseConnector connector = connectors.get(session.getProtocol());
+		BaseConnector connector = ConnectorFactory.getInstance().getConnector(session);
 		connector.sendMessage(parcel);
 	}
 
-	public ActivityListener getMonitor() {	
+	public ActivityListener getMonitor() {
 		return this.monitor;
 	}
-	
+
 	public Session getSession(int deviceId) {
 		Session session = sessions.get(deviceId);
 		log.log(Level.INFO, "Returning session " + session.getId());
 		return session;
 	}
 
-	private synchronized void updateTimestamp(int deviceId) {	
+	private synchronized void updateTimestamp(int deviceId) {
 		log.log(Level.INFO, "Updating device " + deviceId
 				+ "'s session timestamp");
 		sessions.get(deviceId).updateTimeStamp();
 	}
 
 	public void run() {
-		
+
 		final int SEC = 1000;
 		int THRESHOLD = SEC * 30;
 		int POLLING_PERIOD = SEC * 60;

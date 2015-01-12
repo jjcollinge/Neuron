@@ -7,34 +7,36 @@ import com.thing.api.events.MessageEventListener;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
-import com.thing.connectors.impl.MqttConnector;
+import com.thing.connectors.ConnectorFactory;
+import com.thing.storage.MongoDBSessionDAO;
 
-public class DeviceController extends DataEventProducer implements MessageEventListener {
+public class DeviceController extends DataEventProducer implements
+		MessageEventListener {
 
-	private SessionManager sessionManager;
 	private Session session;
 	private BaseConnector connector;
-	
-	public DeviceController(int deviceId) {
-		sessionManager = SessionManager.getInstance();
-		this.session = sessionManager.getSession(deviceId);
-		if(session.getProtocol().equals("MQTT")) {
-			connector = new MqttConnector();
-			connector.connect("localhost", "1883");
-			connector.addMessageEventListener(this);
-		}
+
+	public DeviceController(int sessionId) {
+		MongoDBSessionDAO dao = new MongoDBSessionDAO();
+		session = dao.get(sessionId);
+		BaseConnector connector = ConnectorFactory.getInstance().getConnector(
+				session);
+		SessionManager.getInstance().getMonitor().registerConnector(connector);
+		connector.addMessageEventListener(this);
 	}
-	
+
 	public void startSensorStreaming(int sensorId) {
-		String topic = "devices/"+session.getId()+"/sensors/"+sensorId;
+		String topic = "devices/" + session.getId() + "/sensors/" + sensorId;
 		connector.subscribe(topic + "/stream/response", 2);
-		connector.sendMessage(ParcelPacker.makeParcel("START_STREAM",  "JSON", topic, "MQTT"));
+		connector.sendMessage(ParcelPacker.makeParcel("START_STREAM", "JSON",
+				topic, "MQTT"));
 	}
-	
+
 	public void stopSensorStreaming(int sensorId) {
-		String topic = "devices/"+session.getId()+"/sensors/"+sensorId;
+		String topic = "devices/" + session.getId() + "/sensors/" + sensorId;
 		connector.unsubscribe(topic + "/stream/response");
-		connector.sendMessage(ParcelPacker.makeParcel("STOP_STREAM",  "JSON", topic, "MQTT"));
+		connector.sendMessage(ParcelPacker.makeParcel("STOP_STREAM", "JSON",
+				topic, "MQTT"));
 	}
 
 	public void onMessageArrived(MessageEvent event) {
@@ -42,7 +44,5 @@ public class DeviceController extends DataEventProducer implements MessageEventL
 		DataEvent dataEvent = new DataEvent(this, payload);
 		notifyListeners(dataEvent);
 	}
-	
-	
-	
+
 }

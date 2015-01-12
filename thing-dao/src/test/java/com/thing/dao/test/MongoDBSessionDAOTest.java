@@ -89,7 +89,4 @@ public class MongoDBSessionDAOTest {
 		assertEquals(resultSession.getFormat(), testFormat);
 		
 	}
-	
-	// find by timestamp
-
 }

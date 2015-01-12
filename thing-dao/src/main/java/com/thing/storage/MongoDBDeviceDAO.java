@@ -150,4 +150,8 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		BasicDBObject query = new BasicDBObject().append(field, value);
 		return findByQuery(query);
 	}
+
+	public List<Device> getAll() {
+		return findByQuery(new BasicDBObject());
+	}
 }

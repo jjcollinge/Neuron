@@ -136,4 +136,8 @@ public class MongoDBSessionDAO implements SessionDAO {
 		BasicDBObject query = new BasicDBObject().append(field, value);
 		return findByQuery(query);
 	}
+
+	public List<Session> getAll() {
+		return findByQuery(new BasicDBObject());
+	}
 }

@@ -9,5 +9,6 @@ public interface DAO<T, K> {
 	public boolean update(K key, String field, Object value);
 	public T get(K key);
 	public List<T> find(String field, String value);
+	public List<T> getAll();
 	
 }

@@ -43,7 +43,7 @@ public class DevicesResource {
 	public ArrayList<Device> getDevices() {
 		System.out.println("Request for devices");
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
-		ArrayList<Device> devices = (ArrayList<Device>) dao.find("", "");
+		ArrayList<Device> devices = (ArrayList<Device>) dao.getAll();
 		if (devices == null) {
 			throw new RuntimeException("Devices not found");
 		}
