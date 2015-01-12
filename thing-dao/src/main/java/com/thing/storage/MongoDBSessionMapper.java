@@ -32,8 +32,7 @@ public class MongoDBSessionMapper {
 		int id = (Integer) obj.get("id");
 		String protocol = (String) obj.get("protocol");
 		String format = (String) obj.get("format");
-		long timestamp = (Long) obj.get("timeStamp");
-		Session session = new Session(id, protocol, format, timestamp);
+		Session session = new Session(id, protocol, format);
 		return session;
 	}
 	

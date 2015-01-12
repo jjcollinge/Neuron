@@ -4,11 +4,11 @@ package com.thing.api.model;
 public class Session {
 	
 	private int id;
-	private long timestamp;
+	private Long timestamp;
 	private String protocol;
 	private String format;
 	
-	public Session(int id, String protocol, String format, long timestamp) {
+	public Session(int id, String protocol, String format, Long timestamp) {
 		this.id = id;
 		this.protocol = protocol;
 		this.format = format;
@@ -29,7 +29,7 @@ public class Session {
 	public String getFormat() {
 		return this.format;
 	}
-	public long getTimeStamp() {
+	public Long getTimeStamp() {
 		return this.timestamp;
 	}
 	public void updateTimeStamp() {

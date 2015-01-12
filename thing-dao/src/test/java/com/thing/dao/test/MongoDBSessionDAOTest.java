@@ -81,12 +81,12 @@ public class MongoDBSessionDAOTest {
 		Session testSession = new Session(0, "MQTT", "JSON");
 		dao.insert(testSession);
 		
-		long testTime = (long) 11010101;
+		String testFormat = "FOO";
 		
-		dao.update(0, "timeStamp", testTime);
+		dao.update(0, "format", testFormat);
 		Session resultSession = dao.get(0);
 		assertNotNull("Session should not be null", resultSession);
-		assertTrue(resultSession.getTimeStamp() == testTime);
+		assertEquals(resultSession.getFormat(), testFormat);
 		
 	}
 	
