@@ -24,7 +24,7 @@ public class MongoDBSessionDAOTest {
 		dao.insert(testSession);
 		Session returnedSession = dao.get(0);
 		
-		assertEquals("Session ids should be equal", testSession.getDeviceId(), returnedSession.getDeviceId());
+		assertEquals("Session ids should be equal", testSession.getId(), returnedSession.getId());
 	
 	}
 	
@@ -36,7 +36,7 @@ public class MongoDBSessionDAOTest {
 	
 		Session testSession = new Session(0, "test", "test");
 		dao.insert(testSession);
-		assertTrue("Session should be deleted", dao.remove(testSession.getDeviceId()));
+		assertTrue("Session should be deleted", dao.remove(testSession.getId()));
 		Session returnedSession = dao.get(0);
 		
 		assertNull("Session should be null", returnedSession);

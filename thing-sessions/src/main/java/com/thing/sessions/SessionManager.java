@@ -87,7 +87,7 @@ public class SessionManager implements Runnable, Service {
 
 	// Sends a ping to a device. onMessageArrvied will be called in response
 	private synchronized void pingDevice(Session session) {	
-		log.log(Level.INFO, "Pinging device " + session.getDeviceId());
+		log.log(Level.INFO, "Pinging device " + session.getId());
 		Parcel parcel = ParcelPacker.makeParcel("PING", session.getFormat(),
 				session.getPingAddress() + "/request", session.getProtocol());
 		BaseConnector connector = connectors.get(session.getProtocol());
@@ -100,7 +100,7 @@ public class SessionManager implements Runnable, Service {
 	
 	public Session getSession(int deviceId) {
 		Session session = sessions.get(deviceId);
-		log.log(Level.INFO, "Returning session " + session.getDeviceId());
+		log.log(Level.INFO, "Returning session " + session.getId());
 		return session;
 	}
 

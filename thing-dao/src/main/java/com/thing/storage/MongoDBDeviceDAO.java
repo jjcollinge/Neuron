@@ -54,12 +54,12 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		BasicDBObject doc = (BasicDBObject) mapper.toBson(device);
 		log.log(Level.INFO, "document: " + doc);
 		devices.insert(doc);
-		log.log(Level.INFO, "Inserted device " + device.getId() + " to the database.");
+		log.log(Level.INFO, "Inserted device " + device.getSessionId() + " to the database.");
 	}
 
 	public boolean remove(Integer id) {
 		BasicDBObject doc = new BasicDBObject();
-		doc.put("id", id);
+		doc.put("sessionId", id);
 		DBObject result = devices.findOne(doc);
 		if(result != null) {
 			devices.remove(doc);
@@ -78,7 +78,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 
 	public Device get(Integer id) {
 		BasicDBObject doc = new BasicDBObject();
-		doc.put("id", id);
+		doc.put("sessionId", id);
 		DBObject result = devices.findOne(doc);
 		if(result !=  null) {
 			MongoDBDeviceMapper mapper = new MongoDBDeviceMapper();

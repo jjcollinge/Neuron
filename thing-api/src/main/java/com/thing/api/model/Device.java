@@ -17,7 +17,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Device {
 
-	private int id;
+	private int sessionId;
 	@JsonProperty("manufacturer")
 	private String manufacturer;
 	@JsonProperty("model")
@@ -32,8 +32,8 @@ public class Device {
 	protected ArrayList<Actuator> actuators;
 
 	// Setters
-	public void setId(int id) {
-		this.id = id;
+	public void setSessionId(int id) {
+		this.sessionId = id;
 	}
 
 	public void setUri(String uri) {
@@ -78,8 +78,8 @@ public class Device {
 	}
 
 	// Getters
-	public int getId() {
-		return this.id;
+	public int getSessionId() {
+		return this.sessionId;
 	}
 
 	public String getUri() {

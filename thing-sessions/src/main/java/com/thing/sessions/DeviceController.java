@@ -26,13 +26,13 @@ public class DeviceController extends DataEventProducer implements MessageEventL
 	}
 	
 	public void startSensorStreaming(int sensorId) {
-		String topic = "devices/"+session.getDeviceId()+"/sensors/"+sensorId;
+		String topic = "devices/"+session.getId()+"/sensors/"+sensorId;
 		connector.subscribe(topic + "/stream/response", 2);
 		connector.sendMessage(ParcelPacker.makeParcel("START_STREAM",  "JSON", topic, "MQTT"));
 	}
 	
 	public void stopSensorStreaming(int sensorId) {
-		String topic = "devices/"+session.getDeviceId()+"/sensors/"+sensorId;
+		String topic = "devices/"+session.getId()+"/sensors/"+sensorId;
 		connector.unsubscribe(topic + "/stream/response");
 		connector.sendMessage(ParcelPacker.makeParcel("STOP_STREAM",  "JSON", topic, "MQTT"));
 	}

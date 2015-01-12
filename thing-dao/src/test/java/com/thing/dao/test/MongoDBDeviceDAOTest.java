@@ -20,7 +20,7 @@ public class MongoDBDeviceDAOTest {
 		dao.clear();
 		
 		Device testDevice = new Device();
-		testDevice.setId(0);
+		testDevice.setSessionId(0);
 		testDevice.setModel("test");
 		testDevice.setManufacurer("test");
 		testDevice.setGeo(10.0, 10.0);
@@ -37,7 +37,7 @@ public class MongoDBDeviceDAOTest {
 		dao.insert(testDevice);
 		Device returnedDevice = dao.get(0);
 		
-		assertEquals("Device ids should be equal", testDevice.getId(), returnedDevice.getId());
+		assertEquals("Device ids should be equal", testDevice.getSessionId(), returnedDevice.getSessionId());
 		
 		dao.clear();
 	}
@@ -49,7 +49,7 @@ public class MongoDBDeviceDAOTest {
 		dao.clear();
 		
 		Device testDevice = new Device();
-		testDevice.setId(0);
+		testDevice.setSessionId(0);
 		testDevice.setModel("test");
 		testDevice.setManufacurer("test");
 		testDevice.setGeo(10.0, 10.0);
@@ -64,7 +64,7 @@ public class MongoDBDeviceDAOTest {
 		testDevice.addSensor(testSensor);
 		
 		dao.insert(testDevice);
-		assertTrue("Device should get deleted", dao.remove(testDevice.getId()));
+		assertTrue("Device should get deleted", dao.remove(testDevice.getSessionId()));
 		Device returnedDevice = dao.get(0);
 		
 		assertNull("Device should be null", returnedDevice);
@@ -98,13 +98,13 @@ public class MongoDBDeviceDAOTest {
 		
 		for(int i = 0; i < numberOfDevice; i++) {
 			Device testDevice = new Device();
-			testDevice.setId(i);
+			testDevice.setSessionId(i);
 			testDevice.setManufacurer(manufacturer);
 			dao.insert(testDevice);
 		}
 		
 		Device dummyDevice = new Device();
-		dummyDevice.setId(numberOfDevice + 1);
+		dummyDevice.setSessionId(numberOfDevice + 1);
 		dummyDevice.setManufacurer("redHerringManufacturer");
 		
 		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByManufacturer(manufacturer);
@@ -129,11 +129,11 @@ public class MongoDBDeviceDAOTest {
 		GeoPoint point = new GeoPoint(51.326096, -0.101213);
 		
 		Device goodDevice = new Device();
-		goodDevice.setId(1);
+		goodDevice.setSessionId(1);
 		goodDevice.setGeo(51.329072, -0.109796);
 		
 		Device badDevice = new Device();
-		badDevice.setId(2);
+		badDevice.setSessionId(2);
 		badDevice.setGeo(53.208284, -2.166643);
 
 		dao.insert(goodDevice);
@@ -141,7 +141,7 @@ public class MongoDBDeviceDAOTest {
 		
 		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByGeo(point, distanceInMiles);
 		assertTrue("Should be one device in range, found: " + devicesFound.size(), devicesFound.size() == 1);
-		assertTrue("Device in range id should be 1", devicesFound.get(0).getId() == 1);
+		assertTrue("Device in range id should be 1", devicesFound.get(0).getSessionId() == 1);
 		
 		dao.clear();
 	}

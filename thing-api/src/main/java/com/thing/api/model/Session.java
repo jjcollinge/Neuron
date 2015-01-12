@@ -3,25 +3,25 @@ package com.thing.api.model;
 
 public class Session {
 	
-	private int deviceId;
+	private int id;
 	private long timestamp;
 	private String protocol;
 	private String format;
 	
-	public Session(int deviceId, String protocol, String format, long timestamp) {
-		this.deviceId = deviceId;
+	public Session(int id, String protocol, String format, long timestamp) {
+		this.id = id;
 		this.protocol = protocol;
 		this.format = format;
 		this.timestamp = timestamp;
 	}
-	public Session(int deviceId, String protocol, String format) {
-		this.deviceId = deviceId;
+	public Session(int id, String protocol, String format) {
+		this.id = id;
 		this.protocol = protocol;
 		this.format = format;
 		this.timestamp = System.currentTimeMillis() / 1000L;
 	}
-	public int getDeviceId() {
-		return this.deviceId;
+	public int getId() {
+		return this.id;
 	}
 	public String getProtocol() {
 		return this.protocol;
@@ -42,6 +42,6 @@ public class Session {
 		return (this.timestamp < timestamp);
 	}
 	public String getPingAddress() {
-		return "devices/"+deviceId+"/ping";
+		return "devices/"+id+"/ping";
 	}
 }

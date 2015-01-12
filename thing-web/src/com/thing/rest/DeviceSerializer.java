@@ -16,7 +16,7 @@ public class DeviceSerializer extends JsonSerializer<Device> {
 			SerializerProvider provider) throws IOException,
 			JsonProcessingException {
 		jsonGen.writeStartObject();
-		jsonGen.writeNumberField("id", device.getId());
+		jsonGen.writeNumberField("id", device.getSessionId());
 		jsonGen.writeStringField("manufacturer", device.getManufacturer());
 		jsonGen.writeStringField("model", device.getModel());
 		jsonGen.writeStringField("uri", device.getUri());

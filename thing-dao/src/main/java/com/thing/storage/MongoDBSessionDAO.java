@@ -44,7 +44,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 		MongoDBSessionMapper mapper = new MongoDBSessionMapper();
 		BasicDBObject doc = (BasicDBObject) mapper.toBson(session);
 		sessions.insert(doc);
-		log.log(Level.INFO, "Inserted session for device " + session.getDeviceId() + " to the database.");
+		log.log(Level.INFO, "Inserted session for device " + session.getId() + " to the database.");
 	}
 	
 	public void setCollection(String collectionName) {
@@ -53,7 +53,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 
 	public boolean remove(Integer key) {
 		BasicDBObject doc = new BasicDBObject();
-		doc.put("deviceId", key);
+		doc.put("id", key);
 		DBObject result = sessions.findOne(doc);
 		if(result != null) {
 			sessions.remove(result);
@@ -69,7 +69,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 		BasicDBObject doc = new BasicDBObject();
 		doc.append("$set", new BasicDBObject().append(field, value));
 		
-		BasicDBObject query = new BasicDBObject().append("deviceId", key);
+		BasicDBObject query = new BasicDBObject().append("id", key);
 		WriteResult result = sessions.update(query, doc);
 		if(result.getN() > 0) {
 			log.log(Level.INFO, "Successfully updated " + result.getN() + " documents");
@@ -82,7 +82,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 
 	public Session get(Integer key) {
 		BasicDBObject doc = new BasicDBObject();
-		doc.put("deviceId", key);
+		doc.put("id", key);
 		DBObject result = sessions.findOne(doc);
 		if(result != null) {
 			MongoDBSessionMapper mapper = new MongoDBSessionMapper();

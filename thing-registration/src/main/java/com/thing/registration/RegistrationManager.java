@@ -71,10 +71,6 @@ public class RegistrationManager extends RequestResponseController implements
 		connectors.get(parcel.getMessage().getProtocol()).sendMessage(parcel);
 	}
 
-	public synchronized BaseConnector getConnector(String protocol) {
-		return connectors.get(protocol);
-	}
-
 	public void onMessageArrived(MessageEvent event) {
 		handleRequest(event.getMessage());
 	}

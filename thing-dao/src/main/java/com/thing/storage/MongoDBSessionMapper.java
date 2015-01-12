@@ -29,7 +29,7 @@ public class MongoDBSessionMapper {
 	}
 	
 	public Session fromBson(DBObject obj) {
-		int id = (Integer) obj.get("deviceId");
+		int id = (Integer) obj.get("id");
 		String protocol = (String) obj.get("protocol");
 		String format = (String) obj.get("format");
 		long timestamp = (Long) obj.get("timeStamp");

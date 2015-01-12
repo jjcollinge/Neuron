@@ -24,7 +24,7 @@ public class MongoDBDeviceMapper {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		HashMap<String, Object> hashmap = new HashMap<String, Object>();
-		hashmap.put("id", device.getId());
+		hashmap.put("sessionId", device.getSessionId());
 		hashmap.put("manufacturer", device.getManufacturer());
 		hashmap.put("model", device.getModel());
 		if(device.getGeo() != null) {
@@ -50,7 +50,7 @@ public class MongoDBDeviceMapper {
 	
 	public Device fromBson(DBObject obj) {
 		Device device = new Device();
-		device.setId((Integer) obj.get("id"));
+		device.setSessionId((Integer) obj.get("sessionId"));
 		device.setManufacurer((String) obj.get("manufacturer"));
 		device.setModel((String) obj.get("model"));
 		if(obj.get("loc") != null) {

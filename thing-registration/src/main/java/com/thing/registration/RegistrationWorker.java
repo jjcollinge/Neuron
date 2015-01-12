@@ -26,7 +26,7 @@ public class RegistrationWorker extends Worker {
 	private Parcel response;
 
 	public RegistrationWorker(Message message) {
-		this.request = message;
+		request = message;
 		validator = new RegistrationValidator();
 	}
 
@@ -60,7 +60,7 @@ public class RegistrationWorker extends Worker {
 			int id = IdGenerator.generateId();
 			Session session = new Session(id, protocol, format);
 			Device device = registration.getDevice();
-			device.setId(id);
+			device.setSessionId(id);
 
 			// Track device activity
 			SessionManager.getInstance().trackDevice(id, protocol, format);
@@ -71,7 +71,7 @@ public class RegistrationWorker extends Worker {
 
 			// Create response
 			String returnTopic = registration.getReturnAddress();
-			Message res = new Message(String.valueOf(device.getId()),
+			Message res = new Message(String.valueOf(device.getSessionId()),
 					format, protocol);
 			this.response = ParcelPacker.makeParcel(res, returnTopic);
 			finishWork(response);
