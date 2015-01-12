@@ -1,4 +1,4 @@
-package com.thing.restjersey;
+package com.thing.rest;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class DeviceSerializer extends JsonSerializer<Device> {
 		jsonGen.writeStringField("geo", device.getGeo().toString());
 		jsonGen.writeStartArray();
 		for(Sensor sensor : device.getSensors()) {
-			jsonGen.writeStartObject();;
+			jsonGen.writeStartObject();
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.thing.restjersey;
+package com.thing.rest;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +17,8 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
     public JacksonContextResolver() throws Exception {
         this.objectMapper = new ObjectMapper();
-    this.objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
+        this.objectMapper
+        .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
         .configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 
