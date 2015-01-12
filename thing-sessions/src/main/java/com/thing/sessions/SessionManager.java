@@ -20,14 +20,16 @@ public class SessionManager implements Runnable, Service {
 			.getName());
 
 	private static SessionManager instance;
-	
-	private MongoDBSessionDAO sessions;
+	// Session storage
+	private HashMap<Integer, Session> sessions;
 	// New devices which have not yet responded to a ping
 	private Set<Integer> pendingDevices;
 	// Connectors to devices
 	private HashMap<String, BaseConnector> connectors;
 	// Monitor which forwards all session message activity to this manager
 	private ActivityListener monitor;
+	// Persistent storage
+	private MongoDBSessionDAO dao;
 
 	private SessionManager() {
 		// hidden
@@ -35,6 +37,7 @@ public class SessionManager implements Runnable, Service {
 		connectors = new HashMap<String, BaseConnector>();
 		sessions = new HashMap<Integer, Session>();
 		monitor = new ActivityListener(this);
+		dao = new MongoDBSessionDAO();
 	}
 
 	public static SessionManager getInstance() {
@@ -49,7 +52,6 @@ public class SessionManager implements Runnable, Service {
 		BaseConnector c = new MqttConnector();
 		c.connect("localhost", "1883");
 		connectors.put("MQTT", c);
-		sessions = new MongoDBSessionDAO();
 
 		for (BaseConnector connector : connectors.values()) {
 			SessionManager.getInstance().getMonitor()
@@ -80,6 +82,7 @@ public class SessionManager implements Runnable, Service {
 		sessions.remove(deviceId);
 		if (pendingDevices.contains(deviceId))
 			pendingDevices.remove(deviceId);
+		dao.remove(deviceId);
 	}
 
 	// Sends a ping to a device. onMessageArrvied will be called in response
@@ -109,7 +112,6 @@ public class SessionManager implements Runnable, Service {
 
 	public void run() {
 		
-		final int MIN = 60000;
 		final int SEC = 1000;
 		int THRESHOLD = SEC * 30;
 		int POLLING_PERIOD = SEC * 60;

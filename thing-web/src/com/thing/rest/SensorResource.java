@@ -10,7 +10,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.thing.api.model.Device;
 import com.thing.api.model.Sensor;
-import com.thing.storage.DataHandler;
+import com.thing.storage.MongoDBDeviceDAO;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +38,8 @@ public class SensorResource {
 	public Sensor getSensor() {
 		
 		System.out.println("Request for device");
-		Device device = DataHandler.getInstance().getDevice(Integer.valueOf(deviceId));
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		Device device = dao.get(Integer.valueOf(deviceId));
 		if(device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");
 		}

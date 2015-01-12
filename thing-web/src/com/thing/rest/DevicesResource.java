@@ -1,8 +1,8 @@
 package com.thing.rest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.activation.DataHandler;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,11 +14,10 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.thing.api.model.Device;
-import com.thing.storage.DataHandler;
+import com.thing.storage.MongoDBDeviceDAO;
 
 // URL: http://localhost:8080/thing-web/devices/hello
 
@@ -43,7 +42,8 @@ public class DevicesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Device> getDevices() {
 		System.out.println("Request for devices");
-		ArrayList<Device> devices = DataHandler.getInstance().getDevices();
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		ArrayList<Device> devices = (ArrayList<Device>) dao.find("", "");
 		if (devices == null) {
 			throw new RuntimeException("Devices not found");
 		}
