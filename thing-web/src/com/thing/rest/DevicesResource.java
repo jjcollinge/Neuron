@@ -78,7 +78,7 @@ public class DevicesResource {
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getSensorStream(@PathParam("device") String id, @PathParam("sensorId") String sid) {
 		SensorStreamResource SSR = new SensorStreamResource(uriInfo, request, id, sid);
-		return SSR.getMessages();
+		return SSR.getValue();
 	}
 
 }
