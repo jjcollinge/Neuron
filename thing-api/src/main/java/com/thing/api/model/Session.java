@@ -2,11 +2,12 @@ package com.thing.api.model;
 
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.thing.api.components.IdGenerator;
 
 
 public class Session {
-	
+
 	private HashMap<String, Object> properties;
 	private int id;
 	private Long timestamp;
@@ -14,6 +15,11 @@ public class Session {
 	public Session() {
 		properties = new HashMap<String, Object>();
 		id = IdGenerator.generateId();
+		timestamp = System.currentTimeMillis() / 1000L;
+	}
+	public Session(Integer id) {
+		properties = new HashMap<String, Object>();
+		this.id = id;
 		timestamp = System.currentTimeMillis() / 1000L;
 	}
 	public int getId() {
@@ -36,6 +42,9 @@ public class Session {
 	}
 	public Object getProperty(String key) {
 		return properties.get(key);
+	}
+	public HashMap<String, Object> getProperties() {
+		return properties;
 	}
 	public boolean containsProperty(String key) {
 		return properties.containsKey(key);

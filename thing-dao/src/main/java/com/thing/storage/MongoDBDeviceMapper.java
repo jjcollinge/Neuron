@@ -23,20 +23,20 @@ public class MongoDBDeviceMapper {
 	public DBObject toBson(Device device) {
 		ObjectMapper mapper = new ObjectMapper();
 		
-		HashMap<String, Object> hashmap = new HashMap<String, Object>();
-		hashmap.put("sessionId", device.getSessionId());
-		hashmap.put("manufacturer", device.getManufacturer());
-		hashmap.put("model", device.getModel());
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("sessionId", device.getSessionId());
+		map.put("manufacturer", device.getManufacturer());
+		map.put("model", device.getModel());
 		if(device.getGeo() != null) {
 			Double[] loc = {device.getGeo().getLongitude(), device.getGeo().getLatitude()};
-			hashmap.put("loc", loc);
+			map.put("loc", loc);
 		}
-		hashmap.put("sensors", device.getSensors());
-		hashmap.put("actuators", device.getActuators());
+		map.put("sensors", device.getSensors());
+		map.put("actuators", device.getActuators());
 		
 		String json = "";
 		try {
-			json = mapper.writeValueAsString(hashmap);
+			json = mapper.writeValueAsString(map);
 		} catch (JsonGenerationException e) {
 			return null;
 		} catch (JsonMappingException e) {

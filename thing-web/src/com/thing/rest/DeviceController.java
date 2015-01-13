@@ -1,4 +1,4 @@
-package com.thing.sessions;
+package com.thing.rest;
 
 import com.thing.api.events.DataEvent;
 import com.thing.api.events.DataEventProducer;
@@ -8,6 +8,7 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
+import com.thing.sessions.SessionManager;
 import com.thing.storage.MongoDBSessionDAO;
 
 public class DeviceController extends DataEventProducer implements

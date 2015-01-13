@@ -2,7 +2,6 @@ package com.thing.sessions;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +10,7 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
+import com.thing.storage.MongoDBSessionDAO;
 
 public class SessionManagerDaemon implements Runnable {
 
@@ -18,26 +18,23 @@ public class SessionManagerDaemon implements Runnable {
 			.getName());
 	
 	private HashMap<Integer, Session> activeSessions;
-	
-	// New devices which have not yet responded to a ping
-	private Set<Integer> pendingSessions;
+	private MongoDBSessionDAO dao;
 	
 	public SessionManagerDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
-		pendingSessions = new HashSet<Integer>();
+		dao = new MongoDBSessionDAO();
 	}
 	
 	public void addSession(Session session) {
 		log.log(Level.INFO, "Adding new session " + session.getId());
 		activeSessions.put(session.getId(), session);
-		pendingSessions.add(session.getId());
+		dao.insert(session);
 	}
 	
 	public void removeSession(Integer sessionId) {
 		log.log(Level.INFO, "Removing session " + sessionId);
 		activeSessions.remove(sessionId);
-		if(pendingSessions.contains(sessionId))
-			pendingSessions.remove(sessionId);
+		dao.remove(sessionId);
 	}
 	
 	public Session getSession(Integer sessionId) {
@@ -102,7 +99,7 @@ public class SessionManagerDaemon implements Runnable {
 			HashSet<Integer> deviceToRemove = new HashSet<Integer>();
 
 			// Check each device timestamp against the same threshold to see if
-			// they've updated
+			// they've updated. If not then add them to the removal set
 			for (Integer sessionKey : pingedDevices) {
 				if (activeSessions.get(sessionKey).isOlder(timeoutLimit)) {
 					log.log(Level.WARNING, "Session for device " + sessionKey
@@ -110,7 +107,8 @@ public class SessionManagerDaemon implements Runnable {
 					deviceToRemove.add(sessionKey);
 				}
 			}
-
+			
+			// Remove stale devices
 			for (Integer key : deviceToRemove) {
 				removeSession(key);
 			}

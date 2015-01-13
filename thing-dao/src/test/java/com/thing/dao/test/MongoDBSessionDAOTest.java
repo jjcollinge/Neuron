@@ -20,7 +20,9 @@ public class MongoDBSessionDAOTest {
 		dao.setCollection("testSessions");
 		dao.clear();
 	
-		Session testSession = new Session(0, "test", "test");
+		Session testSession = new Session(0);
+		testSession.addProperty("protocol", "test");
+		testSession.addProperty("format", "test");
 		dao.insert(testSession);
 		Session returnedSession = dao.get(0);
 		
@@ -34,7 +36,9 @@ public class MongoDBSessionDAOTest {
 		dao.setCollection("testSessions");
 		dao.clear();
 	
-		Session testSession = new Session(0, "test", "test");
+		Session testSession = new Session(0);
+		testSession.addProperty("protocol", "test");
+		testSession.addProperty("format", "test");
 		dao.insert(testSession);
 		assertTrue("Session should be deleted", dao.remove(testSession.getId()));
 		Session returnedSession = dao.get(0);
@@ -63,12 +67,14 @@ public class MongoDBSessionDAOTest {
 		
 		String protocol = "testProtocol";
 		
-		Session testSession = new Session(0, protocol, "test");
+		Session testSession = new Session(0);
+		testSession.addProperty("protocol", protocol);
+		testSession.addProperty("format", "test");
 		dao.insert(testSession);
 		
 		ArrayList<Session> matchedSessions = (ArrayList<Session>) dao.findByProtocol(protocol);
 		assertTrue(matchedSessions.size() == 1);
-		assertTrue(matchedSessions.get(0).getProtocol().equals(protocol));
+		assertTrue(matchedSessions.get(0).getProperty("protocol").equals(protocol));
 	}
 	
 	@Test
@@ -78,7 +84,9 @@ public class MongoDBSessionDAOTest {
 		dao.setCollection("testSessions");
 		dao.clear();
 		
-		Session testSession = new Session(0, "MQTT", "JSON");
+		Session testSession = new Session(0);
+		testSession.addProperty("protocol", "MQTT");
+		testSession.addProperty("format", "JSON");
 		dao.insert(testSession);
 		
 		String testFormat = "FOO";
@@ -86,7 +94,7 @@ public class MongoDBSessionDAOTest {
 		dao.update(0, "format", testFormat);
 		Session resultSession = dao.get(0);
 		assertNotNull("Session should not be null", resultSession);
-		assertEquals(resultSession.getFormat(), testFormat);
+		assertEquals("Formats should be equal", resultSession.getProperty("format"), testFormat);
 		
 	}
 }

@@ -15,7 +15,6 @@ import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.thing.api.events.DataEvent;
 import com.thing.api.events.DataEventListener;
-import com.thing.sessions.DeviceController;
 
 public class SensorStreamResource implements DataEventListener {
 

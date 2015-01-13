@@ -12,5 +12,6 @@
 		<module>thing-registration</module>
 		<module>thing-messaging</module>
 		<module>thing-demo</module>
+		<module>thing-sessions</module>
 	</modules>
 </project>
