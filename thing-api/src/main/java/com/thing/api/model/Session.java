@@ -1,47 +1,44 @@
 package com.thing.api.model;
 
+import java.util.HashMap;
+
+import com.thing.api.components.IdGenerator;
+
 
 public class Session {
 	
+	private HashMap<String, Object> properties;
 	private int id;
 	private Long timestamp;
-	private String protocol;
-	private String format;
 	
-	public Session(int id, String protocol, String format, Long timestamp) {
-		this.id = id;
-		this.protocol = protocol;
-		this.format = format;
-		this.timestamp = timestamp;
-	}
-	public Session(int id, String protocol, String format) {
-		this.id = id;
-		this.protocol = protocol;
-		this.format = format;
-		this.timestamp = System.currentTimeMillis() / 1000L;
+	public Session() {
+		properties = new HashMap<String, Object>();
+		id = IdGenerator.generateId();
+		timestamp = System.currentTimeMillis() / 1000L;
 	}
 	public int getId() {
 		return this.id;
 	}
-	public String getProtocol() {
-		return this.protocol;
-	}
-	public String getFormat() {
-		return this.format;
-	}
-	public Long getTimeStamp() {
+	public Long getTimestamp() {
 		return this.timestamp;
 	}
-	public void updateTimeStamp() {
+	public void updateTimestamp() {
 		this.timestamp = System.currentTimeMillis() / 1000L;
 	}
-	public boolean after(long timestamp) {
-		return (this.timestamp > timestamp);
+	public boolean isOlder(Long sourceTime) {
+		return this.timestamp < sourceTime;
 	}
-	public boolean before(long timestamp) {
-		return (this.timestamp < timestamp);
+	public void addProperty(String key, Object value) {
+		properties.put(key, value);
 	}
-	public String getPingAddress() {
-		return "devices/"+id+"/ping";
+	public void removeProperty(String key) {
+		properties.remove(key);
 	}
+	public Object getProperty(String key) {
+		return properties.get(key);
+	}
+	public boolean containsProperty(String key) {
+		return properties.containsKey(key);
+	}
+	
 }

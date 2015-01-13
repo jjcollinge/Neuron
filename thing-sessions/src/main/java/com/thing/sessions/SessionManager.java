@@ -1,40 +1,37 @@
 package com.thing.sessions;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.thing.api.components.Service;
-import com.thing.api.messaging.Parcel;
-import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
 import com.thing.storage.MongoDBSessionDAO;
 
-public class SessionManager implements Runnable, Service {
+public class SessionManager implements Service {
 
 	private static final Logger log = Logger.getLogger(SessionManager.class
 			.getName());
 
 	private static SessionManager instance;
-	// Session storage
-	private HashMap<Integer, Session> sessions;
-	// New devices which have not yet responded to a ping
-	private Set<Integer> pendingDevices;
+
+
 	// Monitor which forwards all session message activity to this manager
 	private ActivityListener monitor;
+	// Daemon thread to remove stale sessions
+	private Thread daemon;
+	private SessionManagerDaemon daemonObject;
 	// Persistent storage
 	private MongoDBSessionDAO dao;
 
+	// Singleton
 	private SessionManager() {
-		// hidden
-		pendingDevices = new HashSet<Integer>();
-		sessions = new HashMap<Integer, Session>();
+
 		monitor = new ActivityListener(this);
 		dao = new MongoDBSessionDAO();
+		daemonObject = new SessionManagerDaemon();
+		daemon = new Thread(daemonObject);
 	}
 
 	public static SessionManager getInstance() {
@@ -46,115 +43,39 @@ public class SessionManager implements Runnable, Service {
 
 	public void start() {
 		log.log(Level.INFO, "Starting service...");
-		new Thread(this).start();
+		daemon.start();
 	}
 
 	public void stop() {
 		log.log(Level.INFO, "Stopping service...");
-	}
-
-	public synchronized void trackDevice(int deviceId, String protocol,
-			String format) {
-
-		log.log(Level.INFO, "Tracking a new device");
-
-		Session session = new Session(deviceId, protocol, format);
-		sessions.put(deviceId, session);
-		BaseConnector connector = ConnectorFactory.getInstance().getConnector(
-				session);
-		monitor.registerConnector(connector);
-		connector.subscribe(session.getPingAddress() + "/response", 2);
-		pendingDevices.add(deviceId);
-	}
-
-	private synchronized void forgetSession(int deviceId) {
-		log.log(Level.INFO, "Forgetting session");
-		sessions.remove(deviceId);
-		if (pendingDevices.contains(deviceId))
-			pendingDevices.remove(deviceId);
-		dao.remove(deviceId);
-	}
-
-	// Sends a ping to a device. onMessageArrvied will be called in response
-	private synchronized void pingDevice(Session session) {
-		log.log(Level.INFO, "Pinging device " + session.getId());
-		Parcel parcel = ParcelPacker.makeParcel("PING", session.getFormat(),
-				session.getPingAddress() + "/request", session.getProtocol());
-		BaseConnector connector = ConnectorFactory.getInstance().getConnector(session);
-		connector.sendMessage(parcel);
+		try {
+			daemon.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ActivityListener getMonitor() {
 		return this.monitor;
 	}
 
-	public Session getSession(int deviceId) {
-		Session session = sessions.get(deviceId);
-		log.log(Level.INFO, "Returning session " + session.getId());
-		return session;
+	public Session getSession(int sessionId) {
+		return daemonObject.getSession(sessionId);
 	}
-
-	private synchronized void updateTimestamp(int deviceId) {
-		log.log(Level.INFO, "Updating device " + deviceId
-				+ "'s session timestamp");
-		sessions.get(deviceId).updateTimeStamp();
+	
+	public void addSession(Session session) {
+		BaseConnector connector = ConnectorFactory.getInstance().getConnector(session);
+		connector.subscribe("devices/"+session.getId()+"/ping/response", 2);
+		monitor.registerConnector(connector);
+		daemonObject.addSession(session);
 	}
-
-	public void run() {
-
-		final int SEC = 1000;
-		int THRESHOLD = SEC * 30;
-		int POLLING_PERIOD = SEC * 60;
-		long pingLimit;
-
-		while (true) {
-
-			HashSet<Integer> pingedDevices = new HashSet<Integer>();
-
-			pingLimit = (System.currentTimeMillis() - THRESHOLD) / 1000L;
-			long timeoutLimit = (System.currentTimeMillis()) / 1000L;
-
-			// Check each device timestamp and ping the ones which exceed the
-			// PING_THRESHOLD value
-			for (Integer sessionKey : sessions.keySet()) {
-				if (sessions.get(sessionKey).before(pingLimit)) {
-					pingDevice(sessions.get(sessionKey));
-					pingedDevices.add(sessionKey);
-				}
-			}
-
-			// delay for POLLING_PERIOD value; this allows devices time to
-			// respond to any pings
-			try {
-				Thread.sleep(POLLING_PERIOD);
-			} catch (InterruptedException e) {
-			}
-
-			/*
-			 * By adding each id from the registry to a set and removing
-			 * afterwards you avoid the read / write conflict associated with
-			 * removing items during iteration directly.
-			 */
-			HashSet<Integer> deviceToRemove = new HashSet<Integer>();
-
-			// Check each device timestamp against the same threshold to see if
-			// they've updated
-			for (Integer sessionKey : pingedDevices) {
-				if (sessions.get(sessionKey).before(timeoutLimit)) {
-					log.log(Level.WARNING, "Session for device " + sessionKey
-							+ " timed out");
-					deviceToRemove.add(sessionKey);
-				}
-			}
-
-			for (Integer key : deviceToRemove) {
-				forgetSession(key);
-			}
-		}
+	
+	public void removeSession(int sessionId) {
+		daemonObject.getSession(sessionId);
 	}
-
+	
 	// This is called by the Activity Listener when a message is exchanged
-	public void onSessionActivity(int deviceId) {
-		updateTimestamp(deviceId);
+	public void onSessionActivity(int sessionId) {
+		daemonObject.updateTimestamp(sessionId);
 	}
 }

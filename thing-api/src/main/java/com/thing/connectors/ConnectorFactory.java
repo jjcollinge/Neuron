@@ -26,7 +26,7 @@ public class ConnectorFactory {
 	
 	public BaseConnector getConnector(Session session) {
 		
-		String protocol = session.getProtocol();
+		String protocol = (String) session.getProperty("protocol");
 		
 		BaseConnector connector;
 		for(String type : types.keySet()) {

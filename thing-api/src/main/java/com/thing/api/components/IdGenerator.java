@@ -1,4 +1,4 @@
-package com.thing.sessions;
+package com.thing.api.components;
 
 public class IdGenerator {
 

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.thing.api.components.IdGenerator;
 import com.thing.api.components.Worker;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
@@ -12,7 +13,6 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
 import com.thing.api.model.Session;
 import com.thing.registration.model.Registration;
-import com.thing.sessions.IdGenerator;
 import com.thing.sessions.SessionManager;
 import com.thing.storage.MongoDBDeviceDAO;
 
@@ -57,13 +57,14 @@ public class RegistrationWorker extends Worker {
 			}
 
 			// Create model
-			int id = IdGenerator.generateId();
-			Session session = new Session(id, protocol, format);
+			Session session = new Session();
+			session.addProperty("protocol", protocol);
+			session.addProperty("format", format);
 			Device device = registration.getDevice();
-			device.setSessionId(id);
+			device.setSessionId(session.getId());
 
 			// Track device activity
-			SessionManager.getInstance().trackDevice(id, protocol, format);
+			SessionManager.getInstance().addSession(session);
 
 			// Store device
 			MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
