@@ -2,18 +2,10 @@ package com.thing.api.model;
 
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-/**
- * Name: Device ---------------------------------------------------------------
- * Desc: This class models an in system device
- * 
- * @author jcollinge
- *
- */
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties("sessionId")
 public class Device {
 
 	private int sessionId;

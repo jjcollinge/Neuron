@@ -2,7 +2,6 @@ package com.thing.api.model;
 
 import java.util.HashMap;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.thing.api.components.IdGenerator;
 
 

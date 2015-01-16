@@ -2,8 +2,8 @@ package com.thing.api.model;
 
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Name: Sensor 

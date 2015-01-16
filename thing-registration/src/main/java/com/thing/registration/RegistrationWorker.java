@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.thing.api.components.IdGenerator;
 import com.thing.api.components.Worker;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.Parcel;
@@ -42,19 +41,16 @@ public class RegistrationWorker extends Worker {
 			if (!validator.isValid(payload))
 				return;
 
+			// Map the registration request onto a POJO
 			ObjectMapper mapper = new ObjectMapper();
-
 			Registration registration = null;
+			
 			try {
 				registration = mapper.readValue(payload, Registration.class);
 			} catch (Exception e) {
-				e.printStackTrace();
-			} 
-
-			if (registration == null) {
-				log.log(Level.INFO, "Dropped corrupt registration");
+				log.log(Level.INFO, "Dropped corrupt registration", e);
 				return;
-			}
+			} 
 
 			// Create model
 			Session session = new Session();
