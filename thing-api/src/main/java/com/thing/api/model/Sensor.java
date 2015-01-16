@@ -20,16 +20,24 @@ public class Sensor {
 
 	private int id = 0;
 	private String value;
+	@JsonProperty("name")
+	private String name;
 	@JsonProperty("sense")
 	private String sense;
 	@JsonProperty("unit")
 	private String unit;
 	@JsonProperty("type")
 	private String type;
+	
+	public Sensor() {}
 
 	// Setters
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setSense(String sense) {
@@ -51,6 +59,10 @@ public class Sensor {
 	// Getters
 	public int getId() {
 		return this.id;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 
 	public String getValue() {
