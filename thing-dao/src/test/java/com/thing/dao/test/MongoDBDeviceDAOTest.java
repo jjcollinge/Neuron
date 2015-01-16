@@ -124,13 +124,13 @@ public class MongoDBDeviceDAOTest {
 		dao.setCollection("testDevices");
 		dao.clear();
 		
-		int distanceInMiles = 20;
+		int metersProximity = 200;
 		
-		GeoPoint point = new GeoPoint(51.326096, -0.101213);
+		GeoPoint point = new GeoPoint(53.37831623, -1.4618752);
 		
 		Device goodDevice = new Device();
 		goodDevice.setSessionId(1);
-		goodDevice.setGeo(51.329072, -0.109796);
+		goodDevice.setGeo(53.37831303, -1.46192884);
 		
 		Device badDevice = new Device();
 		badDevice.setSessionId(2);
@@ -139,7 +139,7 @@ public class MongoDBDeviceDAOTest {
 		dao.insert(goodDevice);
 		dao.insert(badDevice);
 		
-		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByGeo(point, distanceInMiles);
+		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByGeo(point, metersProximity);
 		assertTrue("Should be one device in range, found: " + devicesFound.size(), devicesFound.size() == 1);
 		assertTrue("Device in range id should be 1", devicesFound.get(0).getSessionId() == 1);
 		

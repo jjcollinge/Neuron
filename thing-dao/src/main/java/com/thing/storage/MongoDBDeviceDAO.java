@@ -90,9 +90,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 
-	public List<Device> findByGeo(GeoPoint geo, int proximityInMiles) {
+	public List<Device> findByGeo(GeoPoint geo, int proximityInMeters) {
 		// Rough conversion from miles to degrees
-		double proximityInDegrees = proximityInMiles/69.0;
+		double proximityInDegrees = (proximityInMeters/1000.0)/111.12;
 	
 		BasicDBObject query = new BasicDBObject();
 		final BasicDBObject filter = new BasicDBObject("$near", new double[] {geo.getLongitude(), geo.getLatitude()});
