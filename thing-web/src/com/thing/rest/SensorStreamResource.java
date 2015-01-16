@@ -2,6 +2,8 @@ package com.thing.rest;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.thing.api.events.DataEvent;
@@ -18,6 +21,9 @@ import com.thing.api.events.DataEventListener;
 
 public class SensorStreamResource implements DataEventListener {
 
+	private static final Logger log = Logger
+			.getLogger(SensorStreamResource.class.getName());
+	
 	@Context
 	UriInfo uriInfo;
 	@Context
@@ -25,8 +31,11 @@ public class SensorStreamResource implements DataEventListener {
 	String sensorId;
 	String deviceId;
 	
-	LinkedList<String> valueStream;
-
+	private LinkedList<String> valueStream;
+	private DeviceController controller;
+	private static final SseBroadcaster BROADCASTER = new SseBroadcaster();
+	private boolean streaming;
+	
 	public SensorStreamResource(UriInfo uriInfo, Request request,
 			String deviceId, String sensorId) {
 
@@ -37,6 +46,12 @@ public class SensorStreamResource implements DataEventListener {
 		
 		valueStream = new LinkedList<String>();
 
+		final DataEventListener _this = this;
+		
+		controller = new DeviceController(Integer.valueOf(deviceId));
+		controller.addDataEventListener(_this);
+		
+		streaming = false;
 	}
 
 	// GET: /devices/0/sensor/0/stream
@@ -45,11 +60,14 @@ public class SensorStreamResource implements DataEventListener {
 	public EventOutput getValue() {
 
 		final EventOutput eventOutput = new EventOutput();
-		final DataEventListener _this = this;
 		
-		DeviceController controller = new DeviceController(Integer.valueOf(deviceId));
-		controller.addDataEventListener(_this);
-		controller.startSensorStreaming(Integer.valueOf(sensorId));
+		if(!streaming) {
+			log.log(Level.INFO, "Requesting for stream to start");
+			// Start streaming
+			int id = Integer.valueOf(sensorId);
+			controller.startSensorStreaming(id);
+			streaming = true;
+		}
 				
 		if(!valueStream.isEmpty()) {
 			final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
@@ -62,12 +80,13 @@ public class SensorStreamResource implements DataEventListener {
 				e.printStackTrace();
 			}
 		}
-
+		log.log(Level.INFO, "Returning eventOutput " + eventOutput.toString());
 		return eventOutput;
 	}
 
 	@Override
 	public void onDataArrived(DataEvent dataEvent) {
+		log.log(Level.INFO, "New value arrived, adding to queue");
 		valueStream.addLast(dataEvent.getData());
 		getValue();
 	}

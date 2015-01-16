@@ -8,7 +8,7 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
-import com.thing.sessions.SessionManager;
+import com.thing.connectors.impl.MqttConnector;
 import com.thing.storage.MongoDBSessionDAO;
 
 public class DeviceController extends DataEventProducer implements
@@ -20,9 +20,11 @@ public class DeviceController extends DataEventProducer implements
 	public DeviceController(int sessionId) {
 		MongoDBSessionDAO dao = new MongoDBSessionDAO();
 		session = dao.get(sessionId);
-		BaseConnector connector = ConnectorFactory.getInstance().getConnector(
-				session);
-		SessionManager.getInstance().getMonitor().registerConnector(connector);
+		ConnectorFactory factory = ConnectorFactory.getInstance();
+		factory.registerConnectorType("MQTT", MqttConnector.class);
+		connector = factory.getConnector(session);
+		
+		//SessionManager.getInstance().getMonitor().registerConnector(connector);
 		connector.addMessageEventListener(this);
 	}
 

@@ -19,7 +19,6 @@ REG_RESPONSE = str(randint(1000, 9999))
 #-------------------------------------------
 class Device:
 	uuid = -1
-	value = 0.0
 
 	def __init__(self, descriptor):
 		self.descriptor = descriptor
@@ -30,6 +29,7 @@ class Device:
 
 class Sensor:
 	streaming = False;
+	value = 0.0
 
 	def __init__(self, uuid, sense, unit, type):
 		self.uuid = uuid
@@ -128,4 +128,4 @@ while True:
 			client.publish("devices/"+device.uuid+"/sensors/"+sensor.uuid+"/stream/response", sensor.value)
 	
 	# Delay cycle
-	time.sleep(1)
+	time.sleep(10)
