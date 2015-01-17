@@ -1,9 +1,10 @@
 package com.thing.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.activation.DataHandler;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,11 +13,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.thing.api.model.Device;
 import com.thing.storage.MongoDBDeviceDAO;
 
@@ -98,4 +104,14 @@ public class DevicesResource {
 		return new ActuatorResource(uriInfo, request, id, sid);
 	}
 	
+	// POST (option): /devices/0/actuators/0
+	@Path("{device}/actuators/{actuatorId}")
+	@POST
+	//@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
+	public Response operateActuator(@PathParam("device") String id, @PathParam("actuatorId") String sid, String option) {
+		ActuatorResource actuator = new ActuatorResource(uriInfo, request, id, sid);		
+		actuator.invokeOperation(option);
+		return null;
+	}
 }

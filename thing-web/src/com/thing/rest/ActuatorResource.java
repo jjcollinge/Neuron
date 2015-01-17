@@ -6,6 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.thing.api.model.Actuator;
@@ -46,6 +47,15 @@ public class ActuatorResource {
 		}
 		return device.getActuator(Integer.valueOf(actuatorId));
 		
+	}
+	
+	public Response invokeOperation(String data) {
+		
+		DeviceController controller = new DeviceController(Integer.valueOf(deviceId));
+		controller.invokeOperationOnActuator(Integer.valueOf(actuatorId), data);
+		
+		// get POST data and call invoke on deviceController
+		return null;
 	}
 	
 }

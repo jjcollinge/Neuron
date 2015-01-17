@@ -70,6 +70,8 @@ def on_message(client, userdata, msg):
 		client.subscribe("devices/"+device.uuid+"/ping/request")
 		for sensor in device.sensors:
 			client.subscribe("devices/"+device.uuid+"/sensors/"+sensor.uuid)
+		for actuator in device.actuators:
+			client.subscribe("devices/"+device.uuid+"/actuators/"+actuator.uuid)
 
 	# Request for ping response to check activity
 	elif(msg.topic == "devices/"+device.uuid+"/ping/request"):

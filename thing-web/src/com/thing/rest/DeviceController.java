@@ -41,6 +41,12 @@ public class DeviceController extends DataEventProducer implements
 		connector.sendMessage(ParcelPacker.makeParcel("STOP_STREAM", "JSON",
 				topic, "MQTT"));
 	}
+	
+	public void invokeOperationOnActuator(int actuatorId, String option) {
+		String topic = "devices/" + session.getId() + "/actuators/" + actuatorId;
+//		connector.subscribe(topic + "/response", 2);
+		connector.sendMessage(ParcelPacker.makeParcel(option, (String) session.getProperty("format"), topic, (String) session.getProperty("protocol")));
+	}
 
 	public void onMessageArrived(MessageEvent event) {
 		String payload = event.getMessage().getPayload();
