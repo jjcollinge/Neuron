@@ -82,4 +82,20 @@ public class DevicesResource {
 		return SSR.getConnection();
 	}
 	
+	// GET: /devices/0/actuators
+	@Path("{device}/actuators")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public ActuatorsResource getDeviceActuators(@PathParam("device") String id) {
+		return new ActuatorsResource(uriInfo, request, id);
+	}
+	
+	// GET: /devices/0/actuators/0
+	@Path("{device}/actuators/{actuatorId}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public ActuatorResource getActuator(@PathParam("device") String id, @PathParam("actuatorId") String sid) {
+		return new ActuatorResource(uriInfo, request, id, sid);
+	}
+	
 }

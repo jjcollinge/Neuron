@@ -17,8 +17,6 @@ public class Actuator {
 	@JsonProperty("options")
 	private ArrayList<String> options;
 	
-	public Actuator() {}
-	
 	// Setters
 	public void setId(int id) {
 		this.id = id;
@@ -27,6 +25,8 @@ public class Actuator {
 		this.name = name;
 	}
 	public void addOption(String option) {
+		if(options == null)
+			options = new ArrayList<String>();
 		this.options.add(option);
 	}
 	public void setOptions(ArrayList<String> options) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
 import com.thing.api.model.GeoPoint;
 import com.thing.api.model.Sensor;
@@ -32,6 +33,13 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setUnit("test");
 		testSensor.setValue("test");
 		
+		Actuator testActuator = new Actuator();
+		testActuator.setId(0);
+		testActuator.setName("test");
+		testActuator.addOption("OPEN");
+		testActuator.addOption("CLOSE");
+		
+		testDevice.addActuator(testActuator);
 		testDevice.addSensor(testSensor);
 		
 		dao.insert(testDevice);

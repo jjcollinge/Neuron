@@ -23,20 +23,34 @@ class Device:
 	def __init__(self, descriptor):
 		self.descriptor = descriptor
 		self.sensors = []
+		self.actuators = []
 
 	def addSensor(self, sensor):
 		self.sensors.append(sensor)
+
+	def addActuator(self, actuator):
+		self.actuators.append(actuator)
 
 class Sensor:
 	streaming = False;
 	value = 0.0
 
-	def __init__(self, uuid, sense, unit, type):
+	def __init__(self, uuid, name, sense, unit, type):
 		self.uuid = uuid
+		self.name = name
 		self.sense = sense
 		self.unit = unit
 		self.type = type
 
+class Actuator:
+
+	def __init__(self, uuid, name):
+		self.uuid = uuid
+		self.name = name
+		self.options = []
+
+	def addOption(self, option):
+		self.options.append(option)
 
 #-------------------------------------------
 # CALLBACKS
@@ -63,7 +77,7 @@ def on_message(client, userdata, msg):
 		client.publish("devices/"+device.uuid+"/ping/response", "{\"id\":"+device.uuid+"}")
 
 	# Request for sensor operation
-	else:
+	elif("sensor" in msg.topic):
 		for sensor in device.sensors:
 			if(msg.topic == "devices/"+device.uuid+"/sensors/"+sensor.uuid):
 				print("Handling request for sensor "+sensor.uuid)
@@ -78,6 +92,19 @@ def on_message(client, userdata, msg):
 					sensor.streaming = True;
 				elif(request == "STOP_STREAM"):
 					sensor.streaming = False;
+
+	# Request for actuator operation
+	elif("actuator"  in msg.topic):
+		for actuator in device.actuators:
+			if(msg.topic == "devices/"+device.uuid+"/actuators/"+actuator.uuid):
+				print("Handling request for actuator "+actuator.uuid)
+				jsonData = str(msg.payload)
+				pyObj = json.loads(jsonData)
+				request = pyObj["data"]
+				if(request == "ON"):
+					print("Turning LED on")
+				elif(request == "OFF"):
+					print("Turning LED off")
 
 def on_publish(client, userdata, mid):
 	print("Published")
@@ -106,8 +133,12 @@ client.on_subscribe = on_subscribe
 file = open("device.json", 'r');
 descriptor = file.read();
 device = Device(descriptor)
-sensor = Sensor("0", "temperature", "celcius", "float")
+sensor = Sensor("0", "Temperature Sensor","temperature", "celcius", "float")
 device.addSensor(sensor)
+actuator = Actuator("0", "LED light bulb")
+actuator.addOption("ON")
+actuator.addOption("OFF")
+device.addActuator(actuator)
 
 # Connect to broker
 client.connect(HOST, PORT, 60)

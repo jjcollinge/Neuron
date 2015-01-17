@@ -1,11 +1,9 @@
 package com.thing.storage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -15,7 +13,6 @@ import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
-import com.thing.api.model.GeoPoint;
 import com.thing.api.model.Sensor;
 
 public class MongoDBDeviceMapper {
@@ -64,17 +61,36 @@ public class MongoDBDeviceMapper {
 			BasicDBObject[] dbSensorsArray = dbSensors.toArray(new BasicDBObject[0]);
 			for(DBObject dbSensor : dbSensorsArray) {
 				int sensorId = (Integer) dbSensor.get("id");
+				String name = (String) dbSensor.get("name");
 				String sense = (String) dbSensor.get("sense");
 				String unit = (String) dbSensor.get("unit");
 				String value = (String) dbSensor.get("value");
 				String type = (String) dbSensor.get("type");
 				Sensor s = new Sensor();
 				s.setId(sensorId);
+				s.setName(name);
 				s.setSense(sense);
 				s.setType(type);
 				s.setUnit(unit);
 				s.setValue(value);
 				device.addSensor(s);
+			}
+		}
+		BasicDBList dbActuators = (BasicDBList) obj.get("actuators");
+		if(dbActuators != null) {
+			BasicDBObject[] dbActuatorArray = dbActuators.toArray(new BasicDBObject[0]);
+			for(DBObject dbActuator : dbActuatorArray) {
+				int actuatorId = (Integer) dbActuator.get("id");
+				String name = (String) dbActuator.get("name");
+				BasicDBList dbOptions = (BasicDBList) dbActuator.get("options");
+				String[] dbOptionsArray = dbOptions.toArray(new String[0]);
+				Actuator a = new Actuator();
+				for(String dbOption : dbOptionsArray) {
+					a.addOption(dbOption.toString());
+				}
+				a.setId(actuatorId);
+				a.setName(name);
+				device.addActuator(a);
 			}
 		}
 		device.setUri((String) obj.get("uri"));
