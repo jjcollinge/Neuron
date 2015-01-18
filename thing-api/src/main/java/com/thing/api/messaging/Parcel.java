@@ -12,8 +12,8 @@ package com.thing.api.messaging;
 public class Parcel {
 
 	private String topic;
-	private int qos;
 	private Message message;
+	private int qos;
 	
 	// Required fields - the rest can be set using setter methods
 	public Parcel(Message message, String topic) {

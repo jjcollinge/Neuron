@@ -10,8 +10,9 @@ import com.thing.api.events.MessageEvent;
 import com.thing.api.events.MessageEventListener;
 import com.thing.api.events.MessageEventProducer;
 import com.thing.api.messaging.Message;
-import com.thing.connectors.BaseConnector;
+import com.thing.connectors.Connector;
 import com.thing.connectors.ConnectorFactory;
+import com.thing.connectors.impl.ConnectorFactoryImpl;
 
 public class ActivityListener extends MessageEventProducer implements
 		MessageEventListener {
@@ -19,27 +20,53 @@ public class ActivityListener extends MessageEventProducer implements
 	private static final Logger log = Logger.getLogger(ActivityListener.class
 			.getName());
 
-	private ArrayList<BaseConnector> connectors;
+	private static ActivityListener instance;
+	private ArrayList<Connector> connectors;
 
-	public ActivityListener() {
-		connectors = (ArrayList<BaseConnector>) ConnectorFactory.getInstance()
-				.getConnectorList();
-		for (BaseConnector connector : connectors) {
-			connector.subscribe("/devices/#", 2);
+	/**
+	 * Create a connector for all protocols, they will already be connected
+	 */
+	private ActivityListener() {
+		connectors = new ArrayList<Connector>();
+		
+		ConnectorFactory factory = new ConnectorFactoryImpl();
+		ArrayList<String> types = (ArrayList<String>) factory.getCatalogue();
+		for(String type : types) {
+			Connector connector = factory.getConnector(type);
+			connector.addMessageEventListener(this);
+			connector.subscribe("devices/#", 2);
+			connectors.add(connector);
 		}
 	}
+	
+	/**
+	 * Singleton, only one activity listener is required per instane of the middleware
+	 * @return
+	 */
+	public static ActivityListener getInstance() {
+		if(instance == null) {
+			instance = new ActivityListener();
+		}
+		return instance;
+	}
 
+	/**
+	 * Called when a new message is received from one of the connectors
+	 */
 	public void onMessageArrived(MessageEvent event) {
 
+		// extract the payload
 		String json = event.getMessage().getPayload();
 		int id = -1;
 
+		/* Attempt to get the sessionId from the payload
+		 * and if successful, notify listeners. Otherwise
+		 * drop the message.
+		 */
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode obj = mapper.readTree(json);
-
 			JsonNode idObj = obj.get("sessionId");
-
 			id = idObj.asInt();
 
 			if (id != -1)

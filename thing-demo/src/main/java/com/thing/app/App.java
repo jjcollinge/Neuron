@@ -1,8 +1,8 @@
 package com.thing.app;
 
 import com.thing.api.components.ServiceContainer;
-import com.thing.registration.RegistrationManager;
-import com.thing.sessions.SessionManager;
+import com.thing.registration.RegistrationController;
+import com.thing.sessions.SessionController;
 import com.thing.storage.MongoDBDeviceDAO;
 
 public class App {
@@ -14,8 +14,8 @@ public class App {
 		
 		ServiceContainer container = new ServiceContainer();
 		
-		container.addService(SessionManager.getInstance());
-		container.addService(RegistrationManager.getInstance());
+		container.addService(SessionController.getInstance());
+		container.addService(RegistrationController.getInstance());
 		
 		container.startServices();
 		

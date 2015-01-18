@@ -8,32 +8,40 @@ import java.util.logging.Logger;
 import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
-import com.thing.connectors.BaseConnector;
-import com.thing.connectors.ConnectorFactory;
+import com.thing.connectors.Connector;
+import com.thing.connectors.impl.ConnectorFactoryImpl;
 import com.thing.storage.MongoDBDeviceDAO;
 import com.thing.storage.MongoDBSessionDAO;
 
-public class SessionManagerDaemon implements Runnable {
+public class SessionDaemon implements Runnable {
 
-	private static final Logger log = Logger.getLogger(SessionManagerDaemon.class
+	private static final Logger log = Logger.getLogger(SessionDaemon.class
 			.getName());
 	
 	private HashMap<Integer, Session> activeSessions;
 	private MongoDBSessionDAO sessionDao;
 	private MongoDBDeviceDAO deviceDao;
 	
-	public SessionManagerDaemon() {
+	public SessionDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
 		sessionDao = new MongoDBSessionDAO();
 		deviceDao = new MongoDBDeviceDAO();
 	}
 	
+	/**
+	 * Add a session to database and in memory data structure
+	 * @param session
+	 */
 	public void addSession(Session session) {
 		log.log(Level.INFO, "Adding new session " + session.getId());
 		activeSessions.put(session.getId(), session);
 		sessionDao.insert(session);
 	}
 	
+	/**
+	 * Remove session from database and in memory data structure associated remove device
+	 * @param sessionId
+	 */
 	public void removeSession(Integer sessionId) {
 		log.log(Level.INFO, "Removing session " + sessionId);
 		activeSessions.remove(sessionId);
@@ -43,30 +51,39 @@ public class SessionManagerDaemon implements Runnable {
 		deviceDao.remove(sessionId);
 	}
 	
+	/**
+	 * Return a Session from the in memory data structure
+	 * @param sessionId
+	 * @return
+	 */
 	public Session getSession(Integer sessionId) {
 		return activeSessions.get(sessionId);
 	}
 	
+	/**
+	 * Update the timestamp of the session in memory data structure
+	 * @param sessionId
+	 */
 	public void updateTimestamp(Integer sessionId) {
 		log.log(Level.INFO, "Updating timestamp for session " + sessionId);
 		activeSessions.get(sessionId).updateTimestamp();
 	}
 	
-	// Sends a ping to a device. onMessageArrvied will be called in response
+	/**
+	 * Send a ping message to the device to provoke a response
+	 * @param session
+	 */
 	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());
 		Parcel parcel = ParcelPacker.makeParcel("PING", (String) session.getProperty("format"),
 				"devices/" + session.getId() + "/ping/request", (String) session.getProperty("protocol"));
-		BaseConnector connector = ConnectorFactory.getInstance().getConnector(
-				session);
-		connector.sendMessage(parcel);
+		Connector connector =  new ConnectorFactoryImpl().getConnector((String)session.getProperty("protocol"));
+		connector.send(parcel);
 	}
 	
-	// This is called by the Activity Listener when a message is exchanged
-	public void onSessionActivity(int sessionId) {
-		updateTimestamp(sessionId);
-	}
-	
+	/**
+	 * Separate thread for checking device status based on their timestamp
+	 */
 	public void run() {
 
 		final int SEC = 1000;

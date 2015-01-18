@@ -5,30 +5,36 @@ import java.util.logging.Logger;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.thing.api.components.Worker;
+import com.thing.api.components.RequestResponseWorker;
 import com.thing.api.messaging.Message;
-import com.thing.api.messaging.Parcel;
 import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Device;
 import com.thing.api.model.Session;
 import com.thing.registration.model.Registration;
-import com.thing.sessions.SessionManager;
+import com.thing.sessions.SessionController;
 import com.thing.storage.MongoDBDeviceDAO;
 
-public class RegistrationWorker extends Worker {
+public class RegistrationWorker extends RequestResponseWorker {
 
 	private static final Logger log = Logger.getLogger(RegistrationWorker.class
 			.getName());
 
 	private RegistrationValidator validator;
 	private Message request;
-	private Parcel response;
 
+	/**
+	 * Set any data that will be required to perform a 
+	 * successful run of the doWork method.
+	 * @param message
+	 */
 	public RegistrationWorker(Message message) {
 		request = message;
 		validator = new RegistrationValidator();
 	}
 
+	/**
+	 * This will be ran by a call to runnable in the super class
+	 */
 	protected void doWork() {
 
 		String payload = request.getPayload();
@@ -60,7 +66,7 @@ public class RegistrationWorker extends Worker {
 			device.setSessionId(session.getId());
 
 			// Track device activity
-			SessionManager.getInstance().addSession(session);
+			SessionController.getInstance().addSession(session);
 
 			// Store device
 			MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
@@ -70,12 +76,9 @@ public class RegistrationWorker extends Worker {
 			String returnTopic = registration.getReturnAddress();
 			Message res = new Message(String.valueOf(device.getSessionId()),
 					format, protocol);
-			this.response = ParcelPacker.makeParcel(res, returnTopic);
-			finishWork(response);
+			
+			// Set response
+			setResponse(ParcelPacker.makeParcel(res, returnTopic));
 		} // else other supported formats (XML)
-	}
-
-	public void run() {
-		doWork();
 	}
 }
