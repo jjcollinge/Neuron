@@ -8,22 +8,10 @@ import com.thing.api.model.Session;
 
 public class ConnectorFactory {
 
-	private HashMap<String, Class> types; 
-	private static ConnectorFactory instance;
+	private static HashMap<String, Class> types; 
 	
-	private ConnectorFactory() {
+	public ConnectorFactory() {
 		types = new HashMap<String, Class>();
-	}
-	
-	public static ConnectorFactory getInstance() {
-		if(instance == null) {
-			instance = new ConnectorFactory();
-		}
-		return instance;
-	}
-	
-	public void registerConnectorType(String type, Class connectorClass) {
-		types.put(type, connectorClass);
 	}
 	
 	public BaseConnector getConnector(Session session) {

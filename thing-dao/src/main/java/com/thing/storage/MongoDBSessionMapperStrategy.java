@@ -9,11 +9,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
+import com.thing.api.model.ObjectMapperStrategy;
 import com.thing.api.model.Session;
 
-public class MongoDBSessionMapper {
+public class MongoDBSessionMapperStrategy implements ObjectMapperStrategy<Session, DBObject> {
 
-	public DBObject toBson(Session session) {
+	public DBObject serialize(Session session) {
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("id", session.getId());
 		map.put("timestamp", session.getTimestamp());
@@ -34,14 +36,15 @@ public class MongoDBSessionMapper {
 		DBObject bson = (DBObject) JSON.parse(json);
 		return bson;
 	}
-	
-	public Session fromBson(DBObject obj) {
+
+	public Session deserialize(DBObject obj) {
+		
 		int id = (Integer) obj.get("id");
 		Session session = new Session(id);
 		for(String key : obj.keySet()) {
 			session.addProperty(key, obj.get(key));
 		}
 		return session;
+
 	}
-	
 }

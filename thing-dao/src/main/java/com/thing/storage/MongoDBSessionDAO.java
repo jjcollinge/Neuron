@@ -16,6 +16,7 @@ import com.mongodb.WriteResult;
 import com.thing.api.model.Device;
 import com.thing.api.model.Session;
 import com.thing.api.model.SessionDAO;
+import com.thing.api.model.SessionMapper;
 
 public class MongoDBSessionDAO implements SessionDAO {
 
@@ -30,7 +31,14 @@ public class MongoDBSessionDAO implements SessionDAO {
 	private DB sessionDatabase;
 	private DBCollection sessions;
 	
+	private SessionMapper<DBObject> mapper;
+	
 	public MongoDBSessionDAO() {
+		// initialise an object mapper
+		mapper = new SessionMapper<DBObject>();
+		mapper.setMapperStrategy(new MongoDBSessionMapperStrategy());
+		
+		// initialise database client
 		try {
 			client = new MongoClient(DATABASE_HOST);
 			sessionDatabase = client.getDB(DATABASE_NAME);
@@ -41,8 +49,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 	}
 
 	public void insert(Session session) {
-		MongoDBSessionMapper mapper = new MongoDBSessionMapper();
-		BasicDBObject doc = (BasicDBObject) mapper.toBson(session);
+		BasicDBObject doc = (BasicDBObject) mapper.serialize(session);
 		sessions.insert(doc);
 		log.log(Level.INFO, "Inserted session for device " + session.getId() + " to the database.");
 	}
@@ -85,8 +92,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 		doc.put("id", key);
 		DBObject result = sessions.findOne(doc);
 		if(result != null) {
-			MongoDBSessionMapper mapper = new MongoDBSessionMapper();
-			Session session = mapper.fromBson(result);
+			Session session = mapper.deserialize(result);
 			return session;
 		} else {
 			log.log(Level.INFO, "Session with given id doesn't exist in collection");
@@ -115,9 +121,8 @@ public class MongoDBSessionDAO implements SessionDAO {
 	public List<Session> findByQuery(DBObject query) {
 		List<Session> matchingSessions = new ArrayList<Session>();
 		DBCursor cursor = sessions.find(query);
-		MongoDBSessionMapper mapper = new MongoDBSessionMapper();
 		while(cursor.hasNext()) {
-			Session session = mapper.fromBson(cursor.next());
+			Session session = mapper.deserialize(cursor.next());
 			matchingSessions.add(session);
 		}
 		return matchingSessions;

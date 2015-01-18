@@ -67,7 +67,7 @@ public class SensorStreamResource implements DataEventListener {
 	public void initialiseSensorStreaming() {
 
 		int id = Integer.valueOf(sensorId);
-		DeviceController controller = new DeviceController(id);
+		DeviceProxy controller = new DeviceProxy(id);
 		controller.addDataEventListener(this);
 		controller.startSensorStreaming(id);
 

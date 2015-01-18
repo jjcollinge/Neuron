@@ -53,7 +53,7 @@ public class ActuatorResource {
 	
 	public Response invokeOperation(String data) {
 		
-		DeviceController controller = new DeviceController(Integer.valueOf(deviceId));
+		DeviceProxy controller = new DeviceProxy(Integer.valueOf(deviceId));
 		controller.invokeOperationOnActuator(Integer.valueOf(actuatorId), data);
 		
 		// get POST data and call invoke on deviceController

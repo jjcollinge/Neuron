@@ -13,17 +13,20 @@ import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
+import com.thing.api.model.ObjectMapperStrategy;
 import com.thing.api.model.Sensor;
 
-public class MongoDBDeviceMapper {
-
-	public DBObject toBson(Device device) {
+public class MongoDBDeviceMapperStrategy implements ObjectMapperStrategy<Device, DBObject> {
+	
+	public DBObject serialize(Device device) {
+		
 		ObjectMapper mapper = new ObjectMapper();
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("sessionId", device.getSessionId());
 		map.put("manufacturer", device.getManufacturer());
 		map.put("model", device.getModel());
+		map.put("uri", device.getUri());
 		if(device.getGeo() != null) {
 			Double[] loc = {device.getGeo().getLongitude(), device.getGeo().getLatitude()};
 			map.put("loc", loc);
@@ -44,12 +47,14 @@ public class MongoDBDeviceMapper {
 		DBObject bson = (DBObject) JSON.parse(json);
 		return bson;
 	}
-	
-	public Device fromBson(DBObject obj) {
+
+	public Device deserialize(DBObject obj) {
+		
 		Device device = new Device();
 		device.setSessionId((Integer) obj.get("sessionId"));
 		device.setManufacurer((String) obj.get("manufacturer"));
 		device.setModel((String) obj.get("model"));
+		device.setUri((String) obj.get("uri"));
 		if(obj.get("loc") != null) {
 			BasicDBList coordinates =  (BasicDBList) obj.get("loc");
 			double lon = (Double) coordinates.get(0);
@@ -92,8 +97,7 @@ public class MongoDBDeviceMapper {
 				a.setName(name);
 				device.addActuator(a);
 			}
-		}
-		device.setUri((String) obj.get("uri"));
+		};
 		return device;
 	}
 	

@@ -15,6 +15,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 import com.thing.api.model.Device;
 import com.thing.api.model.DeviceDAO;
+import com.thing.api.model.DeviceMapper;
 import com.thing.api.model.GeoPoint;
 
 public class MongoDBDeviceDAO implements DeviceDAO {
@@ -30,7 +31,14 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	private DB deviceDatabase;
 	private DBCollection devices;
 	
+	private DeviceMapper<DBObject> mapper;
+	
 	public MongoDBDeviceDAO() {
+		// initialise an object mapper
+		mapper = new DeviceMapper<DBObject>();
+		mapper.setMapperStrategy(new MongoDBDeviceMapperStrategy());
+		
+		// initialise database client
 		try {
 			client = new MongoClient(DATABASE_HOST);
 			deviceDatabase = client.getDB(DATABASE_NAME);
@@ -50,8 +58,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	}
 	
 	public void insert(Device device) {
-		MongoDBDeviceMapper mapper = new MongoDBDeviceMapper();
-		BasicDBObject doc = (BasicDBObject) mapper.toBson(device);
+		BasicDBObject doc = (BasicDBObject) mapper.serialize(device);
 		log.log(Level.INFO, "document: " + doc);
 		devices.insert(doc);
 		log.log(Level.INFO, "Inserted device " + device.getSessionId() + " to the database.");
@@ -81,8 +88,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		doc.put("sessionId", id);
 		DBObject result = devices.findOne(doc);
 		if(result !=  null) {
-			MongoDBDeviceMapper mapper = new MongoDBDeviceMapper();
-			Device device = mapper.fromBson(result);
+			Device device = mapper.deserialize(result);
 			return device;
 		} else {
 			log.log(Level.INFO, "Device with given id doesn't exist in collection");
@@ -129,9 +135,8 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	public List<Device> findByQuery(BasicDBObject query) {
 		List<Device> matchingDevices = new ArrayList<Device>();
 		DBCursor cursor = devices.find(query);
-		MongoDBDeviceMapper mapper = new MongoDBDeviceMapper();
 		while(cursor.hasNext()) {
-			Device device = mapper.fromBson(cursor.next());
+			Device device = mapper.deserialize(cursor.next());
 			matchingDevices.add(device);
 		}
 		return matchingDevices;
