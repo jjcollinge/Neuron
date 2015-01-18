@@ -13,7 +13,6 @@ import com.thing.api.messaging.Parcel;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
 import com.thing.connectors.impl.MqttConnector;
-import com.thing.sessions.SessionManager;
 
 public class RegistrationManager extends RequestResponseController implements
 		MessageEventListener, Service {
@@ -45,8 +44,6 @@ public class RegistrationManager extends RequestResponseController implements
 		connectors.put("MQTT", new MqttConnector());
 
 		for (BaseConnector connector : connectors.values()) {
-			SessionManager.getInstance().getMonitor()
-					.registerConnector(connector);
 			connector.connect("localhost", "1883");
 			connector.addMessageEventListener(this);
 			connector.subscribe(this.REGISTRATION_TOPIC, 2);

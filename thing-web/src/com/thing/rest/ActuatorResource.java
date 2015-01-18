@@ -9,6 +9,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.servlet.internal.ResponseWriter;
+
 import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
 import com.thing.storage.MongoDBDeviceDAO;

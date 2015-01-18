@@ -1,6 +1,8 @@
 package com.thing.connectors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.thing.api.model.Session;
 
@@ -43,6 +45,21 @@ public class ConnectorFactory {
 			}
 		}
 		return null;
+	}
+	
+	public List<BaseConnector> getConnectorList() {
+		
+		ArrayList<BaseConnector> connectors = new ArrayList<BaseConnector>();
+		for(String type : types.keySet()) {
+			try {
+				connectors.add((BaseConnector) types.get(type).newInstance());
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return connectors;
 	}
 	
 }

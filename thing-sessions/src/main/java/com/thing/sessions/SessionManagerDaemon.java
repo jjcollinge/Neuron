@@ -10,6 +10,7 @@ import com.thing.api.messaging.ParcelPacker;
 import com.thing.api.model.Session;
 import com.thing.connectors.BaseConnector;
 import com.thing.connectors.ConnectorFactory;
+import com.thing.storage.MongoDBDeviceDAO;
 import com.thing.storage.MongoDBSessionDAO;
 
 public class SessionManagerDaemon implements Runnable {
@@ -18,23 +19,28 @@ public class SessionManagerDaemon implements Runnable {
 			.getName());
 	
 	private HashMap<Integer, Session> activeSessions;
-	private MongoDBSessionDAO dao;
+	private MongoDBSessionDAO sessionDao;
+	private MongoDBDeviceDAO deviceDao;
 	
 	public SessionManagerDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
-		dao = new MongoDBSessionDAO();
+		sessionDao = new MongoDBSessionDAO();
+		deviceDao = new MongoDBDeviceDAO();
 	}
 	
 	public void addSession(Session session) {
 		log.log(Level.INFO, "Adding new session " + session.getId());
 		activeSessions.put(session.getId(), session);
-		dao.insert(session);
+		sessionDao.insert(session);
 	}
 	
 	public void removeSession(Integer sessionId) {
 		log.log(Level.INFO, "Removing session " + sessionId);
 		activeSessions.remove(sessionId);
-		dao.remove(sessionId);
+		// remove the device from both collections
+		// TODO: This should be handled better
+		sessionDao.remove(sessionId);
+		deviceDao.remove(sessionId);
 	}
 	
 	public Session getSession(Integer sessionId) {

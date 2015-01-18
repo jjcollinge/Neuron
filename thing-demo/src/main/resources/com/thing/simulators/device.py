@@ -76,7 +76,7 @@ def on_message(client, userdata, msg):
 	# Request for ping response to check activity
 	elif(msg.topic == "devices/"+device.uuid+"/ping/request"):
 		print("Responding to PING")
-		client.publish("devices/"+device.uuid+"/ping/response", "{\"id\":"+device.uuid+"}")
+		client.publish("devices/"+device.uuid+"/ping/response", "{\"sessionId\":"+device.uuid+"}")
 
 	# Request for sensor operation
 	elif("sensor" in msg.topic):
@@ -91,8 +91,10 @@ def on_message(client, userdata, msg):
 					client.publish("devices/"+device.uuid+"/sensors/"+sensor.uuid+"/response", sensor.value)
 					value = value + 0.2
 				elif(request == "START_STREAM"):
+					print("Staring device stream");
 					sensor.streaming = True;
 				elif(request == "STOP_STREAM"):
+					print("Stopping device stream");
 					sensor.streaming = False;
 
 	# Request for actuator operation
