@@ -9,11 +9,10 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.servlet.internal.ResponseWriter;
-
 import com.thing.api.model.Actuator;
 import com.thing.api.model.Device;
-import com.thing.storage.MongoDBDeviceDAO;
+import com.thing.api.model.DeviceDAO;
+import com.thing.storage.DeviceDAOFactory;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,13 +35,16 @@ public class ActuatorResource {
 
 	}
 	
-	// GET: /devices/0/actuators/0
+	/**
+	 * GET: /devices/0/actuators/0
+	 * @return
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Actuator getActuator() {
 		
 		System.out.println("Request for device");
-		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO("mongodb");
 		Device device = dao.get(Integer.valueOf(deviceId));
 		if(device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");
@@ -51,10 +53,15 @@ public class ActuatorResource {
 		
 	}
 	
-	public Response invokeOperation(String data) {
+	/**
+	 * Sends a one way message to the device
+	 * @param option
+	 * @return
+	 */
+	public Response invokeOperation(String option) {
 		
-		DeviceProxy controller = new DeviceProxy(Integer.valueOf(deviceId));
-		controller.invokeOperationOnActuator(Integer.valueOf(actuatorId), data);
+		DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
+		proxy.operateActuator(Integer.valueOf(actuatorId), option);
 		
 		// get POST data and call invoke on deviceController
 		return null;
