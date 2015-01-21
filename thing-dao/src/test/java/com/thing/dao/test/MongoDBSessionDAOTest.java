@@ -97,4 +97,19 @@ public class MongoDBSessionDAOTest {
 		assertEquals("Formats should be equal", resultSession.getProperty("format"), testFormat);
 		
 	}
+	
+	@Test
+	public void testUpdatingUnknownField() {
+		
+		MongoDBSessionDAO dao = new MongoDBSessionDAO();
+		dao.setCollection("testSessions");
+		dao.clear();
+		
+		Session testSession = new Session(0);
+		testSession.addProperty("protocol", "MQTT");
+		testSession.addProperty("format", "JSON");
+		dao.insert(testSession);
+		
+		assertFalse(dao.update(0, "colour", "blue"));
+	}
 }

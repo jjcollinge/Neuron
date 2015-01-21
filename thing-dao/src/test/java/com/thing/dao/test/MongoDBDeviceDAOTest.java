@@ -153,4 +153,59 @@ public class MongoDBDeviceDAOTest {
 		
 		dao.clear();
 	}
+	
+	@Test
+	public void testUpdateDevice() {
+		
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		dao.setCollection("testDevices");
+		dao.clear();
+		
+		Device testDevice = new Device();
+		testDevice.setSessionId(0);
+		testDevice.setModel("test");
+		testDevice.setManufacurer("test");
+		testDevice.setGeo(10.0, 10.0);
+		
+		Sensor testSensor = new Sensor();
+		testSensor.setId(0);
+		testSensor.setSense("test");
+		testSensor.setType("test");
+		testSensor.setUnit("test");
+		testSensor.setValue("test");
+		
+		testDevice.addSensor(testSensor);	
+		dao.insert(testDevice);
+		assertTrue(dao.update(0, "model", "Rhino"));
+		Device result = dao.get(0);
+		assertEquals(result.getModel(), "Rhino");
+		
+	}
+	
+	@Test
+	public void testUpdateOnUnknownField() {
+		
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		dao.setCollection("testDevices");
+		dao.clear();
+		
+		Device testDevice = new Device();
+		testDevice.setSessionId(0);
+		testDevice.setModel("test");
+		testDevice.setManufacurer("test");
+		testDevice.setGeo(10.0, 10.0);
+		
+		Sensor testSensor = new Sensor();
+		testSensor.setId(0);
+		testSensor.setSense("test");
+		testSensor.setType("test");
+		testSensor.setUnit("test");
+		testSensor.setValue("test");
+		
+		testDevice.addSensor(testSensor);	
+		dao.insert(testDevice);
+		assertFalse(dao.update(0, "colour", "blue"));
+		
+	}
+	
 }

@@ -76,7 +76,7 @@ public class MongoDBSessionDAO implements SessionDAO {
 		BasicDBObject doc = new BasicDBObject();
 		doc.append("$set", new BasicDBObject().append(field, value));
 		
-		BasicDBObject query = new BasicDBObject().append("id", key);
+		BasicDBObject query = new BasicDBObject().append("id", key).append(field, new BasicDBObject("$exists", true));
 		WriteResult result = sessions.update(query, doc);
 		if(result.getN() > 0) {
 			log.log(Level.INFO, "Successfully updated " + result.getN() + " documents");

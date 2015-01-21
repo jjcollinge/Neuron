@@ -1,21 +1,19 @@
 package com.thing.api.messaging;
 
-/**
- * Name: Message
- * ---------------------------------------------------------------
- * Desc: The Message class is responsible for providing a standard
- * 		 internal message. This should be specialised for different
- * 		 types of messages.
- * 
- * @author jcollinge
- *
- */
 public class Message {
 
 	private String payload;
 	private String format;
 	private String protocol;
 	
+	/**
+	 * The Message class is responsible for providing a standard
+	 * internal message. This should be specialised for different
+	 * types of messages.
+	 * @param payload
+	 * @param format
+	 * @param protocol
+	 */
 	public Message(String payload, String format, String protocol) {
 		this.payload = payload;
 		this.format = format;

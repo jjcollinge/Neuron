@@ -22,19 +22,11 @@ public class RegistrationController extends RequestResponseController implements
 
 	private final String REGISTRATION_TOPIC = "register";
 	private HashMap<String, Connector> connectors;
-	private static RegistrationController instance;
 
 	// Singleton, each instance of the middleware only requires on instance of this service
 	
-	private RegistrationController() {
+	public RegistrationController() {
 		connectors = new HashMap<String, Connector>();
-	}
-
-	public static RegistrationController getInstance() {
-		if (instance == null) {
-			instance = new RegistrationController();
-		}
-		return instance;
 	}
 
 	/**

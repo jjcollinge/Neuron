@@ -15,7 +15,7 @@ public class App {
 		ServiceContainer container = new ServiceContainer();
 		
 		container.addService(SessionController.getInstance());
-		container.addService(RegistrationController.getInstance());
+		container.addService(new RegistrationController());
 		
 		container.startServices();
 		

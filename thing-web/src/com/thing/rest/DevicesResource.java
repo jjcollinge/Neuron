@@ -176,6 +176,7 @@ public class DevicesResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ActuatorsResource getDeviceActuators(@PathParam("device") String id) {
+		log.log(Level.INFO, "Get request on resource: devices/" + id + "/actuators");
 		return new ActuatorsResource(uriInfo, request, id);
 	}
 
@@ -191,6 +192,7 @@ public class DevicesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ActuatorResource getActuator(@PathParam("device") String id,
 			@PathParam("actuatorId") String sid) {
+		log.log(Level.INFO, "Get request on resource: devices/" + id + "/actuators/" + sid);
 		return new ActuatorResource(uriInfo, request, id, sid);
 	}
 
@@ -207,8 +209,11 @@ public class DevicesResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response operateActuator(@PathParam("device") String id,
 			@PathParam("actuatorId") String sid, String optionJson) {
+		log.log(Level.INFO, "Post request on resource: devices/" + id + "/actuators/" + sid);
+		
 		ActuatorResource actuator = new ActuatorResource(uriInfo, request, id,
 				sid);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode option = null;
 		try {

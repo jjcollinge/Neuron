@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -79,8 +80,18 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	}
 	
 	public boolean update(Integer key, String field, Object value) {
-		//TODO
-		return true;
+		BasicDBObject doc = new BasicDBObject();
+		doc.append("$set", new BasicDBObject().append(field, value));
+		
+		BasicDBObject query = new BasicDBObject().append("sessionId", key).append(field, new BasicDBObject("$exists", true));
+		WriteResult result = devices.update(query, doc);
+		if(result.getN() > 0) {
+			log.log(Level.INFO, "Successfully updated " + result.getN() + " documents");
+			return true;
+		} else {
+			log.log(Level.INFO, "Couldn't update document");
+			return false;
+		}
 	}
 
 	public Device get(Integer id) {
