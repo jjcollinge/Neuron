@@ -218,10 +218,12 @@ public class DevicesResource {
 		JsonNode option = null;
 		try {
 			option = mapper.readTree(optionJson);
+			JsonNode node = option.get("data");
+			if(node != null)
+				actuator.invokeOperation(node.asText());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, "Dropping wrong format or corrupted POST to actuator");
 		}
-		actuator.invokeOperation(option.get("data").asText());
 		return null;
 	}
 }

@@ -1,6 +1,6 @@
 package com.thing.api.components;
 
-public class IdGenerator {
+public class SessionIdGenerator {
 
 	private static int counter = 0;
 

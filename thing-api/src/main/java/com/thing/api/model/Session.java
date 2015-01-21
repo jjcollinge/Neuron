@@ -2,7 +2,7 @@ package com.thing.api.model;
 
 import java.util.HashMap;
 
-import com.thing.api.components.IdGenerator;
+import com.thing.api.components.SessionIdGenerator;
 
 
 public class Session {
@@ -13,7 +13,7 @@ public class Session {
 	
 	public Session() {
 		properties = new HashMap<String, Object>();
-		id = IdGenerator.generateId();
+		id = SessionIdGenerator.generateId();
 		timestamp = System.currentTimeMillis() / 1000L;
 	}
 	public Session(Integer id) {

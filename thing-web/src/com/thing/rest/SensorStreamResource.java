@@ -102,7 +102,8 @@ public class SensorStreamResource implements DataEventListener {
 			proxy.setup(Integer.valueOf(deviceId).intValue());
 			proxy.addDataEventListener(this);
 			proxy.stopSensorStreaming(id);
-			streaming = true;
+			streaming = false;
+			log.log(Level.INFO, "Stopped sensor streaming");
 		}
 	}
 
@@ -113,5 +114,6 @@ public class SensorStreamResource implements DataEventListener {
 	public void onDataArrived(DataEvent dataEvent) {
 		String data = dataEvent.getData();
 		BROADCASTER.broadcast(new OutboundEvent.Builder().data(String.class, data).build());
+		log.log(Level.INFO, "Sending new SSE data event");
 	}
 }

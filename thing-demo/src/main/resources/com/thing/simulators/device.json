@@ -10,8 +10,7 @@
             "name": "Temperature sensor",
             "sense": "temperature",
             "unit": "celcius",
-            "type": "float",
-            "value": "0.0"
+            "type": "float"
         }
     ],
     "actuators": [

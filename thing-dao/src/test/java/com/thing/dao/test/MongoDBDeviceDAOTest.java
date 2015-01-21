@@ -31,7 +31,6 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setSense("test");
 		testSensor.setType("test");
 		testSensor.setUnit("test");
-		testSensor.setValue("test");
 		
 		Actuator testActuator = new Actuator();
 		testActuator.setId(0);
@@ -67,7 +66,6 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setSense("test");
 		testSensor.setType("test");
 		testSensor.setUnit("test");
-		testSensor.setValue("test");
 		
 		testDevice.addSensor(testSensor);
 		
@@ -172,7 +170,6 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setSense("test");
 		testSensor.setType("test");
 		testSensor.setUnit("test");
-		testSensor.setValue("test");
 		
 		testDevice.addSensor(testSensor);	
 		dao.insert(testDevice);
@@ -200,7 +197,6 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setSense("test");
 		testSensor.setType("test");
 		testSensor.setUnit("test");
-		testSensor.setValue("test");
 		
 		testDevice.addSensor(testSensor);	
 		dao.insert(testDevice);

@@ -160,7 +160,7 @@ while True:
 	for sensor in device.sensors:
 		if(sensor.streaming):
 			sensor.value = sensor.value + 0.1
-			client.publish("devices/"+device.uuid+"/sensors/"+sensor.uuid+"/stream/response", sensor.value)
+			client.publish("devices/"+str(device.uuid)+"/sensors/"+str(sensor.uuid)+"/stream/response", "{ \"sessionId\":"+str(device.uuid)+", \"data\": "+str(sensor.value)+"}")
 	
 	# Delay cycle
 	time.sleep(10)

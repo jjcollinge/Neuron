@@ -61,6 +61,7 @@ public class ActuatorResource {
 	public Response invokeOperation(String option) {
 		
 		DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
+		proxy.setup(Integer.valueOf(deviceId));
 		proxy.operateActuator(Integer.valueOf(actuatorId), option);
 		
 		// get POST data and call invoke on deviceController

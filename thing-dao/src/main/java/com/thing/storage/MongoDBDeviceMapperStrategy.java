@@ -26,7 +26,6 @@ public class MongoDBDeviceMapperStrategy implements ObjectMapperStrategy<Device,
 		map.put("sessionId", device.getSessionId());
 		map.put("manufacturer", device.getManufacturer());
 		map.put("model", device.getModel());
-		map.put("uri", device.getUri());
 		if(device.getGeo() != null) {
 			Double[] loc = {device.getGeo().getLongitude(), device.getGeo().getLatitude()};
 			map.put("loc", loc);
@@ -54,7 +53,6 @@ public class MongoDBDeviceMapperStrategy implements ObjectMapperStrategy<Device,
 		device.setSessionId((Integer) obj.get("sessionId"));
 		device.setManufacurer((String) obj.get("manufacturer"));
 		device.setModel((String) obj.get("model"));
-		device.setUri((String) obj.get("uri"));
 		if(obj.get("loc") != null) {
 			BasicDBList coordinates =  (BasicDBList) obj.get("loc");
 			double lon = (Double) coordinates.get(0);
@@ -69,7 +67,6 @@ public class MongoDBDeviceMapperStrategy implements ObjectMapperStrategy<Device,
 				String name = (String) dbSensor.get("name");
 				String sense = (String) dbSensor.get("sense");
 				String unit = (String) dbSensor.get("unit");
-				String value = (String) dbSensor.get("value");
 				String type = (String) dbSensor.get("type");
 				Sensor s = new Sensor();
 				s.setId(sensorId);
@@ -77,7 +74,6 @@ public class MongoDBDeviceMapperStrategy implements ObjectMapperStrategy<Device,
 				s.setSense(sense);
 				s.setType(type);
 				s.setUnit(unit);
-				s.setValue(value);
 				device.addSensor(s);
 			}
 		}

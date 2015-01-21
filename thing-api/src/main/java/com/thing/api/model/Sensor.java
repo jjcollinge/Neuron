@@ -1,25 +1,12 @@
 package com.thing.api.model;
 
-import java.util.logging.Logger;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-/**
- * Name: Sensor 
- * ---------------------------------------------------------------
- * Desc: This class models an in system sensor
- * 
- * @author jcollinge
- *
- */
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Sensor {
 
-	private static final Logger log = Logger.getLogger(Sensor.class.getName());
-
 	private int id = 0;
-	private String value;
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("sense")
@@ -51,11 +38,7 @@ public class Sensor {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
+
 	// Getters
 	public int getId() {
 		return this.id;
@@ -63,10 +46,6 @@ public class Sensor {
 	
 	public String getName() {
 		return this.name;
-	}
-
-	public String getValue() {
-		return this.value;
 	}
 
 	public String getSense() {

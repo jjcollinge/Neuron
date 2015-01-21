@@ -13,8 +13,6 @@ public class Device {
 	private String manufacturer;
 	@JsonProperty("model")
 	private String model;
-	@JsonProperty("uri")
-	private String uri;
 	@JsonProperty("geo")
 	private GeoPoint geo;
 	@JsonProperty("sensors")
@@ -25,10 +23,6 @@ public class Device {
 	// Setters
 	public void setSessionId(int id) {
 		this.sessionId = id;
-	}
-
-	public void setUri(String uri) {
-		this.uri = uri;
 	}
 
 	public void setManufacurer(String manufacturer) {
@@ -71,10 +65,6 @@ public class Device {
 	// Getters
 	public int getSessionId() {
 		return this.sessionId;
-	}
-
-	public String getUri() {
-		return this.uri;
 	}
 
 	public String getManufacturer() {
