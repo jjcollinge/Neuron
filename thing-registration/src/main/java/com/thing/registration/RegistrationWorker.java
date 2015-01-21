@@ -3,8 +3,6 @@ package com.thing.registration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import com.thing.api.components.RequestResponseWorker;
 import com.thing.api.messaging.Message;
 import com.thing.api.messaging.ParcelPacker;
@@ -19,7 +17,6 @@ public class RegistrationWorker extends RequestResponseWorker {
 	private static final Logger log = Logger.getLogger(RegistrationWorker.class
 			.getName());
 
-	private RegistrationValidator validator;
 	private Message request;
 
 	/**
@@ -29,7 +26,6 @@ public class RegistrationWorker extends RequestResponseWorker {
 	 */
 	public RegistrationWorker(Message message) {
 		request = message;
-		validator = new RegistrationValidator();
 	}
 
 	/**
@@ -41,44 +37,35 @@ public class RegistrationWorker extends RequestResponseWorker {
 		String format = request.getFormat();
 		String protocol = request.getProtocol();
 
-		if (format.equals("JSON")) {
+		RegistrationFactory factory = new RegistrationFactory();
+		Registration registration = factory.getRegistration(format, payload);
+		
+		if(registration == null) {
+			log.log(Level.INFO, "Dropping corrupt registration request");
+			return;
+		}
+		
+		// Create model
+		Session session = new Session();
+		session.addProperty("protocol", protocol);
+		session.addProperty("format", format);
+		Device device = registration.getDevice();
+		device.setSessionId(session.getId());
 
-			// validate against schema
-			if (!validator.isValid(payload))
-				return;
+		// Track device activity
+		SessionController.getInstance().addSession(session);
 
-			// Map the registration request onto a POJO
-			ObjectMapper mapper = new ObjectMapper();
-			Registration registration = null;
-			
-			try {
-				registration = mapper.readValue(payload, Registration.class);
-			} catch (Exception e) {
-				log.log(Level.INFO, "Dropped corrupt registration", e);
-				return;
-			} 
+		// Store device
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		dao.insert(device);
 
-			// Create model
-			Session session = new Session();
-			session.addProperty("protocol", protocol);
-			session.addProperty("format", format);
-			Device device = registration.getDevice();
-			device.setSessionId(session.getId());
-
-			// Track device activity
-			SessionController.getInstance().addSession(session);
-
-			// Store device
-			MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
-			dao.insert(device);
-
-			// Create response
-			String returnTopic = registration.getReturnAddress();
-			Message res = new Message(String.valueOf(device.getSessionId()),
-					format, protocol);
-			
-			// Set response
-			setResponse(ParcelPacker.makeParcel(res, returnTopic));
-		} // else other supported formats (XML)
+		// Create response
+		String returnTopic = registration.getReturnAddress();
+		Message res = new Message(String.valueOf(device.getSessionId()),
+				format, protocol);
+		
+		// Set response
+		setResponse(ParcelPacker.makeParcel(res, returnTopic));
+		log.log(Level.INFO, "Successfully registered device");
 	}
 }
