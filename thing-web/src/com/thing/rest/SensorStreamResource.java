@@ -33,6 +33,7 @@ public class SensorStreamResource implements DataEventListener {
 	private static final SseBroadcaster BROADCASTER = new SseBroadcaster();
 	private EventOutput eventOutput;
 	private boolean streaming;
+	private DeviceProxy proxy;
 
 	public SensorStreamResource(UriInfo uriInfo, Request request,
 			String deviceId, String sensorId) {
@@ -41,9 +42,7 @@ public class SensorStreamResource implements DataEventListener {
 		this.request = request;
 		this.deviceId = deviceId;
 		this.sensorId = sensorId;
-		
-		streaming = false;
-
+		this.streaming = false;
 	}
 
 	/**
@@ -53,14 +52,12 @@ public class SensorStreamResource implements DataEventListener {
 	@GET
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getConnection() {
-		if(!streaming) {
-			eventOutput = new EventOutput();
-			startSensorStreaming();
-			BROADCASTER.add(eventOutput);
-			return eventOutput;
-		}
-		log.log(Level.INFO, "Already connected and streaming");
-		return null;
+
+		eventOutput = new EventOutput();
+		startSensorStreaming();
+		BROADCASTER.add(eventOutput);
+		log.log(Level.INFO, "Added eventOutput to broadcaster");
+		return eventOutput;
 	}
 	
 	/**
@@ -68,6 +65,7 @@ public class SensorStreamResource implements DataEventListener {
 	 */
 	public void finalize() {
 		try {
+			BROADCASTER.remove(eventOutput);
 			eventOutput.close();
 		} catch (IOException e) {
 			log.log(Level.INFO, "Couldn't close the SSE connection");
@@ -80,12 +78,14 @@ public class SensorStreamResource implements DataEventListener {
 	public void startSensorStreaming() {
 		
 		if(!streaming) {
+			// Not streaming so tell device to start publishing
 			int id = Integer.valueOf(sensorId);
-			DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
+			proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
 			proxy.setup(Integer.valueOf(deviceId).intValue());
 			proxy.addDataEventListener(this);
 			proxy.startSensorStreaming(id);
 			streaming = true;
+			log.log(Level.INFO, "Sensor is now streaming");
 		} else {
 			log.log(Level.INFO, "Sensor is already streaming");
 		}
@@ -97,12 +97,20 @@ public class SensorStreamResource implements DataEventListener {
 	public void stopSensorStreaming() {
 		
 		if(streaming) {
+			// Sensor is publishing so tell it to stop
 			int id = Integer.valueOf(sensorId);
-			DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
-			proxy.setup(Integer.valueOf(deviceId).intValue());
-			proxy.addDataEventListener(this);
 			proxy.stopSensorStreaming(id);
+			proxy.removeDataEventListener(this);
 			streaming = false;
+			try {
+				if(eventOutput != null) {
+					BROADCASTER.remove(eventOutput);
+					eventOutput.close();
+					log.log(Level.INFO, "Removed eventOuput from broadcaster and closed stream");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			log.log(Level.INFO, "Stopped sensor streaming");
 		}
 	}

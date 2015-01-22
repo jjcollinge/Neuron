@@ -42,8 +42,8 @@ public class DevicesResource {
 	@Context
 	Request request;
 
-	private static final Logger log = Logger
-			.getLogger(DevicesResource.class.getName());
+	private static final Logger log = Logger.getLogger(DevicesResource.class
+			.getName());
 
 	private AbstractDAOFactory deviceDaoFactory;
 	private DeviceDAO dao;
@@ -105,7 +105,8 @@ public class DevicesResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public SensorsResource getDeviceSensors(@PathParam("device") String id) {
-		log.log(Level.INFO, "Get request for resource: devices/" + id + "/sensors");
+		log.log(Level.INFO, "Get request for resource: devices/" + id
+				+ "/sensors");
 		return new SensorsResource(uriInfo, request, id);
 	}
 
@@ -121,7 +122,8 @@ public class DevicesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public SensorResource getSensor(@PathParam("device") String id,
 			@PathParam("sensorId") String sid) {
-		log.log(Level.INFO, "Get request for resource: devices/" + id + "/sensors" + sid);
+		log.log(Level.INFO, "Get request for resource: devices/" + id
+				+ "/sensors" + sid);
 		return new SensorResource(uriInfo, request, id, sid);
 	}
 
@@ -137,10 +139,16 @@ public class DevicesResource {
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getSensorStream(@PathParam("device") String id,
 			@PathParam("sensorId") String sid) {
-		SensorStreamResource SSR = new SensorStreamResource(uriInfo, request,
-				id, sid);
-		log.log(Level.INFO, "Get request for resource: devices/" + id + "/sensors/" + sid + "/stream");
-		resources.addResource("devices/" + id + "/sensors/" + sid, SSR);
+		String resourceURI = "devices/"+id+"/sensors/"+sid;
+		SensorStreamResource SSR = (SensorStreamResource) resources.getResource(resourceURI);
+		if(SSR != null) {
+			log.log(Level.INFO, "Resource already exists");
+		} else {
+			log.log(Level.INFO, "No existing resource, creating a new one");
+			SSR = new SensorStreamResource(uriInfo, request, id, sid);
+			resources.addResource(resourceURI, SSR);
+		}
+		SSR.startSensorStreaming(); //Throwing
 		return SSR.getConnection();
 	}
 
@@ -155,15 +163,14 @@ public class DevicesResource {
 	@POST
 	public Response stopSensorStream(@PathParam("device") String id,
 			@PathParam("sensorId") String sid) {
-		log.log(Level.INFO, "Post request on resource: devices/" + id + "/sensors/" + sid + "/stream");
-		Object res = resources.getResource("devices/" + id + "/sensors/" + sid);
-		SensorStreamResource SSR = null;
-		if(res != null) {
-			SSR = (SensorStreamResource) res;
-			if(SSR != null)
-				SSR.stopSensorStreaming();
+		String resourceURI = "devices/"+id+"/sensors/"+sid;
+		SensorStreamResource SSR = (SensorStreamResource) resources.getResource(resourceURI);
+		if(SSR != null) {
+			SSR.stopSensorStreaming();
+		} else {
+			log.log(Level.INFO, "Failed to stop sensor as resource doesn't exist");
 		}
-		return null;
+		return Response.ok().build();
 	}
 
 	/**
@@ -176,7 +183,8 @@ public class DevicesResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ActuatorsResource getDeviceActuators(@PathParam("device") String id) {
-		log.log(Level.INFO, "Get request on resource: devices/" + id + "/actuators");
+		log.log(Level.INFO, "Get request on resource: devices/" + id
+				+ "/actuators");
 		return new ActuatorsResource(uriInfo, request, id);
 	}
 
@@ -192,7 +200,8 @@ public class DevicesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ActuatorResource getActuator(@PathParam("device") String id,
 			@PathParam("actuatorId") String sid) {
-		log.log(Level.INFO, "Get request on resource: devices/" + id + "/actuators/" + sid);
+		log.log(Level.INFO, "Get request on resource: devices/" + id
+				+ "/actuators/" + sid);
 		return new ActuatorResource(uriInfo, request, id, sid);
 	}
 
@@ -209,21 +218,23 @@ public class DevicesResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response operateActuator(@PathParam("device") String id,
 			@PathParam("actuatorId") String sid, String optionJson) {
-		log.log(Level.INFO, "Post request on resource: devices/" + id + "/actuators/" + sid);
-		
+		log.log(Level.INFO, "Post request on resource: devices/" + id
+				+ "/actuators/" + sid);
+
 		ActuatorResource actuator = new ActuatorResource(uriInfo, request, id,
 				sid);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode option = null;
 		try {
 			option = mapper.readTree(optionJson);
 			JsonNode node = option.get("data");
-			if(node != null)
+			if (node != null)
 				actuator.invokeOperation(node.asText());
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Dropping wrong format or corrupted POST to actuator");
+			log.log(Level.WARNING,
+					"Dropping wrong format or corrupted POST to actuator");
 		}
-		return null;
+		return Response.ok().build();
 	}
 }
