@@ -1,8 +1,14 @@
 package com.thing.api.components;
 
 import java.util.LinkedHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServiceContainer {
+	
+	private static final Logger log = Logger.getLogger(ServiceContainer.class
+			.getName());
+	
 	LinkedHashMap<Service, Boolean> services;
 	boolean running;
 	
@@ -22,12 +28,12 @@ public class ServiceContainer {
 	}
 	
 	public void startServices() {
-		running = true;
 		for(Service service : services.keySet()) {
 			service.start();
 			services.put(service, true);
 		}
-		System.out.println(this);
+		log.log(Level.INFO, this.toString());
+		running = true;
 	}
 	
 	public void stopServices() {
@@ -35,8 +41,8 @@ public class ServiceContainer {
 			service.stop();
 			services.put(service, false);
 		}
+		log.log(Level.INFO, this.toString());
 		running = false;
-		System.out.println(this);
 	}
 	
 	public String toString() {

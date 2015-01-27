@@ -10,17 +10,18 @@ public class DeviceDAOFactory extends AbstractDAOFactory {
 	 * Returns the requested type of device dao
 	 */
 	@Override
-	public DeviceDAO getDeviceDAO(String type) {
+	public DeviceDAO getDeviceDAO(String type, String dbhost, String dbname) {
 		
 		DeviceDAO dao = null;
 		if(type.equalsIgnoreCase("MONGODB")) {
 			dao = new MongoDBDeviceDAO();
+			dao.initialise(dbhost, dbname);
 		}
 		return dao;
 	}
 
 	@Override
-	public SessionDAO getSessionDAO(String type) {
+	public SessionDAO getSessionDAO(String type, String dbhost, String dbname) {
 		// TODO Auto-generated method stub
 		return null;
 	}

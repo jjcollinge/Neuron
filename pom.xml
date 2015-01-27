@@ -11,7 +11,7 @@
 		<module>thing-dao</module>
 		<module>thing-registration</module>
 		<module>thing-messaging</module>
-		<module>thing-demo</module>
+		<module>thing-app</module>
 		<module>thing-sessions</module>
 	</modules>
 </project>

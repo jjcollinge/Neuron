@@ -8,16 +8,19 @@ import com.thing.connectors.ConnectorFactory;
 
 public class ConnectorFactoryImpl implements ConnectorFactory {
 
+	public static String MQTT_SERVER_HOSTNAME;
+	public static int MQTT_SERVER_PORT;
+	
 	/**
 	 * Create and return a new Connector of the desired protocol
 	 */
 	public Connector getConnector(String protocol) {
 	
 		Connector connector = null;
-		if(protocol.equals("MQTT")) {
+		if(protocol.equalsIgnoreCase("MQTT")) {
 			connector = new Connector();
 			connector.setMessenger(new MqttMessenger());
-			connector.connect("localhost",  1883);
+			connector.connect(MQTT_SERVER_HOSTNAME,  MQTT_SERVER_PORT);
 		}
 
 		return connector;

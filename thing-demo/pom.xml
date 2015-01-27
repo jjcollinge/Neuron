@@ -5,7 +5,7 @@
     <artifactId>parent-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>thing-demo</artifactId>
+  <artifactId>thing-app</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>thing</groupId>

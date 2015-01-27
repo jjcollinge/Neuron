@@ -1,11 +1,12 @@
 package com.thing.registration.test;
 
+
 import org.junit.Test;
 
 import com.thing.api.messaging.Message;
 import com.thing.registration.RegistrationController;
 
-public class RegistrationWorkFlowTest {
+public class RegistrationTest {
 
 	@Test
 	public void testValidRegistrationRequest() {
@@ -36,7 +37,6 @@ public class RegistrationWorkFlowTest {
 						"}}";
 		Message request = new Message(payload, "JSON", "MQTT");
 		controller.handleRequest(request);
-		
 		
 	}
 

@@ -13,7 +13,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
-import com.thing.api.model.Device;
 import com.thing.api.model.Session;
 import com.thing.api.model.SessionDAO;
 import com.thing.api.model.SessionMapper;
@@ -23,17 +22,18 @@ public class MongoDBSessionDAO implements SessionDAO {
 	private static final Logger log = Logger.getLogger(MongoDBDeviceDAO.class
 			.getName());
 	
-	private final String DATABASE_HOST = "localhost";
-	private final String DATABASE_NAME = "database";
-	private final String DEVICE_COLLECTION = "sessions";
+	private static String DATABASE_HOST = "localhost";
+	private static String DATABASE_NAME = "database";
+	private static String DATABASE_COLLECTION = "sessions";
+
+	private SessionMapper<DBObject> mapper;
 	
 	private MongoClient client;
 	private DB sessionDatabase;
 	private DBCollection sessions;
-	
-	private SessionMapper<DBObject> mapper;
-	
+
 	public MongoDBSessionDAO() {
+		
 		// initialise an object mapper
 		mapper = new SessionMapper<DBObject>();
 		mapper.setMapperStrategy(new MongoDBSessionMapperStrategy());
@@ -42,12 +42,18 @@ public class MongoDBSessionDAO implements SessionDAO {
 		try {
 			client = new MongoClient(DATABASE_HOST);
 			sessionDatabase = client.getDB(DATABASE_NAME);
-			sessions = sessionDatabase.getCollection(DEVICE_COLLECTION);
+			sessions = sessionDatabase.getCollection(DATABASE_COLLECTION);
+			log.log(Level.INFO, "Setup up DAO");
 		} catch (UnknownHostException e) {
 			log.log(Level.INFO, "Failed to connect to database");
 		}
 	}
-
+	
+	public void initialise(String dbhost, String dbname) {
+		DATABASE_HOST = dbhost;
+		DATABASE_NAME = dbname;
+	}
+	
 	public void insert(Session session) {
 		BasicDBObject doc = (BasicDBObject) mapper.serialize(session);
 		sessions.insert(doc);

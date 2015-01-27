@@ -43,7 +43,6 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 		} catch (MqttException e) {
 			log.log(Level.WARNING, "Couldn't connect to Mqtt broker " + address);
 		}
-
 	}
 
 	/**
@@ -57,7 +56,6 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 		} catch (MqttException e) {
 			log.log(Level.WARNING, "Failed to disconnect from broker");
 		}
-
 	}
 
 
@@ -95,7 +93,6 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 		} catch (MqttException e) {
 			log.log(Level.SEVERE, "An exception has been thrown", e);
 		}
-
 	}
 
 	/**

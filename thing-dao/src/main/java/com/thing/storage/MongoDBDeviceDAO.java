@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -24,9 +23,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	private static final Logger log = Logger.getLogger(MongoDBDeviceDAO.class
 			.getName());
 	
-	private final String DATABASE_HOST = "localhost";
-	private final String DATABASE_NAME = "database";
-	private final String DEVICE_COLLECTION = "devices";
+	private static String DATABASE_COLLECTION = "devices";
+	private static String DATABASE_HOST = "localhost";
+	private static String DATABASE_NAME = "devices";
 	
 	private MongoClient client;
 	private DB deviceDatabase;
@@ -35,6 +34,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	private DeviceMapper<DBObject> mapper;
 	
 	public MongoDBDeviceDAO() {
+		
 		// initialise an object mapper
 		mapper = new DeviceMapper<DBObject>();
 		mapper.setMapperStrategy(new MongoDBDeviceMapperStrategy());
@@ -43,10 +43,15 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		try {
 			client = new MongoClient(DATABASE_HOST);
 			deviceDatabase = client.getDB(DATABASE_NAME);
-			devices = deviceDatabase.getCollection(DEVICE_COLLECTION);
+			devices = deviceDatabase.getCollection(DATABASE_COLLECTION);
 		} catch (UnknownHostException e) {
 			log.log(Level.INFO, "Failed to connect to database");
 		}
+	}
+	
+	public void initialise(String dbhost, String dbname) {
+		DATABASE_HOST = dbhost;
+		DATABASE_NAME = dbname;
 	}
 
 	public void finalize() {
