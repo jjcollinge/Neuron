@@ -2,7 +2,7 @@ package com.neuron.api.events;
 
 import java.util.EventObject;
 
-import com.neuron.api.messaging.Message;
+import com.neuron.api.data.Message;
 
 public class MessageEvent extends EventObject {
 

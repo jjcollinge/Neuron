@@ -1,4 +1,4 @@
-package com.neuron.connectors;
+package com.neuron.api.connectors;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.SessionDAO;
+import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.connectors.ConnectorFactoryImpl;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.MessageEvent;
-import com.neuron.connectors.ConnectorFactory;
-import com.neuron.connectors.ConnectorFactoryImpl;
 
 public class MqttDeviceProxy extends DeviceProxy {
 

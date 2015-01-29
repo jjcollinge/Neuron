@@ -12,11 +12,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.neuron.api.connectors.Messenger;
 import com.neuron.api.data.Context;
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.events.MessageEvent;
-import com.neuron.api.messaging.Message;
-import com.neuron.api.messaging.Parcel;
-import com.neuron.connectors.Messenger;
 
 public class MqttMessenger extends Messenger implements MqttCallback {
 

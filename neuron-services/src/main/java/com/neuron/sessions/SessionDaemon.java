@@ -6,11 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.connectors.Connector;
+import com.neuron.api.connectors.ConnectorFactoryImpl;
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.data.Session;
-import com.neuron.api.messaging.Message;
-import com.neuron.api.messaging.Parcel;
-import com.neuron.connectors.Connector;
-import com.neuron.connectors.ConnectorFactoryImpl;
 
 public class SessionDaemon implements Runnable {
 

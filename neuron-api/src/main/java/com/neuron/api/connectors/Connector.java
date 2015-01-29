@@ -1,7 +1,7 @@
-package com.neuron.connectors;
+package com.neuron.api.connectors;
 
+import com.neuron.api.data.Parcel;
 import com.neuron.api.events.MessageEventListener;
-import com.neuron.api.messaging.Parcel;
 
 public class Connector {
 

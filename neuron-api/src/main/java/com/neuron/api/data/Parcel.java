@@ -1,4 +1,4 @@
-package com.neuron.api.messaging;
+package com.neuron.api.data;
 
 public class Parcel {
 

@@ -6,14 +6,14 @@ import java.util.logging.Logger;
 
 import com.neuron.api.components.RequestResponseController;
 import com.neuron.api.components.services.Service;
+import com.neuron.api.connectors.Connector;
+import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.connectors.ConnectorFactoryImpl;
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.data.ServiceConfiguration;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
-import com.neuron.api.messaging.Message;
-import com.neuron.api.messaging.Parcel;
-import com.neuron.connectors.Connector;
-import com.neuron.connectors.ConnectorFactory;
-import com.neuron.connectors.ConnectorFactoryImpl;
 
 public class RegistrationController extends RequestResponseController implements
 		MessageEventListener, Service {

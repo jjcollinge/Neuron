@@ -9,9 +9,9 @@ import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Context;
 import com.neuron.api.data.Device;
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.data.Session;
-import com.neuron.api.messaging.Message;
-import com.neuron.api.messaging.Parcel;
 import com.neuron.sessions.SessionController;
 
 public class RegistrationWorker extends RequestResponseWorker {

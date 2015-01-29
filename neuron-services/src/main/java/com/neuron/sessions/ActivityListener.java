@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.neuron.api.connectors.Connector;
+import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.connectors.ConnectorFactoryImpl;
+import com.neuron.api.data.Message;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
 import com.neuron.api.events.MessageEventProducer;
-import com.neuron.api.messaging.Message;
-import com.neuron.connectors.Connector;
-import com.neuron.connectors.ConnectorFactory;
-import com.neuron.connectors.ConnectorFactoryImpl;
 
 public class ActivityListener extends MessageEventProducer implements
 		MessageEventListener {

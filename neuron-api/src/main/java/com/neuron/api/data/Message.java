@@ -1,6 +1,5 @@
-package com.neuron.api.messaging;
+package com.neuron.api.data;
 
-import com.neuron.api.data.Context;
 
 public class Message {
 

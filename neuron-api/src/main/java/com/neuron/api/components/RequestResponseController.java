@@ -3,9 +3,9 @@ package com.neuron.api.components;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.events.WorkCompleteEventListener;
-import com.neuron.api.messaging.Message;
-import com.neuron.api.messaging.Parcel;
 
 public abstract class RequestResponseController implements
 		WorkCompleteEventListener {

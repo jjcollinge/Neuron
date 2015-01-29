@@ -1,8 +1,8 @@
 package com.neuron.api.components;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.neuron.api.data.Parcel;
 import com.neuron.api.events.WorkCompleteEventListener;
-import com.neuron.api.messaging.Parcel;
 
 public abstract class RequestResponseWorker implements Runnable {
 

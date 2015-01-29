@@ -1,6 +1,6 @@
-package com.neuron.connectors;
+package com.neuron.api.connectors;
 
-import com.neuron.api.messaging.Parcel;
+import com.neuron.api.data.Parcel;
 
 public interface MessengerInterface {
 
