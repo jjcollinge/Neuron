@@ -2,6 +2,13 @@ package com.neuron.api.data;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+/**
+ * Provides a POJO representation of a geo location.
+ * Will be constructed by deserialization.
+ * NOTE: Currently only supports JSON deserialization.
+ * @author JC
+ * 
+ */
 public class GeoPoint {
 	
 	@JsonProperty("longitude")

@@ -2,6 +2,14 @@ package com.neuron.api.components.dal;
 
 import java.util.List;
 
+/**
+ * An interface to provide the minimum CRUD
+ * requirements of any DAO implementation.
+ * @author JC
+ *
+ * @param <T> Object type
+ * @param <K> Key type
+ */
 public interface DAO<T, K> {
 	
 	public void initialise(String dbhost, int dbport, String dbname);

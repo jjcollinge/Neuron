@@ -7,7 +7,6 @@ import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.services.Service;
-import com.neuron.api.data.ServiceConfiguration;
 import com.neuron.api.data.Session;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
@@ -51,11 +50,11 @@ public class SessionController implements Service, MessageEventListener {
 	 */
 
 	// =====================================================================
-	public void setup(ServiceConfiguration config) {
+	public void setup() {
 
 		AbstractDAOFactory deviceDAOFactory = DAOFactoryProducer
 				.getFactory("device");
-		DeviceDAO dao = deviceDAOFactory.getDeviceDAO(config.getDatabaseType());
+		DeviceDAO dao = deviceDAOFactory.getDeviceDAO();
 		daemonObject.setDeviceDAO(dao);
 
 	}

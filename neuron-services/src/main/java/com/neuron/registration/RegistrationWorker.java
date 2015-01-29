@@ -4,8 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.RequestResponseWorker;
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Context;
 import com.neuron.api.data.Device;
@@ -20,16 +18,16 @@ public class RegistrationWorker extends RequestResponseWorker {
 			.getName());
 
 	private Message request;
-	private String databaseType;
+	private DeviceDAO dao;
 
 	/**
 	 * Set any data that will be required to perform a 
 	 * successful run of the doWork method.
 	 * @param message
 	 */
-	public RegistrationWorker(Message message, String dbType) {
+	public RegistrationWorker(Message message, DeviceDAO deviceDao) {
 		request = message;
-		databaseType = dbType;
+		dao = deviceDao;
 	}
 
 	/**
@@ -63,8 +61,6 @@ public class RegistrationWorker extends RequestResponseWorker {
 		SessionController.getInstance().addSession(session);
 
 		// Store device
-		AbstractDAOFactory daoFactory = DAOFactoryProducer.getFactory("device");
-		DeviceDAO dao = daoFactory.getDeviceDAO(databaseType);
 		dao.insert(device);
 
 		// Create response

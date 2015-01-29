@@ -5,13 +5,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.RequestResponseController;
+import com.neuron.api.components.dal.AbstractDAOFactory;
+import com.neuron.api.components.dal.DAOFactoryProducer;
+import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.services.Service;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.connectors.ConnectorFactoryImpl;
 import com.neuron.api.data.Message;
 import com.neuron.api.data.Parcel;
-import com.neuron.api.data.ServiceConfiguration;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
 
@@ -24,7 +26,7 @@ public class RegistrationController extends RequestResponseController implements
 	private final String REGISTRATION_TOPIC = "register";
 	private HashMap<String, Connector> connectors;
 	private static RegistrationController instance;
-	private String databaseType;
+	private DeviceDAO dao;
 	
 	private RegistrationController() {
 		connectors = new HashMap<String, Connector>();
@@ -44,15 +46,16 @@ public class RegistrationController extends RequestResponseController implements
 	 */
 	
 	//=====================================================================
-	public void setup(ServiceConfiguration config) {
+	public void setup() {
 		
 		ConnectorFactory factory = new ConnectorFactoryImpl();
-		for(String connectorType : config.getConnectorTypes()) {
+		for(String connectorType : factory.getCatalogue()) {
 			Connector connector = factory.getConnector(connectorType);
 			connectors.put(connectorType, connector);
 		}
 		
-		databaseType = config.getDatabaseType();
+		AbstractDAOFactory daoFactory = DAOFactoryProducer.getFactory("device");
+		dao = daoFactory.getDeviceDAO();
 	}
 
 	public void start() {
@@ -81,7 +84,7 @@ public class RegistrationController extends RequestResponseController implements
 	 */
 	public synchronized void handleRequest(Message message) {
 		log.log(Level.INFO, "Handling registration request");
-		doWork(new RegistrationWorker(message, databaseType));
+		doWork(new RegistrationWorker(message, dao));
 	}
 
 	/**

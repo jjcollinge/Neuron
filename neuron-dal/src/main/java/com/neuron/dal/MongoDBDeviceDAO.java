@@ -18,6 +18,15 @@ import com.neuron.api.components.dal.DeviceMapper;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.GeoPoint;
 
+/**
+ * A MongoDB implementation of the DeviceDAO.
+ * Provides MongoDB specific implementation
+ * details and is dependent on the
+ * MongoDBDeviceMapperStrategy for object
+ * mapping.
+ * @author JC
+ *
+ */
 public class MongoDBDeviceDAO implements DeviceDAO {
 	
 	private static final Logger log = Logger.getLogger(MongoDBDeviceDAO.class
@@ -51,12 +60,18 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 	
+	/**
+	 * Initialise the static database configuration (i.e. hostname, port, database)
+	 */
 	public void initialise(String dbhost, int dbport, String dbname) {
 		DATABASE_HOST = dbhost;
 		DATABASE_PORT = dbport;
 		DATABASE_NAME = dbname;
 	}
 
+	/**
+	 * Close the connection to the server
+	 */
 	public void finalize() {
 		client.close();
 	}

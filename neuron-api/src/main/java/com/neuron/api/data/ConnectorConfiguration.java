@@ -1,5 +1,12 @@
 package com.neuron.api.data;
 
+/**
+ * Configuration POJO which contains all the information
+ * needed to add a new connector to a system dynamically.
+ * @see com.nueron.api.components.Application for usage
+ * @author JC
+ *
+ */
 public class ConnectorConfiguration {
 
 	private String hostname;
@@ -7,9 +14,10 @@ public class ConnectorConfiguration {
 	private String type;
 	private String username;
 	private String password;
+	@SuppressWarnings("rawtypes")
 	private Class messengerClass;
 	
-	public ConnectorConfiguration(String hostname, int port, String type, Class messengerClass) {
+	public ConnectorConfiguration(String hostname, int port, String type, @SuppressWarnings("rawtypes") Class messengerClass) {
 		this.hostname = hostname;
 		this.port = port;
 		this.type = type;
@@ -44,6 +52,7 @@ public class ConnectorConfiguration {
 		return this.password;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Class getMessengerClass() {
 		return this.messengerClass;
 	}

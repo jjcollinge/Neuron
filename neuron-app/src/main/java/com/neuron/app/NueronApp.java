@@ -1,146 +1,68 @@
 package com.neuron.app;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
-import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.components.Application;
 import com.neuron.api.components.services.ServiceContainer;
-import com.neuron.api.connectors.ConnectorFactoryImpl;
-import com.neuron.api.data.ConnectorConfiguration;
-import com.neuron.api.data.DatabaseConfiguration;
-import com.neuron.api.data.ServiceConfiguration;
-import com.neuron.dal.MongoDBDeviceDAO;
-import com.neuron.messaging.MqttMessenger;
 import com.neuron.registration.RegistrationController;
 import com.neuron.sessions.SessionController;
 
+/**
+ * The main application which is required to register
+ * the implementation specific details of the data
+ * access object and any supported messengers. Any
+ * valid application must then call setup to check if
+ * the supplied class files and configuration files
+ * can be successfully loaded. Finally services are
+ * added to a service container and then all services
+ * are started simultaneously.
+ * @author JC
+ *
+ */
 public class NueronApp {
-
-	private static final Logger log = Logger.getLogger(NueronApp.class
-			.getName());
 	
-	private static class Application implements Runnable {
+	/**
+	 * This class exists in order to separate the setup
+	 * sequence of the application from the main
+	 * method. This allows the application to have
+	 * multiple main methods in case you want to handle
+	 * command lines arguments differently.
+	 * @author JC
+	 *
+	 */
+	private static class Neuron extends Application implements Runnable {
 		
 		/**
 		 * Application startup sequence
 		 */
 		public void run() {
 			
-			/**
-			 * Load config.properties file to get key value pairs for system
-			 * configuration.
-			 */
-			Properties prop = new Properties();
-			String databaseHost = "";
-			int databasePort = 0;
-			String databaseType = "";
-			String databaseName = "";
-			String brokerHost = "";
-			int brokerPort = 0;
-			String brokerType = "";
-			InputStream input = null;
+			// Ideally these would be loaded from the class loader at runtime
+			registerDAOClassName("com.neuron.dal.MongoDBDeviceDAO");
+			registerMessengerClassName("com.neuron.messaging.MqttMessenger");
 			
-			try {
-				input = new FileInputStream("config.properties");
-				prop.load(input);
-				
-				databaseHost = prop.getProperty("database_host");
-				databasePort = Integer.valueOf(prop.getProperty("database_port"));
-				databaseType = prop.getProperty("database_type");
-				databaseName = prop.getProperty("database_name");
-				brokerHost = prop.getProperty("broker_host");
-				brokerPort = Integer.valueOf(prop.getProperty("broker_port"));
-				brokerType = prop.getProperty("broker_type");
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if(input != null)
-					try {
-						input.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			if(setup()) {
+			
+				/**
+				 * Create a service container to handle the setup and tear down of services
+				 */
+				ServiceContainer container = new ServiceContainer();	
+				container.addService(SessionController.getInstance());
+				container.addService(RegistrationController.getInstance());
+				container.startServices();
 			}
-			
-			log.log(Level.INFO, "Launching Neuron application with the following properties:\n"
-					+ "....................................." + "\n"
-					+ "Database:\n"
-					+ "database_host: " + databaseHost + "\n"
-					+ "database_port: " + databasePort + "\n"
-					+ "database_type: " + databaseType + "\n"
-					+ "database_name: " + databaseName + "\n"
-					+ "Protocols:\n"
-					+ "broker_host: " + brokerHost + "\n"
-					+ "broker_port: " + brokerPort + "\n"
-					+ "broker_type: " + brokerType + "\n"
-					+ ".....................................");
-			
-			/**
-			 * Load DAO factory with provided database type
-			 */
-			AbstractDAOFactory deviceFactory = DAOFactoryProducer.getFactory("device");
-			DatabaseConfiguration databaseConfig  = new DatabaseConfiguration(
-					databaseHost,
-					databasePort,
-					databaseType,
-					databaseName,
-					MongoDBDeviceDAO.class);	// This should be injected at run time
-			deviceFactory.registerDAO(databaseConfig);
-			
-			/**
-			 * Load Connector factory with all supported protocol types 
-			 */
-			ConnectorFactoryImpl connectorFactory = new ConnectorFactoryImpl();
-			ConnectorConfiguration brokerConfig  = new ConnectorConfiguration(
-					brokerHost,
-					brokerPort,
-					brokerType,
-					MqttMessenger.class);		// This should be injected at run time
-			connectorFactory.registerConnector(brokerConfig);
-			
-			/**
-			 * Clear any stale devices left in database from previous runs
-			 */
-			DeviceDAO deviceDAO = deviceFactory.getDeviceDAO(databaseType);
-			deviceDAO.clear();
-			
-			/**
-			 * Create a service configuration informing each service of the 
-			 * available protocols and database
-			 */
-			ServiceConfiguration serviceConfig = new ServiceConfiguration();
-			serviceConfig.registerDatabaseType(databaseType);
-			serviceConfig.registerConnectorType(brokerType);
-			
-			/**
-			 * Create a service container to handle the setup and tear down of services
-			 */
-			ServiceContainer container = new ServiceContainer(serviceConfig);	
-			container.addService(SessionController.getInstance());
-			container.addService(RegistrationController.getInstance());
-			container.startServices();
 			
 		}
 	}
 	
 	/**
 	 * Main entry point of program, used to read any command line args
-	 * and set the relevant properties.
+	 * and set the relevant properties. This can be overloaded if
+	 * required. An instance of Neuron must be started at the end of
+	 * any main function in a new thread.
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// Start application thread
-		new Thread(new Application()).start();
+		new Thread(new Neuron()).start();
 	}
 
 }

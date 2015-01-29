@@ -1,5 +1,13 @@
 package com.neuron.api.data;
 
+/**
+ * Configuration POJO which contains all the information
+ * needed to add the database configuration to the system
+ * dynamically.
+ * @see com.nueron.api.components.Application for usage
+ * @author JC
+ *
+ */
 public class DatabaseConfiguration {
 
 	private String hostname;
@@ -8,8 +16,10 @@ public class DatabaseConfiguration {
 	private String username;
 	private String password;
 	private String databaseName;
+	@SuppressWarnings("rawtypes")
 	private Class clientClass;
 	
+	@SuppressWarnings("rawtypes")
 	public DatabaseConfiguration(String hostname, int port, String type, String databaseName, Class clientClass) {
 		this.hostname = hostname;
 		this.port = port;
@@ -50,6 +60,7 @@ public class DatabaseConfiguration {
 		return this.password;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Class getClientClass() {
 		return this.clientClass;
 	}

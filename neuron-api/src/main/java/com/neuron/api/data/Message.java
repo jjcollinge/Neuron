@@ -1,6 +1,15 @@
 package com.neuron.api.data;
 
-
+/**
+ * An internal message structure. Used to pass data
+ * between system components. Contains a payload
+ * which can contain nested payload wrapped in a 
+ * string. The context holds the information about
+ * the environment of the 
+ * payload (i.e. format, protocol etc) 
+ * @author JC
+ *
+ */
 public class Message {
 
 	private String payload;

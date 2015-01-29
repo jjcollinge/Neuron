@@ -3,6 +3,13 @@ package com.neuron.api.data;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+/**
+ * Provides a POJO representation of a sensor.
+ * Will be constructed by deserialization.
+ * NOTE: Currently only supports JSON deserialization.
+ * @author JC
+ * 
+ */
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Sensor {
 

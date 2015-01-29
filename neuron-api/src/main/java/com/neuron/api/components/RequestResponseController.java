@@ -7,53 +7,73 @@ import com.neuron.api.data.Message;
 import com.neuron.api.data.Parcel;
 import com.neuron.api.events.WorkCompleteEventListener;
 
+/**
+ * Provides a super class for any controller whom needs
+ * to handle a request and response type of interaction.
+ * This controller will handle allocating new workers to
+ * deal with each request and free them upon completion.
+ * The number of available workers can also be throttled
+ * to stop a large number of requests causing the system
+ * to fall over (DDOS protection). Any subsequent requests
+ * will be dropped by the controller and must be resent at
+ * a time when the controller is under less load.
+ * @author JC
+ *
+ */
 public abstract class RequestResponseController implements
 		WorkCompleteEventListener {
 
 	private static final Logger log = Logger
 			.getLogger(RequestResponseController.class.getName());
 
-	private int maxNumberOfWorkers;
-	private int numberOfWorkers;
+	private int maxWorkers;
+	private int numWorkers;
 
-	public RequestResponseController() {
-		maxNumberOfWorkers = 20;
-	}
-	
 	/**
-	 * 	Set the maximum number of workers to allocate at once to
-	 *  handling registration requests
-	 * @param max
+	 * Initialises the max number of works permitted
+	 */
+	public RequestResponseController() {
+		maxWorkers = 20;
+	}
+
+	/**
+	 * Set the maximum number of workers to allocate at once to handling
+	 * registration requests
+	 * 
+	 * @param maximum number of workers
 	 */
 	public void setMaximumNumberOfWorkers(int max) {
-		maxNumberOfWorkers = max;
+		maxWorkers = max;
 	}
 
 	/**
 	 * Returns the current number of workers
-	 * @return
+	 * 
+	 * @return the current number of workers allocated
 	 */
 	@SuppressWarnings("unused")
 	private synchronized int getNumberOfWorkers() {
-		return numberOfWorkers;
+		return numWorkers;
 	}
 
 	/**
 	 * Returns the maximum number of workers
-	 * @return
+	 * 
+	 * @return the maxium number of workers permitted
 	 */
 	@SuppressWarnings("unused")
 	private synchronized int getMaxNumberOfWorkers() {
-		return maxNumberOfWorkers;
+		return maxWorkers;
 	}
 
 	/**
 	 * Check if worker is available and if so register them
+	 * 
 	 * @param worker
-	 * @return
+	 * @return Success
 	 */
 	private synchronized boolean registerWorker(RequestResponseWorker worker) {
-		if (this.numberOfWorkers < this.maxNumberOfWorkers) {
+		if (this.numWorkers < this.maxWorkers) {
 			worker.addCompletionEventListener(this);
 			return true;
 		}
@@ -61,24 +81,38 @@ public abstract class RequestResponseController implements
 	}
 
 	/**
-	 * Check registration status and allocate new thread for worker
+	 * Checks the availability of workers. If available the worker
+	 * will be registered and their work will be started in a new
+	 * thread. If the worker cannot be registered the request will
+	 * be dropped.
+	 * 
 	 * @param worker
 	 */
 	public synchronized void doWork(RequestResponseWorker worker) {
 		if (registerWorker(worker)) {
 			log.log(Level.INFO, "Successfully registered worker number "
-					+ numberOfWorkers);
-			this.numberOfWorkers++;
+					+ numWorkers);
+			this.numWorkers++;
 			new Thread(worker).start();
 		} else {
 			log.log(Level.INFO,
 					"Dropped worker request, maximum number of workers ("
-							+ this.maxNumberOfWorkers + ") has been reached");
+							+ this.maxWorkers + ") has been reached");
 		}
 	}
 
+	/**
+	 * Handle the initial request in the implementation class.
+	 * Resulting in a call to the doWork method
+	 * @param Message request
+	 */
 	public abstract void handleRequest(Message req);
 
+	/**
+	 * Handle the dispatch of a response to the same device
+	 * whom made the request.
+	 * @param Parcel request
+	 */
 	public abstract void handleResponse(Parcel res);
 
 	/**
@@ -89,7 +123,7 @@ public abstract class RequestResponseController implements
 		log.log(Level.INFO, "Worker has finished, reallocating...");
 		handleResponse(parcel);
 		worker.removeCompletionEventListener(this);
-		this.numberOfWorkers--;
+		this.numWorkers--;
 	}
 
 }

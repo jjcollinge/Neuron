@@ -2,6 +2,11 @@ package com.neuron.api.connectors;
 
 import com.neuron.api.data.Parcel;
 
+/**
+ * The API for any messenger implementations
+ * @author JC
+ *
+ */
 public interface MessengerInterface {
 
 	public void connect(String host, int port);

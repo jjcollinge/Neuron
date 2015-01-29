@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+/**
+ * Provides a POJO representation of a device.
+ * Will be constructed by deserialization.
+ * NOTE: Currently only supports JSON deserialization.
+ * @author JC
+ * 
+ */
 @JsonIgnoreProperties("sessionId")
 public class Device {
 
@@ -28,7 +35,7 @@ public class Device {
 	public void setManufacurer(String manufacturer) {
 		this.manufacturer = manufacturer;
 	}
-	
+
 	public void setModel(String model) {
 		this.model = model;
 	}
@@ -36,7 +43,7 @@ public class Device {
 	public void setGeo(GeoPoint geo) {
 		this.geo = geo;
 	}
-	
+
 	public void setGeo(double lon, double lat) {
 		this.geo = new GeoPoint(lon, lat);
 	}
@@ -48,18 +55,18 @@ public class Device {
 	public void setActuators(ArrayList<Actuator> actuators) {
 		this.actuators = actuators;
 	}
-	
+
 	public void addSensor(Sensor sensor) {
-		if(sensors == null)
+		if (sensors == null)
 			sensors = new ArrayList<Sensor>();
-		sensors.add(sensor);			
+		sensors.add(sensor);
 	}
-	
+
 	public void addActuator(Actuator actuator) {
-		if(actuators == null)
+		if (actuators == null)
 			actuators = new ArrayList<Actuator>();
 		actuators.add(actuator);
-		
+
 	}
 
 	// Getters
@@ -86,7 +93,7 @@ public class Device {
 	public ArrayList<Actuator> getActuators() {
 		return this.actuators;
 	}
-	
+
 	public Sensor getSensor(int index) {
 		return this.sensors.get(index);
 	}
@@ -94,5 +101,5 @@ public class Device {
 	public Actuator getActuator(int index) {
 		return this.actuators.get(index);
 	}
-	
+
 }
