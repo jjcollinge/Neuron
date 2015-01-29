@@ -1,17 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>thing</groupId>
+	<groupId>neuron</groupId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<artifactId>parent-project</artifactId>
 	<modules>
-		<module>thing-api</module>
-		<module>thing-web</module>
-		<module>thing-dao</module>
-		<module>thing-registration</module>
-		<module>thing-messaging</module>
-		<module>thing-app</module>
-		<module>thing-sessions</module>
+	<module>neuron-api</module>
+	<module>neuron-app</module>
+	<module>neuron-dal</module>
+	<module>neuron-messaging</module>
+	<module>neuron-services</module>
+	<module>nueron-web</module>
 	</modules>
 </project>
