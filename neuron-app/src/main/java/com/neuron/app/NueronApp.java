@@ -4,6 +4,7 @@ import com.neuron.api.components.Application;
 import com.neuron.api.components.services.ServiceContainer;
 import com.neuron.registration.RegistrationController;
 import com.neuron.sessions.SessionController;
+import com.neuron.web.WebController;
 
 /**
  * The main application which is required to register
@@ -47,9 +48,10 @@ public class NueronApp {
 				ServiceContainer container = new ServiceContainer();	
 				container.addService(SessionController.getInstance());
 				container.addService(RegistrationController.getInstance());
+				container.addService(WebController.getInstance());
 				container.startServices();
 			}
-			
+		
 		}
 	}
 	

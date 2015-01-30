@@ -20,14 +20,14 @@
   	</dependency>
   	<dependency>
   		<groupId>neuron</groupId>
-  		<artifactId>neuron-web</artifactId>
+  		<artifactId>neuron-dal</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
-  		<type>war</type>
   	</dependency>
   	<dependency>
   		<groupId>neuron</groupId>
-  		<artifactId>neuron-dal</artifactId>
+  		<artifactId>neuron-web</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
+  		<classifier>classes</classifier>
   	</dependency>
   </dependencies>
   </project>

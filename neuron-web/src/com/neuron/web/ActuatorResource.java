@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -44,7 +44,7 @@ public class ActuatorResource {
 	public Actuator getActuator() {
 		
 		System.out.println("Request for device");
-		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO("mongodb");
+		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO();
 		Device device = dao.get(Integer.valueOf(deviceId));
 		if(device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");

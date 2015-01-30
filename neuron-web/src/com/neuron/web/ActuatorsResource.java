@@ -1,61 +1,53 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
+import com.neuron.api.components.dal.AbstractDAOFactory;
+import com.neuron.api.components.dal.DAOFactoryProducer;
+import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.data.Actuator;
 import com.neuron.api.data.Device;
-import com.neuron.api.data.Sensor;
-import com.neuron.dal.MongoDBDeviceDAO;
-
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class SensorsResource {
+public class ActuatorsResource {
 
 	@Context
 	UriInfo uriInfo;
 	@Context
 	Request request;
-	
+
 	String deviceId;
 
-	public SensorsResource(UriInfo uriInfo, Request request, String id) {
-		
+	public ActuatorsResource(UriInfo uriInfo, Request request, String id) {
+
 		this.uriInfo = uriInfo;
 		this.request = request;
 		this.deviceId = id;
-		
+
 	}
 
-	// GET: /devices/0/sensors
+	// GET: /devices/0/actuators
 	@GET
-	public ArrayList<Sensor> getSensors() {
-		
+	public ArrayList<Actuator> getActuator() {
+
 		System.out.println("Request for device");
-		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		AbstractDAOFactory daoFactory = DAOFactoryProducer.getFactory("device");
+		DeviceDAO dao = daoFactory.getDeviceDAO();
 		Device device = dao.get(Integer.valueOf(deviceId));
-		if(device == null) {
+		if (device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");
 		}
-		return device.getSensors();
-				
+		return device.getActuators();
+
 	}
 
-	// GET: /devices/0/sensors/0
-	@GET
-	@Path("{sensorId}")
-	public SensorResource getSensor(String deviceId,@PathParam("sensorId") String sensorId) {
-		
-		return new SensorResource(uriInfo, request, deviceId, sensorId);
-		
-	}
 }

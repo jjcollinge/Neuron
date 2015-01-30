@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -120,7 +120,7 @@ public class SensorStreamResource implements DataEventListener {
 	 */
 	@Override
 	public void onDataArrived(DataEvent dataEvent) {
-		String data = dataEvent.getData();
+		String data = (String) dataEvent.getData();
 		BROADCASTER.broadcast(new OutboundEvent.Builder().data(String.class, data).build());
 		log.log(Level.INFO, "Sending new SSE data event");
 	}

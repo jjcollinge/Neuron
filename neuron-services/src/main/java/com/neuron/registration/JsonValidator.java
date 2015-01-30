@@ -30,4 +30,12 @@ public class JsonValidator implements Validator {
 		
 	    return valid;
 	}
+
+	/**
+	 * Test source is valid JSON and validate against the schema
+	 */
+	public boolean isValid(String source, String schemaFilename) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

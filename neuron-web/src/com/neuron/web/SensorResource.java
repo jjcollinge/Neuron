@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -8,9 +8,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
+import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Sensor;
-import com.neuron.dal.MongoDBDeviceDAO;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +39,7 @@ public class SensorResource {
 	public Sensor getSensor() {
 		
 		System.out.println("Request for device");
-		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO();
 		Device device = dao.get(Integer.valueOf(deviceId));
 		if(device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");

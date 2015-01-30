@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 
 public class DeviceProxyFactory {

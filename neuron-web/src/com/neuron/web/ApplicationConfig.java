@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import javax.ws.rs.ApplicationPath;
 
@@ -10,13 +10,11 @@ import org.glassfish.jersey.server.ServerProperties;
 public class ApplicationConfig extends ResourceConfig {
 
 	public ApplicationConfig() {
-		
-		super(SseFeature.class);
-		
-		packages("com.thing.rest");
 
+		super(SseFeature.class);
+		packages("com.neuron.web");
 		property(ServerProperties.TRACING, "ALL");
-		
+
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -51,7 +51,7 @@ public class DevicesResource {
 
 	public DevicesResource() {
 		deviceDaoFactory = DAOFactoryProducer.getFactory("device");
-		dao = deviceDaoFactory.getDeviceDAO("mongodb");
+		dao = deviceDaoFactory.getDeviceDAO();
 		resources = ResourceManager.getInstance();
 	}
 

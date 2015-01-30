@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import java.util.HashMap;
 

@@ -11,6 +11,6 @@
 	<module>neuron-dal</module>
 	<module>neuron-messaging</module>
 	<module>neuron-services</module>
-	<module>nueron-web</module>
+	<module>neuron-web</module>
 	</modules>
 </project>

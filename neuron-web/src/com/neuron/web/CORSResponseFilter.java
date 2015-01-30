@@ -1,4 +1,4 @@
-package com.thing.rest;
+package com.neuron.web;
 
 import java.io.IOException;
 import java.util.logging.Level;
