@@ -59,23 +59,21 @@ public class RegistrationController extends RequestResponseController implements
 	}
 
 	public void start() {
-		log.log(Level.INFO, "Starting service...");
-
 		setMaximumNumberOfWorkers(10);
 		
 		for(Connector connector : connectors.values()) {
 			connector.addMessageEventListener(this);
 			connector.subscribe(REGISTRATION_TOPIC, 2);
 		}
+		log.log(Level.INFO, "Started service: " + this.getClass().getSimpleName());
 	}
 
 	public void stop() {
-		log.log(Level.INFO, "Stopping service...");
-		
 		for (Connector connector : connectors.values()) {
 			connector.removeMessageEventListener(this);
 			connector.unsubscribe(this.REGISTRATION_TOPIC);
 		}
+		log.log(Level.INFO, "Stopped service: " + this.getClass().getSimpleName());
 	}
 	//=====================================================================
 		

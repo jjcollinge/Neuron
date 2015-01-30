@@ -17,7 +17,7 @@ public class ServiceContainer {
 			.getName());
 
 	private LinkedHashMap<Service, Boolean> services;
-	private boolean running;
+	private volatile boolean running;
 
 	/**
 	 * Initialise collections
@@ -32,9 +32,14 @@ public class ServiceContainer {
 	 * Will ONLY succeed if the services are stopped.
 	 * @param service to add
 	 */
-	public void addService(Service service) {
-		if (!running)
+	public void addService(final Service service) {
+		log.log(Level.INFO, "Adding new service " + service.getClass().getSimpleName());
+		if (!running) {
+			service.setup();
 			services.put(service, false);
+		} else {
+			log.log(Level.INFO, "Cannot add a service whilst the container is running");
+		}
 	}
 
 	/**
@@ -44,8 +49,12 @@ public class ServiceContainer {
 	 * @param service to remove
 	 */
 	public void removeService(Service service) {
-		if (!running)
+		log.log(Level.INFO, "Removing service " + service.getClass().getSimpleName());
+		if (!running) {
 			services.remove(service);
+		} else {
+			log.log(Level.INFO, "Cannot remove service whilst container is running");
+		}
 	}
 
 	/**
@@ -53,14 +62,16 @@ public class ServiceContainer {
 	 * collection. Must start from a stopped state.
 	 */
 	public void startServices() {
+		log.log(Level.INFO, "Starting services");
 		if(!running) {
-			for (Service service : services.keySet()) {
-				service.setup();
+			for(Service service : services.keySet()) {
 				service.start();
 				services.put(service, true);
 			}
 			log.log(Level.INFO, this.toString());
 			running = true;
+		} else {
+			log.log(Level.INFO, "Services are already running");
 		}
 	}
 
@@ -70,6 +81,7 @@ public class ServiceContainer {
 	 * the services are already running.
 	 */
 	public void stopServices() {
+		log.log(Level.INFO, "Stopping services");
 		if(running) {
 			for (Service service : services.keySet()) {
 				service.stop();
@@ -77,6 +89,8 @@ public class ServiceContainer {
 			}
 			log.log(Level.INFO, this.toString());
 			running = false;
+		} else {
+			log.log(Level.INFO, "Cannot stop services as they are not running");
 		}
 	}
 
@@ -85,19 +99,20 @@ public class ServiceContainer {
 	 * running services.
 	 */
 	public String toString() {
+		log.log(Level.INFO, "Printing services");
 		String tmp = "";
-		tmp += "\n-------------------------------------\n";
-		for (Service service : services.keySet()) {
-			tmp += "Service: " + service.getClass().getSimpleName() + " is ";
-			if (services.get(service)) {
-				// running
-				tmp += "Running\n";
+		tmp += "\n#####################################\n";
+		for(Service service : services.keySet()) {
+			tmp += "Service name: " + service.getClass().getSimpleName() + "\n";
+			tmp += "Service status: ";
+			if(services.get(service) == true){
+				tmp += " RUNNING\n";
 			} else {
-				// not running
-				tmp += "Stopped\n";
+				tmp += " STOPPED\n";
 			}
+			tmp += "-------------------------------------\n";
 		}
-		tmp += "-------------------------------------\n";
+		tmp += "#####################################\n";
 		return tmp;
 	}
 }

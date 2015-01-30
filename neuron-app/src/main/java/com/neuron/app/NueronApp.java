@@ -40,17 +40,28 @@ public class NueronApp {
 			registerDAOClassName("com.neuron.dal.MongoDBDeviceDAO");
 			registerMessengerClassName("com.neuron.messaging.MqttMessenger");
 			
+			ServiceContainer container = null;
+			
 			if(setup()) {
 			
 				/**
 				 * Create a service container to handle the setup and tear down of services
 				 */
-				ServiceContainer container = new ServiceContainer();	
+				container = new ServiceContainer();	
 				container.addService(SessionController.getInstance());
 				container.addService(RegistrationController.getInstance());
 				container.addService(WebController.getInstance());
 				container.startServices();
 			}
+			
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			container.stopServices();
 		
 		}
 	}

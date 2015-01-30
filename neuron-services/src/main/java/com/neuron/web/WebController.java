@@ -13,7 +13,6 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.neuron.api.components.services.Service;
 
-
 public class WebController implements Service {
 
 	private static final Logger log = Logger.getLogger(WebController.class
@@ -22,6 +21,7 @@ public class WebController implements Service {
 	private static WebController instance;
 
 	private Tomcat server;
+	private volatile boolean running;
 
 	private WebController() {
 	}
@@ -52,38 +52,51 @@ public class WebController implements Service {
 					webappDirLocation).getAbsolutePath());
 
 			// Add servlet that will register Jersey REST resources
-			Tomcat.addServlet(context, "jersey-container-servlet", new
-			ServletContainer(new ApplicationConfig()));
+			Tomcat.addServlet(context, "jersey-container-servlet",
+					new ServletContainer(new ApplicationConfig()));
 			context.addServletMapping("/api/*", "jersey-container-servlet");
 
 			// Define and bind web.xml file location.
-			//File configFile = new File(webappDirLocation + "WEB-INF/web.xml");
-			//log.log(Level.INFO, "Locating web.xml at " + webappDirLocation + "WEB-INF/web.xml");
-			//context.setConfigFile(configFile.toURI().toURL());
+			// File configFile = new File(webappDirLocation +
+			// "WEB-INF/web.xml");
+			// log.log(Level.INFO, "Locating web.xml at " + webappDirLocation +
+			// "WEB-INF/web.xml");
+			// context.setConfigFile(configFile.toURI().toURL());
 
 		} catch (ServletException e) {
 			log.log(Level.SEVERE, "Failed to add servlet");
-		}/* catch (MalformedURLException e) {
-			log.log(Level.SEVERE, "Failed to parse URL");
-		}*/
+		}/*
+		 * catch (MalformedURLException e) { log.log(Level.SEVERE,
+		 * "Failed to parse URL"); }
+		 */
 	}
 
 	public void start() {
-		try {
-			server.start();
-			server.getServer().await();
-		} catch (LifecycleException e) {
-			log.log(Level.INFO, "Failed to start server");
-		}
+		new Thread(new Runnable() {
+			public void run() {
+
+				try {
+					server.start();
+					running = true;
+					log.log(Level.INFO, "Web server now running");
+				} catch (LifecycleException e) {
+					e.printStackTrace();
+				}
+				while (running) {
+					server.getServer().await();
+				}
+				try {
+					server.stop();
+					log.log(Level.INFO, "Web server now stopped");
+				} catch (LifecycleException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	public void stop() {
-		try {
-			server.stop();
-		} catch (LifecycleException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		running = false;
 	}
 
 }

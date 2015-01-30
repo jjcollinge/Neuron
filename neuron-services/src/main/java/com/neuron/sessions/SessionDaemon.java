@@ -19,6 +19,7 @@ public class SessionDaemon implements Runnable {
 
 	private HashMap<Integer, Session> activeSessions;
 	private DeviceDAO deviceDao;
+	private volatile boolean running;
 
 	public SessionDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
@@ -82,6 +83,14 @@ public class SessionDaemon implements Runnable {
 				.getContext().getProtocol());
 		connector.send(parcel);
 	}
+	
+	/**
+	 * Stops the running thread
+	 */
+	public void stop() {
+		running = false;
+		log.log(Level.INFO, "Session deamon now stopping");
+	}
 
 	/**
 	 * Separate thread for checking device status based on their timestamp
@@ -92,8 +101,11 @@ public class SessionDaemon implements Runnable {
 		int THRESHOLD = SEC * 30;
 		int POLLING_PERIOD = SEC * 60;
 		long pingLimit;
+		
+		running = true;
+		log.log(Level.INFO, "Session deamon now running");
 
-		while (true) {
+		while (running) {
 
 			HashSet<Integer> pingedDevices = new HashSet<Integer>();
 
@@ -114,6 +126,7 @@ public class SessionDaemon implements Runnable {
 			try {
 				Thread.sleep(POLLING_PERIOD);
 			} catch (InterruptedException e) {
+				running = false;
 			}
 
 			/*

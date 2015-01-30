@@ -44,9 +44,6 @@ public class DeviceResource {
 		System.out.println("Request for device");
 		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO();
 		Device device = dao.get(Integer.valueOf(id));
-		if(device == null) {
-			throw new RuntimeException("Device " + id + " not found");
-		}
 		return device;
 	}
 

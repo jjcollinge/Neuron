@@ -60,17 +60,19 @@ public class SessionController implements Service, MessageEventListener {
 	}
 
 	public void start() {
-		log.log(Level.INFO, "Starting service...");
 		daemon.start();
+		log.log(Level.INFO, "Started service: " + this.getClass().getSimpleName());
 	}
 
-	public void stop() {
-		log.log(Level.INFO, "Stopping service...");
+	public void stop() {	
 		try {
+			daemonObject.stop();
+			daemon.interrupt();
 			daemon.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		log.log(Level.INFO, "Stopped service: " + this.getClass().getSimpleName());
 	}
 
 	// =====================================================================
