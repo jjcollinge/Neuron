@@ -27,10 +27,11 @@ import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Device;
 
 /**
- * Root of RESTful services and is responsible for routing and sub resource
- * requests
- * 
- * @author jcollinge
+ * Device resources root. Any resource associated with a device
+ * will be accessible as a derived uri of this entry point. A
+ * GET request to this uri will return a list of all device
+ * representations currently stored within the system. 
+ * @author JC
  *
  */
 @Path("devices")
@@ -49,15 +50,19 @@ public class DevicesResource {
 	private DeviceDAO dao;
 	private ResourceManager resources;
 
+	/**
+	 * A new Resource will be created per request. Any persistence in the
+	 * web app needs to be independent of this class and initialised from
+	 * here.
+	 */
 	public DevicesResource() {
 		deviceDaoFactory = DAOFactoryProducer.getFactory("device");
 		dao = deviceDaoFactory.getDeviceDAO();
 		resources = ResourceManager.getInstance();
 	}
-
+	
 	/**
-	 * GET: http://localhost:8080/thing-web/devices/hello
-	 * 
+	 * GET: /devices/hello
 	 * @return
 	 */
 	@GET
@@ -69,8 +74,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices
-	 * 
-	 * @return
+	 * @return A representation of all the devices current stored in the
+	 * system
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -85,9 +90,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0
-	 * 
-	 * @param id
-	 * @return
+	 * @param id of the particular device to retrieve
+	 * @return a single device representation
 	 */
 	@Path("{device}")
 	public DeviceResource getDevice(@PathParam("device") String id) {
@@ -97,9 +101,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors
-	 * 
-	 * @param id
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @return a representation of all the sensors available in a single device representation
 	 */
 	@Path("{device}/sensors")
 	@GET
@@ -112,10 +115,9 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors/0
-	 * 
-	 * @param id
-	 * @param sid
-	 * @return
+	 * @param id of a particular device to retrieve 
+	 * @param id of a particular sensor to retrieve
+	 * @return a representation of a single sensor from a single device representation
 	 */
 	@Path("{device}/sensors/{sensorId}")
 	@GET
@@ -129,10 +131,11 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors/0/stream Starts the sensor stream
-	 * 
-	 * @param id
-	 * @param sid
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @param id of a particular sensor to retrieve
+	 * @return opens a connection with the client and will either periodically or on event
+	 * send data down the connection to the client. This will remain open until both ends
+	 * close and cleanup the connection.
 	 */
 	@Path("{device}/sensors/{sensorId}/stream")
 	@GET
@@ -154,10 +157,9 @@ public class DevicesResource {
 
 	/**
 	 * POST: /devices/0/sensors/0/stream Stops the sensor stream
-	 * 
-	 * @param id
-	 * @param sid
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @param id of a particular sensor to retrieve
+	 * @return OK response, this will signify the connection has been terminated succesfully
 	 */
 	@Path("{device}/sensors/{sensorId}/stream")
 	@POST
@@ -175,9 +177,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/actuators
-	 * 
-	 * @param id
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @return a representation of all the actuators available in a single device representation
 	 */
 	@Path("{device}/actuators")
 	@GET
@@ -190,10 +191,9 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/actuators/0
-	 * 
-	 * @param id
-	 * @param sid
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @param id of a particular actuator to retrieve
+	 * @return a representation of a single actuators from a single device representation
 	 */
 	@Path("{device}/actuators/{actuatorId}")
 	@GET
@@ -207,11 +207,10 @@ public class DevicesResource {
 
 	/**
 	 * POST (option): /devices/0/actuators/0
-	 * 
-	 * @param id
-	 * @param sid
-	 * @param option
-	 * @return
+	 * @param id of a particular device to retrieve
+	 * @param id of a particular actuator to operate
+	 * @param a predefined option (command) to send to the device
+	 * @return OK response, will signify the command has been successfully sent
 	 */
 	@Path("{device}/actuators/{actuatorId}")
 	@POST

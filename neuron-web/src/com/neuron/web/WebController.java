@@ -1,7 +1,6 @@
 package com.neuron.web;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +42,7 @@ public class WebController implements Service {
 			// Define port number for the web application
 			String webPort = System.getenv("PORT");
 			if (webPort == null || webPort.isEmpty()) {
-				webPort = "8080";
+				webPort = "9998";
 			}
 			// Bind the port to Tomcat server
 			server.setPort(Integer.valueOf(webPort));
