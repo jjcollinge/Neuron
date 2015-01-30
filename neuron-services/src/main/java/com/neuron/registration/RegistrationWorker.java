@@ -23,7 +23,8 @@ public class RegistrationWorker extends RequestResponseWorker {
 	/**
 	 * Set any data that will be required to perform a 
 	 * successful run of the doWork method.
-	 * @param message
+	 * @param message Client request
+	 * @param deviceDao The data access object to handle the request
 	 */
 	public RegistrationWorker(Message message, DeviceDAO deviceDao) {
 		request = message;

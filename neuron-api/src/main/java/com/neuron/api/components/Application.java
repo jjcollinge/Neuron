@@ -45,7 +45,7 @@ public abstract class Application {
 	 * Registers the ONLY data access object class name.
 	 * Any subsequent calls to this will overwrite the
 	 * original class name.
-	 * @param classname
+	 * @param classname The classname of the data access object
 	 */
 	protected void registerDAOClassName(String classname) {
 		databaseClassName = classname;
@@ -55,7 +55,7 @@ public abstract class Application {
 	 * Register a new messenger class name. Multiple class
 	 * names can be provided for each implementation. Each
 	 * implementation should ideally be for a single protocol.
-	 * @param classname
+	 * @param classname The classname of the messenger
 	 */
 	protected void registerMessengerClassName(String classname) {
 		messengerClassNames.add(classname);
@@ -65,7 +65,7 @@ public abstract class Application {
 	 * Loads the configuration file and attempts to register
 	 * the implementation details with the relevant system
 	 * components.
-	 * @return Success
+	 * @return boolean If setup was successful;
 	 */
 	protected boolean setup() {
 		

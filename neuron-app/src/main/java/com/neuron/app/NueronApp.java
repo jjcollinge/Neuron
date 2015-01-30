@@ -60,7 +60,7 @@ public class NueronApp {
 	 * and set the relevant properties. This can be overloaded if
 	 * required. An instance of Neuron must be started at the end of
 	 * any main function in a new thread.
-	 * @param args
+	 * @param args The command line arguments
 	 */
 	public static void main(String[] args) {
 		// Start application thread

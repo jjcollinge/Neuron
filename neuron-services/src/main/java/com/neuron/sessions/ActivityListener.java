@@ -42,7 +42,7 @@ public class ActivityListener extends MessageEventProducer implements
 	
 	/**
 	 * Singleton, only one activity listener is required per instane of the middleware
-	 * @return
+	 * @return ActivityListener The listener
 	 */
 	public static ActivityListener getInstance() {
 		if(instance == null) {

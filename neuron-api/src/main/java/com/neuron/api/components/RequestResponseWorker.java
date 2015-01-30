@@ -29,7 +29,7 @@ public abstract class RequestResponseWorker implements Runnable {
 	/**
 	 * The worker will be started within a thread so this method defines
 	 * the main sequence of events. Do the required task and then notify
-	 * the listenrs when it is complete
+	 * the listeners when it is complete
 	 */
 	public void run() {
 		doWork();
@@ -39,7 +39,7 @@ public abstract class RequestResponseWorker implements Runnable {
 	/**
 	 * Add a listener which will be notified once the doWork method is complete
 	 * 
-	 * @param a new listener for the work complete event
+	 * @param wcel A new listener for the work complete event
 	 */
 	public void addCompletionEventListener(WorkCompleteEventListener wcel) {
 		this.workListeners.add(wcel);
@@ -48,7 +48,7 @@ public abstract class RequestResponseWorker implements Runnable {
 	/**
 	 * Remove a current listener
 	 * 
-	 * @param a current listener for the work complete event
+	 * @param wcel A current listener for the work complete event
 	 */
 	public void removeCompletionEventListener(WorkCompleteEventListener wcel) {
 		this.workListeners.remove(wcel);
@@ -62,6 +62,7 @@ public abstract class RequestResponseWorker implements Runnable {
 
 	/**
 	 * This will be called when a response has been formed by the worker
+	 * @param response The response to pass back to the controller
 	 */
 	public void setResponse(Parcel response) {
 		this.response = response;

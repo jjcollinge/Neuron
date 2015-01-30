@@ -48,7 +48,7 @@ public class ActuatorResource {
 	
 	/**
 	 * GET: /devices/0/actuators/0
-	 * @return
+	 * @return Actuator The desired actuator
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -66,8 +66,8 @@ public class ActuatorResource {
 	
 	/**
 	 * Sends a one way message to the device
-	 * @param option
-	 * @return
+	 * @param option The option to invoke on the device
+	 * @return Response The success of the operation
 	 */
 	public Response invokeOperation(String option) {
 		

@@ -40,7 +40,7 @@ public abstract class RequestResponseController implements
 	 * Set the maximum number of workers to allocate at once to handling
 	 * registration requests
 	 * 
-	 * @param maximum number of workers
+	 * @param max Maximum number of workers
 	 */
 	public void setMaximumNumberOfWorkers(int max) {
 		maxWorkers = max;
@@ -49,7 +49,7 @@ public abstract class RequestResponseController implements
 	/**
 	 * Returns the current number of workers
 	 * 
-	 * @return the current number of workers allocated
+	 * @return int The current number of workers allocated
 	 */
 	@SuppressWarnings("unused")
 	private synchronized int getNumberOfWorkers() {
@@ -59,7 +59,7 @@ public abstract class RequestResponseController implements
 	/**
 	 * Returns the maximum number of workers
 	 * 
-	 * @return the maxium number of workers permitted
+	 * @return the maximum number of workers permitted
 	 */
 	@SuppressWarnings("unused")
 	private synchronized int getMaxNumberOfWorkers() {
@@ -69,8 +69,8 @@ public abstract class RequestResponseController implements
 	/**
 	 * Check if worker is available and if so register them
 	 * 
-	 * @param worker
-	 * @return Success
+	 * @param worker The worker to register
+	 * @return boolean If the worker was successfully registered
 	 */
 	private synchronized boolean registerWorker(RequestResponseWorker worker) {
 		if (this.numWorkers < this.maxWorkers) {
@@ -86,7 +86,7 @@ public abstract class RequestResponseController implements
 	 * thread. If the worker cannot be registered the request will
 	 * be dropped.
 	 * 
-	 * @param worker
+	 * @param worker The worker whom will do the work
 	 */
 	public synchronized void doWork(RequestResponseWorker worker) {
 		if (registerWorker(worker)) {
@@ -104,19 +104,21 @@ public abstract class RequestResponseController implements
 	/**
 	 * Handle the initial request in the implementation class.
 	 * Resulting in a call to the doWork method
-	 * @param Message request
+	 * @param req The client request
 	 */
 	public abstract void handleRequest(Message req);
 
 	/**
 	 * Handle the dispatch of a response to the same device
 	 * whom made the request.
-	 * @param Parcel request
+	 * @param res Response to dispatch to client
 	 */
 	public abstract void handleResponse(Parcel res);
 
 	/**
 	 * Called when a worker has completed their current task
+	 * @param worker Worker whom has completed the work
+	 * @param parcel The response to send back to the client
 	 */
 	public void onWorkComplete(RequestResponseWorker worker, Parcel parcel) {
 		// work completed by worker, reallocate

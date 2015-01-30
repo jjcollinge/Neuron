@@ -14,13 +14,13 @@ public abstract class AbstractDAOFactory {
 
 	/**
 	 * Register a particular data access object implementation with the factory
-	 * 
-	 * @param config
+	 * @param config The configuration file of a DAO
 	 */
 	public abstract void registerDAO(DatabaseConfiguration config);
+	
 	/**
 	 * Returns the ONLY device data access object and is implementation agnostic
-	 * @return DeviceDAO
+	 * @return DeviceDAO The ONLY device data access object
 	 */
 	public abstract DeviceDAO getDeviceDAO();
 

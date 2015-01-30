@@ -19,9 +19,9 @@ public class Message {
 	 * The Message class is responsible for providing a standard
 	 * internal message. This should be specialised for different
 	 * types of messages.
-	 * @param payload
-	 * @param protocol
-	 * @param format
+	 * @param payload The data encapsulated in a string
+	 * @param protocol The protocol to send the message
+	 * @param format The format of the message
 	 */
 	public Message(String payload, String protocol, String format) {
 		this.payload = payload;

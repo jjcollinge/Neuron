@@ -31,8 +31,8 @@ public class ResourceManager {
 	
 	/**
 	 * Store a new resource keyed by its uri
-	 * @param uri
-	 * @param resource
+	 * @param uri The desired URI
+	 * @param resource The resource to store
 	 */
 	public void addResource(String uri, Object resource) {
 		resources.put(uri, resource);
@@ -40,7 +40,7 @@ public class ResourceManager {
 	
 	/**
 	 * Remove a resource
-	 * @param resource
+	 * @param resource resource The resource to remove
 	 */
 	public void removeResource(Object resource) {
 		resources.remove(resource);
@@ -48,7 +48,8 @@ public class ResourceManager {
 	
 	/**
 	 * Return a resource keyed by its uri
-	 * @param uri
+	 * @param uri The resource identifier to get
+	 * @return Object The resource
 	 */
 	public Object getResource(String uri) {
 		return resources.get(uri);

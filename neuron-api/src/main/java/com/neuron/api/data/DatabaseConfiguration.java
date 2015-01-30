@@ -4,7 +4,7 @@ package com.neuron.api.data;
  * Configuration POJO which contains all the information
  * needed to add the database configuration to the system
  * dynamically.
- * @see com.nueron.api.components.Application for usage
+ * @see com.neuron.api.components.Application for usage
  * @author JC
  *
  */

@@ -30,8 +30,7 @@ public class SessionDaemon implements Runnable {
 	
 	/**
 	 * Add a session to database and in memory data structure
-	 * 
-	 * @param session
+	 * @param session The session to add
 	 */
 	public void addSession(Session session) {
 		log.log(Level.INFO, "Adding new session " + session.getId());
@@ -41,8 +40,7 @@ public class SessionDaemon implements Runnable {
 	/**
 	 * Remove session from database and in memory data structure associated
 	 * remove device
-	 * 
-	 * @param sessionId
+	 * @param sessionId The session identifier to remove
 	 */
 	public void removeSession(Integer sessionId) {
 		log.log(Level.INFO, "Removing session " + sessionId);
@@ -52,9 +50,8 @@ public class SessionDaemon implements Runnable {
 
 	/**
 	 * Return a Session from the in memory data structure
-	 * 
-	 * @param sessionId
-	 * @return
+	 * @param sessionId The desired session identifier
+	 * @return Session The session matching the given session id
 	 */
 	public Session getSession(Integer sessionId) {
 		return activeSessions.get(sessionId);
@@ -62,8 +59,7 @@ public class SessionDaemon implements Runnable {
 
 	/**
 	 * Update the timestamp of the session in memory data structure
-	 * 
-	 * @param sessionId
+	 * @param sessionId The session identifier to perform the update on
 	 */
 	public void updateTimestamp(Integer sessionId) {
 		log.log(Level.INFO, "Updating timestamp for session " + sessionId);
@@ -72,8 +68,7 @@ public class SessionDaemon implements Runnable {
 
 	/**
 	 * Send a ping message to the device to provoke a response
-	 * 
-	 * @param session
+	 * @param session The session to ping
 	 */
 	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());

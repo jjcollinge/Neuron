@@ -17,8 +17,8 @@ public class Context {
 	 * Holds the information about a current situation.
 	 * All data is required and must be provided in the
 	 * constructor.
-	 * @param protocol
-	 * @param format
+	 * @param protocol The context's protocol
+	 * @param format The context's format
 	 */
 	public Context(String protocol, String format) {
 		this.protocol = protocol;
@@ -27,7 +27,7 @@ public class Context {
 	
 	/**
 	 * Get the protocol from the context
-	 * @return
+	 * @return String The context's protocol
 	 */
 	public String getProtocol() {
 		return this.protocol;
@@ -35,7 +35,7 @@ public class Context {
 	
 	/**
 	 * Get the format from the context
-	 * @return
+	 * @return String The context's format
 	 */
 	public String getFormat() {
 		return this.format;

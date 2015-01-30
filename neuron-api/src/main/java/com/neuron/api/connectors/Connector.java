@@ -16,7 +16,7 @@ public class Connector {
 	
 	/**
 	 * Set the messenger to use in this connector
-	 * @param messenger
+	 * @param messenger The messenger for this connector to use
 	 */
 	public void setMessenger(Messenger messenger) {
 		this.messenger = messenger;
@@ -24,8 +24,8 @@ public class Connector {
 	
 	/**
 	 * Connect to to a given server
-	 * @param hostname
-	 * @param port
+	 * @param host The server hostname
+	 * @param port The server port
 	 */
 	public void connect(String host, int port) {
 		messenger.connect(host, port);
@@ -40,7 +40,7 @@ public class Connector {
 	
 	/**
 	 * Send a given parcel to the server
-	 * @param parcel
+	 * @param parcel The parcel to send
 	 */
 	public void send(Parcel parcel) {
 		messenger.sendMessage(parcel);
@@ -49,8 +49,8 @@ public class Connector {
 	/**
 	 * Listen to all messages on a given topic
 	 * Ensure that the given QOS is met
-	 * @param topic to listen to
-	 * @param qos to enforce
+	 * @param topic  The topic to listen to
+	 * @param qos The qos to enforce
 	 */
 	public void subscribe(String topic, int qos) {
 		messenger.subscribe(topic, qos);
@@ -58,7 +58,7 @@ public class Connector {
 	
 	/**
 	 * Stop listening to messages on a give topic
-	 * @param topic to stop listening to
+	 * @param topic The topic to stop listening to
 	 */
 	public void unsubscribe(String topic) {
 		messenger.unsubscribe(topic);
@@ -66,7 +66,7 @@ public class Connector {
 	
 	/**
 	 * State of current server connection
-	 * @return connection state
+	 * @return boolean The connection state
 	 */
 	public boolean isConnected() {
 		return messenger.isConnected();
@@ -75,7 +75,7 @@ public class Connector {
 	/**
 	 * Add a new listener to receive messages collected
 	 * by the messenger
-	 * @param new listener
+	 * @param mel The new listener
 	 */
 	public void addMessageEventListener(MessageEventListener mel) {
 		messenger.addMessageEventListener(mel);
@@ -84,7 +84,7 @@ public class Connector {
 	/**
 	 * Remove a current listener from receiving messages collected
 	 * by the messenger
-	 * @param current listener
+	 * @param mel The current listener
 	 */
 	public void removeMessageEventListener(MessageEventListener mel) {
 		messenger.removeMessageEventListener(mel);

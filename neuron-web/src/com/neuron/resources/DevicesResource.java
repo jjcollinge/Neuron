@@ -64,7 +64,7 @@ public class DevicesResource {
 	
 	/**
 	 * GET: /devices/hello
-	 * @return
+	 * @return String Hello World string
 	 */
 	@GET
 	@Path("hello")
@@ -91,7 +91,7 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0
-	 * @param id of the particular device to retrieve
+	 * @param id The id of the particular device to retrieve
 	 * @return a single device representation
 	 */
 	@Path("{device}")
@@ -102,7 +102,7 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors
-	 * @param id of a particular device to retrieve
+	 * @param id The id of a particular device to retrieve
 	 * @return a representation of all the sensors available in a single device representation
 	 */
 	@Path("{device}/sensors")
@@ -116,8 +116,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors/0
-	 * @param id of a particular device to retrieve 
-	 * @param id of a particular sensor to retrieve
+	 * @param id The id of a particular device to retrieve 
+	 * @param sid The id of a particular sensor to retrieve
 	 * @return a representation of a single sensor from a single device representation
 	 */
 	@Path("{device}/sensors/{sensorId}")
@@ -132,8 +132,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/sensors/0/stream Starts the sensor stream
-	 * @param id of a particular device to retrieve
-	 * @param id of a particular sensor to retrieve
+	 * @param id The id of a particular device to retrieve
+	 * @param sid The id of a particular sensor to retrieve
 	 * @return opens a connection with the client and will either periodically or on event
 	 * send data down the connection to the client. This will remain open until both ends
 	 * close and cleanup the connection.
@@ -158,8 +158,8 @@ public class DevicesResource {
 
 	/**
 	 * POST: /devices/0/sensors/0/stream Stops the sensor stream
-	 * @param id of a particular device to retrieve
-	 * @param id of a particular sensor to retrieve
+	 * @param id The id of a particular device to retrieve
+	 * @param sid  The id of a particular sensor to retrieve
 	 * @return OK response, this will signify the connection has been terminated succesfully
 	 */
 	@Path("{device}/sensors/{sensorId}/stream")
@@ -178,7 +178,7 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/actuators
-	 * @param id of a particular device to retrieve
+	 * @param id The id of a particular device to retrieve
 	 * @return a representation of all the actuators available in a single device representation
 	 */
 	@Path("{device}/actuators")
@@ -192,8 +192,8 @@ public class DevicesResource {
 
 	/**
 	 * GET: /devices/0/actuators/0
-	 * @param id of a particular device to retrieve
-	 * @param id of a particular actuator to retrieve
+	 * @param id The id of a particular device to retrieve
+	 * @param sid The id of a particular actuator to retrieve
 	 * @return a representation of a single actuators from a single device representation
 	 */
 	@Path("{device}/actuators/{actuatorId}")
@@ -208,10 +208,10 @@ public class DevicesResource {
 
 	/**
 	 * POST (option): /devices/0/actuators/0
-	 * @param id of a particular device to retrieve
-	 * @param id of a particular actuator to operate
-	 * @param a predefined option (command) to send to the device
-	 * @return OK response, will signify the command has been successfully sent
+	 * @param id The id of a particular device to retrieve
+	 * @param sid The id of a particular actuator to operate
+	 * @param optionJson A predefined option (command) to send to the device
+	 * @return Response OK will signify the command has been successfully sent
 	 */
 	@Path("{device}/actuators/{actuatorId}")
 	@POST

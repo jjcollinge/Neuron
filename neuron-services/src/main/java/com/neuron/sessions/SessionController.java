@@ -77,9 +77,8 @@ public class SessionController implements Service, MessageEventListener {
 
 	/**
 	 * Gets the daemon thread to return a Session
-	 * 
-	 * @param sessionId
-	 * @return
+	 * @param sessionId The session id
+	 * @return Session The session matching the given session id
 	 */
 	public Session getSession(int sessionId) {
 		return daemonObject.getSession(sessionId);
@@ -87,8 +86,7 @@ public class SessionController implements Service, MessageEventListener {
 
 	/**
 	 * Adds a new Session
-	 * 
-	 * @param session
+	 * @param session The session to add
 	 */
 	public void addSession(Session session) {
 		// Connector connector =
@@ -101,8 +99,7 @@ public class SessionController implements Service, MessageEventListener {
 
 	/**
 	 * Remove a current Session
-	 * 
-	 * @param sessionId
+	 * @param sessionId The session identified to remove
 	 */
 	public void removeSession(int sessionId) {
 		daemonObject.getSession(sessionId);
