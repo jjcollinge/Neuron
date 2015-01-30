@@ -53,15 +53,6 @@ public class NueronApp {
 				container.addService(WebController.getInstance());
 				container.startServices();
 			}
-			
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			container.stopServices();
 		
 		}
 	}

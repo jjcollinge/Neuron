@@ -11,6 +11,15 @@ import com.neuron.api.data.Session;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
 
+/**
+ * The Session Controller is one of the main services provided by the
+ * Neuron platform and thus has to implements the start and stop methods in
+ * order to allow command and control. The purpose of the session controller
+ * is to check for session that have become stale and remove them from the
+ * device repository.
+ * @author JC
+ *
+ */
 public class SessionController implements Service, MessageEventListener {
 
 	private static final Logger log = Logger.getLogger(SessionController.class
@@ -44,12 +53,14 @@ public class SessionController implements Service, MessageEventListener {
 	}
 
 	/**
-	 * The Session Controller is one of the main services provided by
-	 * thingMiddleware and thus has to implements the start and stop methods in
-	 * order to allow command and control.
+	 * -------------------------------------------------------------------------
+	 * Service Layer
+	 * -------------------------------------------------------------------------
 	 */
 
-	// =====================================================================
+	/**
+	 * @see com.neuron.api.components.services.Service
+	 */
 	public void setup() {
 
 		AbstractDAOFactory deviceDAOFactory = DAOFactoryProducer
@@ -59,11 +70,17 @@ public class SessionController implements Service, MessageEventListener {
 
 	}
 
+	/**
+	 * @see com.neuron.api.components.services.Service
+	 */
 	public void start() {
 		daemon.start();
 		log.log(Level.INFO, "Started service: " + this.getClass().getSimpleName());
 	}
 
+	/**
+	 * @see com.neuron.api.components.services.Service
+	 */
 	public void stop() {	
 		try {
 			daemonObject.stop();
@@ -74,8 +91,6 @@ public class SessionController implements Service, MessageEventListener {
 		}
 		log.log(Level.INFO, "Stopped service: " + this.getClass().getSimpleName());
 	}
-
-	// =====================================================================
 
 	/**
 	 * Gets the daemon thread to return a Session

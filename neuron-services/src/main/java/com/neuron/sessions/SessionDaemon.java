@@ -2,6 +2,7 @@ package com.neuron.sessions;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,15 @@ import com.neuron.api.data.Message;
 import com.neuron.api.data.Parcel;
 import com.neuron.api.data.Session;
 
+/**
+ * The session daemon is responsible for polling session
+ * timestamps and pinging the device if it is at risk
+ * of becoming stale. If it does not get a response the
+ * daemon will remove the device associated with that
+ * particular session.
+ * @author JC
+ *
+ */
 public class SessionDaemon implements Runnable {
 
 	private static final Logger log = Logger.getLogger(SessionDaemon.class
@@ -98,8 +108,8 @@ public class SessionDaemon implements Runnable {
 	public void run() {
 
 		final int SEC = 1000;
-		int THRESHOLD = SEC * 30;
-		int POLLING_PERIOD = SEC * 60;
+		int THRESHOLD = SEC * 20;
+		int POLLING_PERIOD = SEC * 30;
 		long pingLimit;
 		
 		running = true;
@@ -129,27 +139,18 @@ public class SessionDaemon implements Runnable {
 				running = false;
 			}
 
-			/*
-			 * By adding each id from the registry to a set and removing
-			 * afterwards you avoid the read / write conflict associated with
-			 * removing items during iteration directly.
-			 */
-			HashSet<Integer> deviceToRemove = new HashSet<Integer>();
-
 			// Check each device timestamp against the same threshold to see if
 			// they've updated. If not then add them to the removal set
-			for (Integer sessionKey : pingedDevices) {
+			Iterator<Integer> iter = pingedDevices.iterator();
+			while(iter.hasNext()) {
+				Integer sessionKey = iter.next();
 				if (activeSessions.get(sessionKey).isOlder(timeoutLimit)) {
 					log.log(Level.WARNING, "Session for device " + sessionKey
 							+ " timed out");
-					deviceToRemove.add(sessionKey);
+					removeSession(sessionKey);
 				}
 			}
-
-			// Remove stale devices
-			for (Integer key : deviceToRemove) {
-				removeSession(key);
-			}
+			
 		}
 	}
 
