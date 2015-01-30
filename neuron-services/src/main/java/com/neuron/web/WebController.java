@@ -13,6 +13,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.neuron.api.components.services.Service;
 
+
 public class WebController implements Service {
 
 	private static final Logger log = Logger.getLogger(WebController.class
@@ -32,7 +33,6 @@ public class WebController implements Service {
 		return instance;
 	}
 
-	@Override
 	public void setup() {
 		try {
 			// Define a folder to hold web application contents.
@@ -53,7 +53,7 @@ public class WebController implements Service {
 
 			// Add servlet that will register Jersey REST resources
 			Tomcat.addServlet(context, "jersey-container-servlet", new
-			ServletContainer(new com.neuron.web.ApplicationConfig()));
+			ServletContainer(new com.neuron.resources.ApplicationConfig()));
 			context.addServletMapping("/api/*", "jersey-container-servlet");
 
 			// Define and bind web.xml file location.
@@ -68,7 +68,6 @@ public class WebController implements Service {
 		}*/
 	}
 
-	@Override
 	public void start() {
 		try {
 			server.start();
@@ -78,7 +77,6 @@ public class WebController implements Service {
 		}
 	}
 
-	@Override
 	public void stop() {
 		try {
 			server.stop();

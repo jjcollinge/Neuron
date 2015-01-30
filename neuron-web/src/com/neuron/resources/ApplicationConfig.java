@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.resources;
 
 import javax.ws.rs.ApplicationPath;
 
@@ -12,7 +12,7 @@ public class ApplicationConfig extends ResourceConfig {
 	public ApplicationConfig() {
 
 		super(SseFeature.class);
-		packages("com.neuron.web");
+		packages("com.neuron.resources", "com.neuron.rest");
 		property(ServerProperties.TRACING, "ALL");
 		
 

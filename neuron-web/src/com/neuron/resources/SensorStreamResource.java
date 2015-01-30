@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.resources;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -17,6 +17,8 @@ import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.DataEventListener;
+import com.neuron.rest.DeviceProxy;
+import com.neuron.rest.DeviceProxyFactory;
 
 public class SensorStreamResource implements DataEventListener {
 

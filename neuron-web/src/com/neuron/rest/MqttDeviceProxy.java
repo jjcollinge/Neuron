@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.rest;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

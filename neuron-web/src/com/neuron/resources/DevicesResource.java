@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.resources;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -25,6 +25,7 @@ import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Device;
+import com.neuron.rest.ResourceManager;
 
 /**
  * Device resources root. Any resource associated with a device

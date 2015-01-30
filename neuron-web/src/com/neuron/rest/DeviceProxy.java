@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.rest;
 
 import com.neuron.api.components.DeviceProxyInterface;
 import com.neuron.api.events.DataEventProducer;

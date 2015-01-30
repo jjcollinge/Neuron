@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.rest;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

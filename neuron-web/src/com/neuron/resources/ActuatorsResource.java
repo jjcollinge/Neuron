@@ -1,4 +1,6 @@
-package com.neuron.web;
+package com.neuron.resources;
+
+import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -8,44 +10,44 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
+import com.neuron.api.components.dal.AbstractDAOFactory;
+import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.components.dal.DeviceDAOFactory;
+import com.neuron.api.data.Actuator;
 import com.neuron.api.data.Device;
-import com.neuron.api.data.Sensor;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class SensorResource {
+public class ActuatorsResource {
 
 	@Context
 	UriInfo uriInfo;
 	@Context
 	Request request;
-	String sensorId;
+
 	String deviceId;
 
-	public SensorResource(UriInfo uriInfo, Request request, String deviceId, String sensorId) {
+	public ActuatorsResource(UriInfo uriInfo, Request request, String id) {
 
 		this.uriInfo = uriInfo;
 		this.request = request;
-		this.deviceId = deviceId;
-		this.sensorId = sensorId;
+		this.deviceId = id;
 
 	}
-	
-	// GET: /devices/0/sensors/0
+
+	// GET: /devices/0/actuators
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Sensor getSensor() {
-		
+	public ArrayList<Actuator> getActuator() {
+
 		System.out.println("Request for device");
-		DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO();
+		AbstractDAOFactory daoFactory = DAOFactoryProducer.getFactory("device");
+		DeviceDAO dao = daoFactory.getDeviceDAO();
 		Device device = dao.get(Integer.valueOf(deviceId));
-		if(device == null) {
+		if (device == null) {
 			throw new RuntimeException("Device " + deviceId + " not found");
 		}
-		return device.getSensor(Integer.valueOf(sensorId));
-		
+		return device.getActuators();
+
 	}
 
 }
