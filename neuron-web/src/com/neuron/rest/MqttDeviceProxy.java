@@ -3,12 +3,11 @@ package com.neuron.rest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.connectors.ConnectorFactoryImpl;
-import com.neuron.api.data.Session;
+import com.neuron.api.data.Message;
+import com.neuron.api.data.Parcel;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.MessageEvent;
 
@@ -17,7 +16,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 	private static final Logger log = Logger.getLogger(MqttDeviceProxy.class
 			.getName());
 
-	private Session session;
+	private int sessionId;
 	private Connector connector;
 	private boolean ready;
 
@@ -30,11 +29,11 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 */
 	@Override
 	public void setup(int sessionId) {
-//		AbstractDAOFactory sessionFactory = DAOFactoryProducer.getFactory("session");
-//		ConnectorFactory factory =  new ConnectorFactoryImpl();
-//		connector = factory.getConnector());
-//		connector.addMessageEventListener(this);
-//		ready = true;
+		this.sessionId = sessionId;
+		ConnectorFactory factory =  new ConnectorFactoryImpl();
+		connector = factory.getConnector("mqtt");
+		connector.addMessageEventListener(this);
+		ready = true;
 	}
 
 	/**
@@ -42,15 +41,15 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 */
 	@Override
 	public void startSensorStreaming(int sensorId) {
-//		if (ready) {
-//			String topic = "devices/" + session.getId() + "/sensors/"
-//					+ sensorId;
-//			connector.subscribe(topic + "/stream/response", 2);
-//			connector.send(ParcelPacker.makeParcel("START_STREAM", "JSON",
-//					topic, "MQTT"));
-//		} else {
-//			notReady();
-//		}
+		if (ready) {
+			String topic = "devices/" + sessionId + "/sensors/"
+					+ sensorId;
+			connector.subscribe(topic + "/stream/response", 2);
+			Message msg = new Message("START_STREAM", "MQTT", "JSON");
+			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+		} else {
+			notReady();
+		}
 	}
 
 	/**
@@ -58,15 +57,15 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 */
 	@Override
 	public void stopSensorStreaming(int sensorId) {
-//		if (ready) {
-//			String topic = "devices/" + session.getId() + "/sensors/"
-//					+ sensorId;
-//			connector.unsubscribe(topic + "/stream/response");
-//			connector.send(ParcelPacker.makeParcel("STOP_STREAM", "JSON",
-//					topic, "MQTT"));
-//		} else {
-//			notReady();
-//		}
+		if (ready) {
+			String topic = "devices/" + sessionId + "/sensors/"
+					+ sensorId;
+			connector.unsubscribe(topic + "/stream/response");
+			Message msg = new Message("STOP_STREAM", "MQTT", "JSON");
+			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+		} else {
+			notReady();
+		}
 	}
 
 	/**
@@ -74,15 +73,14 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 */
 	@Override
 	public void operateActuator(int actuatorId, String option) {
-//		if (ready) {
-//			String topic = "devices/" + session.getId() + "/actuators/"
-//					+ actuatorId;
-//			connector.send(ParcelPacker.makeParcel(option,
-//					(String) session.getProperty("format"), topic,
-//					(String) session.getProperty("protocol")));
-//		} else {
-//			notReady();
-//		}
+		if (ready) {
+			String topic = "devices/" + sessionId + "/actuators/"
+					+ actuatorId;
+			Message msg = new Message(option, "MQTT", "JSON");
+			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+		} else {
+			notReady();
+		}
 	}
 
 	/**
@@ -91,9 +89,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 */
 	@Override
 	public void onMessageArrived(MessageEvent event) {
-//		String payload = event.getMessage().getPayload();
-//		DataEvent dataEvent = new DataEvent(this, payload);
-//		notifyListeners(dataEvent);
+		String payload = event.getMessage().getPayload();
+		DataEvent dataEvent = new DataEvent(this, payload);
+		notifyListeners(dataEvent);
 	}
 
 	/**

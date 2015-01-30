@@ -92,10 +92,21 @@
 			<version>2.10.1</version>
 		</dependency>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>neuron</groupId>
 			<artifactId>neuron-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<classifier>classes</classifier>
+		</dependency>
+		<dependency>
+			<groupId>neuron</groupId>
+			<artifactId>neuron-services</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>

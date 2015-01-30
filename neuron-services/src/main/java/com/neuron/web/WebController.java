@@ -53,7 +53,7 @@ public class WebController implements Service {
 
 			// Add servlet that will register Jersey REST resources
 			Tomcat.addServlet(context, "jersey-container-servlet", new
-			ServletContainer(new com.neuron.resources.ApplicationConfig()));
+			ServletContainer(new ApplicationConfig()));
 			context.addServletMapping("/api/*", "jersey-container-servlet");
 
 			// Define and bind web.xml file location.

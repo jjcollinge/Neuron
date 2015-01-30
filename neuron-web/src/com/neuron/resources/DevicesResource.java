@@ -152,7 +152,7 @@ public class DevicesResource {
 			SSR = new SensorStreamResource(uriInfo, request, id, sid);
 			resources.addResource(resourceURI, SSR);
 		}
-		SSR.startSensorStreaming(); //Throwing
+		//SSR.startSensorStreaming(); //Throwing
 		return SSR.getConnection();
 	}
 

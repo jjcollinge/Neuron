@@ -1,4 +1,4 @@
-package com.neuron.resources;
+package com.neuron.web;
 
 import javax.ws.rs.ApplicationPath;
 

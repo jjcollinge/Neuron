@@ -15,10 +15,13 @@ import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
 
+
+import com.neuron.api.data.Session;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.DataEventListener;
 import com.neuron.rest.DeviceProxy;
 import com.neuron.rest.DeviceProxyFactory;
+import com.neuron.sessions.SessionController;
 
 public class SensorStreamResource implements DataEventListener {
 
@@ -82,7 +85,11 @@ public class SensorStreamResource implements DataEventListener {
 		if(!streaming) {
 			// Not streaming so tell device to start publishing
 			int id = Integer.valueOf(sensorId);
-			proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
+			// Grab the devices session
+			Session session = SessionController.getInstance().getSession(Integer.valueOf(deviceId));
+			// Extract the sessions context
+			com.neuron.api.data.Context context = session.getContext();
+			proxy = new DeviceProxyFactory().getDeviceProxy(context);
 			proxy.setup(Integer.valueOf(deviceId).intValue());
 			proxy.addDataEventListener(this);
 			proxy.startSensorStreaming(id);
