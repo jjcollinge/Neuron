@@ -13,6 +13,13 @@ import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Sensor;
 
+/**
+ * A representation of an in system sensor. This is only the data
+ * representation and all interaction has been moved out into a 
+ * separate streaming resource. @see com.neuron.resources.SensorStreamResource
+ * @author JC
+ *
+ */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SensorResource {

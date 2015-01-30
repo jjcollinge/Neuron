@@ -23,11 +23,22 @@ import com.neuron.rest.DeviceProxy;
 import com.neuron.rest.DeviceProxyFactory;
 import com.neuron.sessions.SessionController;
 
+/**
+ * Handles dispatching start and stop keywords to a device
+ * to interact with a specific sensor. Listens for any
+ * responding values from the sensor and adds them to the
+ * SSE broadcast which will then push them to the client.
+ * @author JC
+ *
+ */
 public class SensorStreamResource implements DataEventListener {
 
 	private static final Logger log = Logger
 			.getLogger(SensorStreamResource.class.getName());
 
+	/**
+	 * HTTP context information about the request
+	 */
 	@Context
 	UriInfo uriInfo;
 	@Context
@@ -52,7 +63,8 @@ public class SensorStreamResource implements DataEventListener {
 
 	/**
 	 * GET: /devices/0/sensor/0/stream/
-	 * @return
+	 * @return SSE connection, this will stay open until terminated by the server or
+	 * manually destroyed by the client
 	 */
 	@GET
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
@@ -125,7 +137,7 @@ public class SensorStreamResource implements DataEventListener {
 	}
 
 	/**
-	 * Called when a new data event is received
+	 * Called when a new data event is received from a device
 	 */
 	@Override
 	public void onDataArrived(DataEvent dataEvent) {

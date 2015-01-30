@@ -11,6 +11,13 @@ import com.neuron.api.data.Parcel;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.MessageEvent;
 
+/**
+ * MQTT implementation of a device proxy. Will use a mqtt
+ * connector to speak to the device and handle any mqtt
+ * specific validation.
+ * @author JC
+ *
+ */
 public class MqttDeviceProxy extends DeviceProxy {
 
 	private static final Logger log = Logger.getLogger(MqttDeviceProxy.class

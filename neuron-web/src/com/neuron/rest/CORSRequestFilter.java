@@ -10,6 +10,14 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * Applies a filter to any incoming requests. The filter will
+ * accept any preflight HTTP messages sent from the browser
+ * to authenticate CORS(Cross Origin Resource Sharing) which
+ * can sometime be blocked in languages such as javascript.
+ * @author JC
+ *
+ */
 @Provider
 @PreMatching
 public class CORSRequestFilter implements ContainerRequestFilter {

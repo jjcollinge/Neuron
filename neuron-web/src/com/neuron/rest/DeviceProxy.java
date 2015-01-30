@@ -5,6 +5,13 @@ import com.neuron.api.events.DataEventProducer;
 import com.neuron.api.events.MessageEvent;
 import com.neuron.api.events.MessageEventListener;
 
+/**
+ * The base proxy brings together a number of interfaces and
+ * a base class to provide the functionality required to 
+ * interact successfully with both the devices and web app. 
+ * @author JC
+ *
+ */
 public abstract class DeviceProxy extends DataEventProducer implements
 		DeviceProxyInterface, MessageEventListener {
 

@@ -17,7 +17,13 @@ import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Sensor;
 
-
+/**
+ * A representation of a list of sensors associated with a
+ * particular device. Will handle calls to a particular
+ * sensor and pass back the individual item.
+ * @author JC
+ *
+ */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SensorsResource {
@@ -48,7 +54,6 @@ public class SensorsResource {
 			throw new RuntimeException("Device " + deviceId + " not found");
 		}
 		return device.getSensors();
-				
 	}
 
 	// GET: /devices/0/sensors/0
@@ -57,6 +62,5 @@ public class SensorsResource {
 	public SensorResource getSensor(String deviceId,@PathParam("sensorId") String sensorId) {
 		
 		return new SensorResource(uriInfo, request, deviceId, sensorId);
-		
 	}
 }

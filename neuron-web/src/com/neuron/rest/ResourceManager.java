@@ -2,6 +2,17 @@ package com.neuron.rest;
 
 import java.util.HashMap;
 
+/**
+ * In order to avoid creating multiple resources per
+ * request and thus invoking creating multiple
+ * streams to and from the devices, the resources must
+ * be managed. The ResourceManager is responsible for
+ * storing resources with their URI as a key. This
+ * allows clients to grab any existing resource based
+ * only on their URI.
+ * @author JC
+ *
+ */
 public class ResourceManager {
 
 	private HashMap<String, Object> resources;

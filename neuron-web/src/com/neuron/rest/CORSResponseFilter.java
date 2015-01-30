@@ -10,6 +10,14 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * Applies a filter to any outgoing response messages. Sets the headers
+ * so that a client is aware of and can accept the data from the server.
+ * This avoids issues with browser and languages which sometimes enforce
+ * no CORS (Cross Origin Resource Sharing).
+ * @author JC
+ *
+ */
 @Provider
 @PreMatching
 public class CORSResponseFilter implements ContainerResponseFilter {

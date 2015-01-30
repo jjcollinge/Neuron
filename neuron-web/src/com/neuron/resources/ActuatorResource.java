@@ -1,6 +1,7 @@
 package com.neuron.resources;
 
 import javax.ws.rs.Consumes;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -13,9 +14,18 @@ import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Actuator;
 import com.neuron.api.data.Device;
+import com.neuron.api.data.Session;
 import com.neuron.rest.DeviceProxy;
 import com.neuron.rest.DeviceProxyFactory;
+import com.neuron.sessions.SessionController;
 
+/**
+ * A representation of an actuator in the system. Can either
+ * return a data representation of itself or invoke operations
+ * on the actual actuator.
+ * @author JC
+ *
+ */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ActuatorResource {
@@ -34,7 +44,6 @@ public class ActuatorResource {
 		this.request = request;
 		this.deviceId = deviceId;
 		this.actuatorId = actuatorId;
-
 	}
 	
 	/**
@@ -62,12 +71,17 @@ public class ActuatorResource {
 	 */
 	public Response invokeOperation(String option) {
 		
-		//DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy("mqtt");
-		//proxy.setup(Integer.valueOf(deviceId));
-		//proxy.operateActuator(Integer.valueOf(actuatorId), option);
-		
+		// Not streaming so tell device to start publishing
+		int id = Integer.valueOf(actuatorId);
+		// Grab the devices session
+		Session session = SessionController.getInstance().getSession(Integer.valueOf(deviceId));
+		// Extract the sessions context
+		com.neuron.api.data.Context context = session.getContext();
+		DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy(context);
+		proxy.setup(Integer.valueOf(deviceId).intValue());
+		proxy.operateActuator(id, option);
 		// get POST data and call invoke on deviceController
-		return null;
+		return Response.ok().build();
 	}
 	
 }

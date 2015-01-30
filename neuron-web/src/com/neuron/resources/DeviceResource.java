@@ -13,6 +13,13 @@ import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 
+/**
+ * A representation of an in system device. Will only return
+ * a data represenation of itself including any
+ * sensors or actuators associated with it.
+ * @author JC
+ *
+ */
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class DeviceResource {

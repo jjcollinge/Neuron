@@ -9,6 +9,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/**
+ * This classes existence will allow jackson to 
+ * apply the given configuration to its Json 
+ * serialization and deserialization.
+ * @author JC
+ *
+ */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
