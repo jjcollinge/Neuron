@@ -48,7 +48,7 @@ public class SensorStreamResource implements DataEventListener {
 
 	private static final SseBroadcaster BROADCASTER = new SseBroadcaster();
 	private EventOutput eventOutput;
-	private boolean streaming;
+	private volatile boolean streaming;
 	private DeviceProxy proxy;
 
 	public SensorStreamResource(UriInfo uriInfo, Request request,
@@ -71,9 +71,9 @@ public class SensorStreamResource implements DataEventListener {
 	public EventOutput getConnection() {
 
 		eventOutput = new EventOutput();
-		startSensorStreaming();
 		BROADCASTER.add(eventOutput);
-		log.log(Level.INFO, "Added eventOutput to broadcaster");
+		startSensorStreaming();
+			
 		return eventOutput;
 	}
 	
@@ -122,6 +122,8 @@ public class SensorStreamResource implements DataEventListener {
 			int id = Integer.valueOf(sensorId);
 			proxy.stopSensorStreaming(id);
 			proxy.removeDataEventListener(this);
+			DataEvent event = new DataEvent(this, "{ \"data\": \"CLOSE\" }");
+			onDataArrived(event);
 			streaming = false;
 			try {
 				if(eventOutput != null) {
@@ -133,6 +135,8 @@ public class SensorStreamResource implements DataEventListener {
 				e.printStackTrace();
 			}
 			log.log(Level.INFO, "Stopped sensor streaming");
+		} else {
+			log.log(Level.INFO, "Sensor isn't streaming");
 		}
 	}
 
@@ -142,7 +146,9 @@ public class SensorStreamResource implements DataEventListener {
 	@Override
 	public void onDataArrived(DataEvent dataEvent) {
 		String data = (String) dataEvent.getData();
-		BROADCASTER.broadcast(new OutboundEvent.Builder().data(String.class, data).build());
-		log.log(Level.INFO, "Sending new SSE data event");
+		if(streaming) {
+			BROADCASTER.broadcast(new OutboundEvent.Builder().data(String.class, data).build());
+			log.log(Level.INFO, "Sending new SSE data event");
+		}
 	}
 }

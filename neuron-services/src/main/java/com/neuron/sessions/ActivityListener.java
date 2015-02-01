@@ -76,7 +76,7 @@ public class ActivityListener extends MessageEventProducer implements
 						event.getMessage().getProtocol())));
 
 		} catch (Exception e) {
-			log.log(Level.INFO,
+			log.log(Level.FINER,
 					"Couldn't extract id from message. This message will not update a sessions timestamp");
 		}
 	}
