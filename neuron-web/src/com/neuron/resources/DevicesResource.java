@@ -159,7 +159,7 @@ public class DevicesResource {
 	 * POST: /devices/0/sensors/0/stream Stops the sensor stream
 	 * @param id The id of a particular device to retrieve
 	 * @param sid  The id of a particular sensor to retrieve
-	 * @return OK response, this will signify the connection has been terminated succesfully
+	 * @return OK response, this will signify the connection has been terminated successfully
 	 */
 	@Path("{device}/sensors/{sensorId}/stream")
 	@POST
@@ -168,6 +168,7 @@ public class DevicesResource {
 		String resourceURI = "devices/"+id+"/sensors/"+sid;
 		SensorStreamResource SSR = (SensorStreamResource) resources.getResource(resourceURI);
 		if(SSR != null) {
+			log.log(Level.INFO, "Stopping resource: " + resourceURI);
 			SSR.stopSensorStreaming();
 		} else {
 			log.log(Level.INFO, "Failed to stop sensor as resource doesn't exist");

@@ -122,7 +122,7 @@ public class SensorStreamResource implements DataEventListener {
 			int id = Integer.valueOf(sensorId);
 			proxy.stopSensorStreaming(id);
 			proxy.removeDataEventListener(this);
-			DataEvent event = new DataEvent(this, "{ \"data\": \"CLOSE\" }");
+			DataEvent event = new DataEvent(this, "{ \"sessionId\": \"" + deviceId + "\", \"data\": \"CLOSE\" }");
 			onDataArrived(event);
 			streaming = false;
 			try {
