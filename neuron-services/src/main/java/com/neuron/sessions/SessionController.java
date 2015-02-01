@@ -3,6 +3,7 @@ package com.neuron.sessions;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.components.Configuration;
 import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
@@ -61,13 +62,20 @@ public class SessionController implements Service, MessageEventListener {
 	/**
 	 * @see com.neuron.api.components.services.Service
 	 */
-	public void setup() {
+	public void setup(Configuration config) {
 
 		AbstractDAOFactory deviceDAOFactory = DAOFactoryProducer
 				.getFactory("device");
 		DeviceDAO dao = deviceDAOFactory.getDeviceDAO();
 		daemonObject.setDeviceDAO(dao);
-
+		String timeout = config.getProperty("ping_timeout");
+		String pollPeriod = config.getProperty("ping_polling_period");
+		if(timeout != null) {
+			daemonObject.setPingTimeout(Integer.valueOf(timeout));
+		}
+		if(pollPeriod != null) {
+			daemonObject.setPingPollingPeriod(Integer.valueOf(pollPeriod));
+		}
 	}
 
 	/**

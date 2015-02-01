@@ -33,6 +33,7 @@ public abstract class Application {
 	
 	private String databaseClassName;
 	private List<String> messengerClassNames;
+	private Configuration config;
 	
 	/**
 	 * Initialises the collections
@@ -65,9 +66,10 @@ public abstract class Application {
 	 * Loads the configuration file and attempts to register
 	 * the implementation details with the relevant system
 	 * components.
+	 * @param configFile A file path to the applications configuration file
 	 * @return boolean If setup was successful;
 	 */
-	protected boolean setup() {
+	protected boolean setup(String configFile) {
 		
 		if(databaseClassName == null || messengerClassNames.isEmpty()) {
 			log.log(Level.WARNING, "You must register a data access "
@@ -76,57 +78,33 @@ public abstract class Application {
 					+ "setup now");
 			return false;
 		}
-		
+			
 		/**
-		 * Load config.properties file to get key value pairs for system
+		 * Load config file to get key value pairs for system
 		 * configuration.
 		 */
-		Properties prop = new Properties();
-		String databaseHost = "";
-		int databasePort = 0;
-		String databaseType = "";
-		String databaseName = "";
-		String brokerHost = "";
-		int brokerPort = 0;
-		String brokerType = "";
-		InputStream input = null;
+			
+		ConfigurationLoader loader = new ConfigurationLoader();
+		config = loader.loadConfiguration(configFile);
 		
-		try {
-			input = new FileInputStream("config.properties");
-			prop.load(input);
-			
-			databaseHost = prop.getProperty("database_host");
-			databasePort = Integer.valueOf(prop.getProperty("database_port"));
-			databaseType = prop.getProperty("database_type");
-			databaseName = prop.getProperty("database_name");
-			brokerHost = prop.getProperty("broker_host");
-			brokerPort = Integer.valueOf(prop.getProperty("broker_port"));
-			brokerType = prop.getProperty("broker_type");
-			
-		} catch (FileNotFoundException e) {
-			log.log(Level.WARNING, "Failed to locate config.properties file, stopping setup now.");
-			return false;
-		} catch (IOException e) {
-			log.log(Level.WARNING, "Failed to read config.properties file, stopping setup now.");
-			return false;
-		} finally {
-			if(input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					log.log(Level.WARNING, "Failed to close config.properties file");
-				}
-		}
+		String databaseHostname = config.getProperty("database_hostname");
+		String databasePort = config.getProperty("database_port");
+		String databaseType = config.getProperty("database_type");
+		String databaseName = config.getProperty("database_name");
+		String brokerHostname = config.getProperty("broker_host");
+		String brokerPort = config.getProperty("broker_port");
+		String brokerType = config.getProperty("broker_type");
+		InputStream input = null;
 		
 		log.log(Level.INFO, "Launching application with the following properties:\n"
 				+ "....................................." + "\n"
 				+ "Database:\n"
-				+ "database_host: " + databaseHost + "\n"
+				+ "database_host: " + databaseHostname + "\n"
 				+ "database_port: " + databasePort + "\n"
 				+ "database_type: " + databaseType + "\n"
 				+ "database_name: " + databaseName + "\n"
 				+ "Protocols:\n"
-				+ "broker_host: " + brokerHost + "\n"
+				+ "broker_host: " + brokerHostname + "\n"
 				+ "broker_port: " + brokerPort + "\n"
 				+ "broker_type: " + brokerType + "\n"
 				+ ".....................................");
@@ -138,8 +116,8 @@ public abstract class Application {
 		DatabaseConfiguration databaseConfig;
 		try {
 			databaseConfig = new DatabaseConfiguration(
-					databaseHost,
-					databasePort,
+					databaseHostname,
+					Integer.valueOf(databasePort),
 					databaseType,
 					databaseName,
 					Class.forName(databaseClassName));
@@ -157,8 +135,8 @@ public abstract class Application {
 			ConnectorConfiguration brokerConfig;
 			try {
 				brokerConfig = new ConnectorConfiguration(
-						brokerHost,
-						brokerPort,
+						brokerHostname,
+						Integer.valueOf(brokerPort),
 						brokerType,
 						Class.forName(messengerClassName));
 				connectorFactory.registerConnector(brokerConfig);
@@ -177,6 +155,10 @@ public abstract class Application {
 		log.log(Level.INFO, "Succesfully setup new application");
 		return true;
 		
+	}
+	
+	public Configuration getConfig() {
+		return this.config;
 	}
 	
 }

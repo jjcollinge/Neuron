@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.components.Configuration;
 import com.neuron.api.components.RequestResponseController;
 import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
@@ -23,7 +24,7 @@ public class RegistrationController extends RequestResponseController implements
 	private static final Logger log = Logger
 			.getLogger(RegistrationController.class.getName());
 
-	private final String REGISTRATION_TOPIC = "register";
+	private String registrationTopic = "register";
 	private HashMap<String, Connector> connectors;
 	private static RegistrationController instance;
 	private DeviceDAO dao;
@@ -46,7 +47,7 @@ public class RegistrationController extends RequestResponseController implements
 	 */
 	
 	//=====================================================================
-	public void setup() {
+	public void setup(Configuration config) {
 		
 		ConnectorFactory factory = new ConnectorFactoryImpl();
 		for(String connectorType : factory.getCatalogue()) {
@@ -56,6 +57,11 @@ public class RegistrationController extends RequestResponseController implements
 		
 		AbstractDAOFactory daoFactory = DAOFactoryProducer.getFactory("device");
 		dao = daoFactory.getDeviceDAO();
+		
+		String regTopic = config.getProperty("registration_topic");
+		if(regTopic != null) {
+			this.registrationTopic = regTopic;
+		}
 	}
 
 	public void start() {
@@ -63,7 +69,7 @@ public class RegistrationController extends RequestResponseController implements
 		
 		for(Connector connector : connectors.values()) {
 			connector.addMessageEventListener(this);
-			connector.subscribe(REGISTRATION_TOPIC, 2);
+			connector.subscribe(registrationTopic, 2);
 		}
 		log.log(Level.INFO, "Started service: " + this.getClass().getSimpleName());
 	}
@@ -71,7 +77,7 @@ public class RegistrationController extends RequestResponseController implements
 	public void stop() {
 		for (Connector connector : connectors.values()) {
 			connector.removeMessageEventListener(this);
-			connector.unsubscribe(this.REGISTRATION_TOPIC);
+			connector.unsubscribe(this.registrationTopic);
 		}
 		log.log(Level.INFO, "Stopped service: " + this.getClass().getSimpleName());
 	}

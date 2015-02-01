@@ -42,12 +42,12 @@ public class NueronApp {
 			
 			ServiceContainer container = null;
 			
-			if(setup()) {
+			if(setup("neuron-config.json")) {
 			
 				/**
 				 * Create a service container to handle the setup and tear down of services
 				 */
-				container = new ServiceContainer();	
+				container = new ServiceContainer(getConfig());	
 				container.addService(SessionController.getInstance());
 				container.addService(RegistrationController.getInstance());
 				container.addService(WebController.getInstance());

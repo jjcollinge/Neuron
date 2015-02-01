@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.components.Configuration;
+
 /**
  * Controls a collection of services. Is responsible
  * for ensuring that a services setup method is called
@@ -18,13 +20,15 @@ public class ServiceContainer {
 
 	private LinkedHashMap<Service, Boolean> services;
 	private volatile boolean running;
+	private Configuration config;
 
 	/**
 	 * Initialise collections
 	 */
-	public ServiceContainer() {
+	public ServiceContainer(Configuration config) {
 		this.services = new LinkedHashMap<Service, Boolean>();
 		this.running = false;
+		this.config = config;
 	}
 
 	/**
@@ -35,7 +39,7 @@ public class ServiceContainer {
 	public void addService(final Service service) {
 		log.log(Level.INFO, "Adding new service " + service.getClass().getSimpleName());
 		if (!running) {
-			service.setup();
+			service.setup(config);
 			services.put(service, false);
 		} else {
 			log.log(Level.INFO, "Cannot add a service whilst the container is running");

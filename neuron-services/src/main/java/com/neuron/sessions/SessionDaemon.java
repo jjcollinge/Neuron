@@ -30,6 +30,10 @@ public class SessionDaemon implements Runnable {
 	private HashMap<Integer, Session> activeSessions;
 	private DeviceDAO deviceDao;
 	private volatile boolean running;
+	
+	private final int SEC = 1000;
+	private int timeout = SEC * 20;
+	private int polling_period = SEC * 30;
 
 	public SessionDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
@@ -94,6 +98,14 @@ public class SessionDaemon implements Runnable {
 		connector.send(parcel);
 	}
 	
+	public void setPingTimeout(int seconds) {
+		this.timeout = SEC * seconds;
+	}
+	
+	public void setPingPollingPeriod(int seconds){
+		this.polling_period = SEC * seconds;
+	}
+	
 	/**
 	 * Stops the running thread
 	 */
@@ -107,9 +119,6 @@ public class SessionDaemon implements Runnable {
 	 */
 	public void run() {
 
-		final int SEC = 1000;
-		int THRESHOLD = SEC * 20;
-		int POLLING_PERIOD = SEC * 30;
 		long pingLimit;
 		
 		running = true;
@@ -119,7 +128,7 @@ public class SessionDaemon implements Runnable {
 
 			HashSet<Integer> pingedDevices = new HashSet<Integer>();
 
-			pingLimit = (System.currentTimeMillis() - THRESHOLD) / 1000L;
+			pingLimit = (System.currentTimeMillis() - timeout) / 1000L;
 			long timeoutLimit = (System.currentTimeMillis()) / 1000L;
 
 			// Check each device timestamp and ping the ones which exceed the
@@ -134,7 +143,7 @@ public class SessionDaemon implements Runnable {
 			// delay for POLLING_PERIOD value; this allows devices time to
 			// respond to any pings
 			try {
-				Thread.sleep(POLLING_PERIOD);
+				Thread.sleep(polling_period);
 			} catch (InterruptedException e) {
 				running = false;
 			}

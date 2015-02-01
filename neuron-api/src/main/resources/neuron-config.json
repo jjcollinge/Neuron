@@ -1,0 +1,19 @@
+{
+	"database_host": "localhost",
+	"database_port": "27017",
+	"database_type": "mongodb",
+	"database_name": "database",
+	"database_username": "test",
+	"database_password": "test",
+	"broker_host": "localhost",
+	"broker_port": "1883",
+	"broker_type": "mqtt",
+	"broker_username": "test",
+	"broker_password": "test",
+	"ping_timeout": "20",
+	"ping_polling_period": "30",
+	"registration_topic": "register",
+	"webapp_dir":"../neuron-web/WebContent/",
+	"webapp_port":"9998",
+	"device_limit": "100"
+}

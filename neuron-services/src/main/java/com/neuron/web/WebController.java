@@ -11,6 +11,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.neuron.api.components.Configuration;
 import com.neuron.api.components.services.Service;
 
 public class WebController implements Service {
@@ -33,17 +34,26 @@ public class WebController implements Service {
 		return instance;
 	}
 
-	public void setup() {
+	public void setup(Configuration config) {
 		try {
 			// Define a folder to hold web application contents.
-			String webappDirLocation = "../neuron-web/WebContent/";
+			String webappDirLocation = config.getProperty("webapp_dir");
+			if(webappDirLocation == null) {
+				webappDirLocation = "../neuron-web/WebContent/";
+			}
+			
+			// Define a folder to hold web application contents.
 			server = new Tomcat();
 
 			// Define port number for the web application
-			String webPort = System.getenv("PORT");
-			if (webPort == null || webPort.isEmpty()) {
-				webPort = "9998";
+			String webPort = config.getProperty("webapp_port");
+			if(webPort == null) {
+				webPort = System.getenv("PORT");
+				if (webPort == null || webPort.isEmpty()) {
+					webPort = "9998";
+				}
 			}
+			
 			// Bind the port to Tomcat server
 			server.setPort(Integer.valueOf(webPort));
 
