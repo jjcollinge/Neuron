@@ -39,6 +39,7 @@ public class NueronApp {
 			// Ideally these would be loaded from the class loader at runtime
 			registerDAOClassName("com.neuron.dal.MongoDBDeviceDAO");
 			registerMessengerClassName("com.neuron.messaging.MqttMessenger");
+			registerProxyClassName("com.neuron.rest.MqttDeviceProxy");
 			
 			ServiceContainer container = null;
 			

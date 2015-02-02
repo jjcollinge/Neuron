@@ -16,11 +16,13 @@ import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
 
 
+
+
+import com.neuron.api.components.DeviceProxy;
+import com.neuron.api.components.DeviceProxyFactory;
 import com.neuron.api.data.Session;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.DataEventListener;
-import com.neuron.rest.DeviceProxy;
-import com.neuron.rest.DeviceProxyFactory;
 import com.neuron.sessions.SessionController;
 
 /**

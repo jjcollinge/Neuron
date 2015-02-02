@@ -3,6 +3,7 @@ package com.neuron.rest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.components.DeviceProxy;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.connectors.ConnectorFactoryImpl;

@@ -33,6 +33,7 @@ public abstract class Application {
 	
 	private String databaseClassName;
 	private List<String> messengerClassNames;
+	private List<String> proxyClassNames;
 	private Configuration config;
 	
 	/**
@@ -40,6 +41,7 @@ public abstract class Application {
 	 */
 	public Application() {
 		messengerClassNames = new ArrayList<String>();
+		proxyClassNames = new ArrayList<String>();
 	}
 	
 	/**
@@ -63,6 +65,17 @@ public abstract class Application {
 	}
 	
 	/**
+	 * Register a new proxy class name. Multiple class
+	 * names can be provided for each implementation.
+	 * Each implementation should ideally be for a single
+	 * protocol.
+	 * @param classname The classname of the proxy
+	 */
+	public void registerProxyClassName(String classname) {
+		proxyClassNames.add(classname);
+	}
+	
+	/**
 	 * Loads the configuration file and attempts to register
 	 * the implementation details with the relevant system
 	 * components.
@@ -71,10 +84,12 @@ public abstract class Application {
 	 */
 	protected boolean setup(String configFile) {
 		
-		if(databaseClassName == null || messengerClassNames.isEmpty()) {
+		if(databaseClassName == null || messengerClassNames.isEmpty() || proxyClassNames.isEmpty()) {
 			log.log(Level.WARNING, "You must register a data access "
-					+ "object implementation class name and atleast 1 "
-					+ "messenger implementation class name. Stopping"
+					+ "object implementation class name, atleast 1 "
+					+ "messenger implementation class name and atleast"
+					+ "1 proxy implementation class name before"
+					+ "starting an application. Stopping"
 					+ "setup now");
 			return false;
 		}
@@ -128,7 +143,8 @@ public abstract class Application {
 		}
 		
 		/**
-		 * Load Connector factory with all supported protocol types 
+		 * Load Connector factory with all supported protocol types
+		 * n.b. would need to change for multiple protocols
 		 */
 		ConnectorFactoryImpl connectorFactory = new ConnectorFactoryImpl();
 		for(String messengerClassName : messengerClassNames) {
@@ -144,6 +160,19 @@ public abstract class Application {
 				log.log(Level.WARNING, "Failed to find class for provided messenger class name, stopping setup now", e);
 				return false;
 			}	
+		}
+		
+		/**
+		 * Load Proxy factory with all supported protocol types
+		 */
+		DeviceProxyFactory proxyFactory = new DeviceProxyFactory();
+		for(String proxyClassName : proxyClassNames) {
+			try {
+				proxyFactory.registerProxy(brokerType, Class.forName(proxyClassName));
+			} catch (ClassNotFoundException e) {
+				log.log(Level.WARNING, "Failed to find class for provided messenger class name, stopping setup now", e);
+				return false;
+			}
 		}
 		
 		/**

@@ -1,7 +1,6 @@
 package com.neuron.resources;
 
 import javax.ws.rs.Consumes;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -10,13 +9,13 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.neuron.api.components.DeviceProxy;
+import com.neuron.api.components.DeviceProxyFactory;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Actuator;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Session;
-import com.neuron.rest.DeviceProxy;
-import com.neuron.rest.DeviceProxyFactory;
 import com.neuron.sessions.SessionController;
 
 /**
