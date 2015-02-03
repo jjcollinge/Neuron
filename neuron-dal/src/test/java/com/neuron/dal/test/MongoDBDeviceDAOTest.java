@@ -127,6 +127,41 @@ public class MongoDBDeviceDAOTest {
 	}
 	
 	@Test
+	public void testFindDeviceWithSensor() {
+		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		dao.setCollection("testDevices");
+		dao.clear();
+		
+		Device testDevice = new Device();
+		testDevice.setSessionId(0);
+		testDevice.setModel("test");
+		testDevice.setManufacurer("test");
+		testDevice.setGeo(10.0, 10.0);
+		
+		Sensor testSensor = new Sensor();
+		testSensor.setId(0);
+		testSensor.setSense("temperature");
+		testSensor.setType("test");
+		testSensor.setUnit("test");
+		
+		Actuator testActuator = new Actuator();
+		testActuator.setId(0);
+		testActuator.setName("test");
+		testActuator.addOption("OPEN");
+		testActuator.addOption("CLOSE");
+		
+		testDevice.addActuator(testActuator);
+		testDevice.addSensor(testSensor);
+		
+		dao.insert(testDevice);
+		ArrayList<Device> returnedDevices = (ArrayList<Device>) dao.findBySensorCapability("temperature");
+
+		assertEquals("Device ids should be equal", testDevice.getSessionId(), returnedDevices.get(0).getSessionId());
+		
+		dao.clear();
+	}
+	
+	@Test
 	public void testFindDeviceByGeo() {
 		
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();

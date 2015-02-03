@@ -2,8 +2,8 @@
     "manufacturer": "RaspberryPi",
     "model": "B+",
     "geo": {
-        "latitude": 23.1,
-        "longitude": 34.1
+        "latitude": 53.37831623,
+        "longitude": -1.4618752
     },
     "sensors": [
         {

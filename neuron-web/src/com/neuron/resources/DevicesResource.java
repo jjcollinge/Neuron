@@ -1,6 +1,7 @@
 package com.neuron.resources;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -25,6 +27,7 @@ import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Device;
+import com.neuron.api.data.GeoPoint;
 import com.neuron.rest.ResourceManager;
 
 /**
@@ -80,13 +83,33 @@ public class DevicesResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<Device> getDevices() {
-		log.log(Level.INFO, "Get request for resource: devices");
-		ArrayList<Device> devices = (ArrayList<Device>) dao.getAll();
-		if (devices == null) {
-			throw new RuntimeException("Devices not found");
+	public ArrayList<Device> getDevices(@QueryParam("sense") String sense,
+										@QueryParam("geo") List<Double> geo,
+										@QueryParam("range") int range) {
+		
+		log.log(Level.INFO, "Get request for resource: devices with query params: " + sense
+																			+ ", " + geo
+																			+ ", " + range);
+		
+		ArrayList<Device> matchingDevices = new ArrayList<Device>();
+		
+		boolean filtered = false;
+		// filter the devices based on the query parameters
+		if(sense != null){
+			matchingDevices.addAll((ArrayList<Device>) dao.findBySensorCapability(sense));
+			filtered = true;
 		}
-		return devices;
+		if(geo != null) {
+			if(geo.size() == 2) {
+				GeoPoint point = new GeoPoint(geo.get(0), geo.get(1));
+				matchingDevices.addAll((ArrayList<Device>) dao.findByGeo(point, range));
+				filtered = true;
+			}
+		}
+		if(!filtered) {
+			matchingDevices.addAll((ArrayList<Device>) dao.getAll());
+		}
+		return matchingDevices;
 	}
 
 	/**

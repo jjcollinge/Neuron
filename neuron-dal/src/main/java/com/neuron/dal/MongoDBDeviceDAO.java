@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -55,6 +56,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 			client = new MongoClient(DATABASE_HOST);
 			deviceDatabase = client.getDB(DATABASE_NAME);
 			devices = deviceDatabase.getCollection(DATABASE_COLLECTION);
+			devices.ensureIndex(new BasicDBObject("loc", "2d"), "geospacialIdx");
 		} catch (UnknownHostException e) {
 			log.log(Level.INFO, "Failed to connect to database");
 		}
@@ -78,7 +80,6 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 	
 	public void setCollection(String collectionName) {
 		devices = deviceDatabase.getCollection(collectionName);
-		devices.ensureIndex(new BasicDBObject("loc", "2d"), "geospacialIdx");
 	}
 	
 	public void insert(Device device) {
@@ -144,7 +145,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 
 	public List<Device> findBySensorCapability(String sense) {
 		BasicDBObject query = new BasicDBObject();
-		query.put("sense", sense);
+		query.put("sensors.sense", sense);
 		return findByQuery(query);
 	}
 
@@ -162,7 +163,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 
 	public List<Device> findByActuatorCapability(String capbability) {
 		BasicDBObject query = new BasicDBObject();
-		query.put("capbability", capbability);
+		query.put("actuators.capbability", capbability);
 		return findByQuery(query);
 	}
 	
