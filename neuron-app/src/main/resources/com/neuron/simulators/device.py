@@ -19,7 +19,8 @@ REG_RESPONSE = str(randint(1000, 9999))
 #-------------------------------------------
 class Device:
 	uuid = -1
-
+        refresh_rate = 10
+        
 	def __init__(self, descriptor):
 		self.descriptor = descriptor
 		self.sensors = []
@@ -68,10 +69,18 @@ def on_message(client, userdata, msg):
 		pyObj = json.loads(jsonData)
 		device.uuid = str(pyObj["data"])
 		client.subscribe("devices/"+device.uuid+"/ping/request")
+		client.subscribe("devices/"+device.uuid+"/configure")
 		for sensor in device.sensors:
 			client.subscribe("devices/"+device.uuid+"/sensors/"+sensor.uuid)
 		for actuator in device.actuators:
 			client.subscribe("devices/"+device.uuid+"/actuators/"+actuator.uuid)
+
+        # Configure device
+        elif(msg.topic == "devices/"+device.uuid+"/configure"):
+                print("Configuring device")
+                jsonData = str(msg.payload)
+		pyObj = json.loads(jsonData)
+		device.refresh_rate = str(pyObj["data"])
 
 	# Request for ping response to check activity
 	elif(msg.topic == "devices/"+device.uuid+"/ping/request"):
@@ -137,7 +146,7 @@ client.on_subscribe = on_subscribe
 file = open("device.json", 'r');
 descriptor = file.read();
 device = Device(descriptor)
-sensor = Sensor("0", "Temperature Sensor","temperature", "celcius", "float")
+sensor = Sensor("0", "Temperature Sensor", "temperature", "celcius", "float")
 device.addSensor(sensor)
 actuator = Actuator("0", "LED light bulb")
 actuator.addOption("ON")
@@ -163,4 +172,4 @@ while True:
 			client.publish("devices/"+str(device.uuid)+"/sensors/"+str(sensor.uuid)+"/stream/response", "{ \"sessionId\":"+str(device.uuid)+", \"data\": "+str(sensor.value)+"}")
 	
 	# Delay cycle
-	time.sleep(10)
+	time.sleep(int(device.refresh_rate))

@@ -16,6 +16,8 @@ public abstract class DeviceProxy extends DataEventProducer implements
 		DeviceProxyInterface, MessageEventListener {
 
 	public abstract void setup(int sessionId);
+	
+	public abstract void configureDevice(int refreshRate);
 
 	public abstract void startSensorStreaming(int sensorId);
 

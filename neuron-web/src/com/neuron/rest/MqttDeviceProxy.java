@@ -110,4 +110,15 @@ public class MqttDeviceProxy extends DeviceProxy {
 				"DeviceProxy is not ready, please call the setup method first");
 	}
 
+	@Override
+	public void configureDevice(int refreshRate) {
+		if (ready) {
+			String topic = "devices/" + sessionId + "/configure";
+			Message msg = new Message(String.valueOf(refreshRate), "MQTT", "JSON");
+			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+		} else {
+			notReady();
+		}
+	}
+
 }

@@ -122,6 +122,35 @@ public class DevicesResource {
 		log.log(Level.INFO, "Get request for resource: device " + id);
 		return new DeviceResource(uriInfo, request, id);
 	}
+	
+	/**
+	 * POST: /devices/0/configure
+	 * @param id The id of the particular device to retrieve
+	 * @return a single device representation
+	 */
+	@POST
+	@Path("{device}/configure")
+	public Response configureDevice(@PathParam("device") String id, String configuration) {
+		log.log(Level.INFO, "Request to configure: device " + id);
+		DeviceResource dr = new DeviceResource(uriInfo, request, id);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode config = null;
+		try {
+			config = mapper.readTree(configuration);
+			int refreshRate = config.get("data").asInt();
+			if(refreshRate > 1 && refreshRate < 200) {
+				dr.configure(refreshRate);
+			} else {
+				log.log(Level.WARNING, "Dropping configuration request with invalid param");
+			}
+		} catch (Exception e) {
+			log.log(Level.WARNING,
+					"Dropping wrong format or corrupted POST to device");
+		}
+		
+		return Response.ok().build();
+	}
 
 	/**
 	 * GET: /devices/0/sensors

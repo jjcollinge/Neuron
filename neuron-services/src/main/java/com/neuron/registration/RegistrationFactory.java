@@ -15,7 +15,6 @@ public class RegistrationFactory {
 		
 		Registration registration = null;
 		
-		//TODO: move JSON to context
 		if(format.equalsIgnoreCase("JSON")) {
 			validator = new JsonValidator();
 			

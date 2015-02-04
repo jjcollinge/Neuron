@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -12,10 +13,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
+import com.neuron.api.components.DeviceProxy;
+import com.neuron.api.components.DeviceProxyFactory;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Sensor;
+import com.neuron.api.data.Session;
+import com.neuron.sessions.SessionController;
 
 /**
  * A representation of a list of sensors associated with a
