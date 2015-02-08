@@ -38,6 +38,7 @@ public class WebController implements Service {
 		try {
 			// Define a folder to hold web application contents.
 			String webappDirLocation = config.getProperty("webapp_dir");
+
 			if(webappDirLocation == null) {
 				webappDirLocation = "../neuron-web/WebContent/";
 			}
