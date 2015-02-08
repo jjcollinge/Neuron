@@ -2,6 +2,8 @@ package com.neuron.api.components;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,13 +29,19 @@ public class ConfigurationLoader {
 	 * @param filename File to load
 	 * @return Configuration The configuration encapsulated in a POJO
 	 */
-	public Configuration loadConfiguration(String filename) {
-
+	public Configuration loadConfiguration(String filename, String appPath) {		
 		Configuration config = new Configuration();
 		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append(appPath);
+			sb.append("/");
+			sb.append(filename);
+			String url = sb.toString();
+			
 			//TODO: Move the configuration file location to the application
+			log.log(Level.INFO, "Config Path: " + url);
 			InputStream input = ConfigurationLoader.class
-					.getResourceAsStream("/"+filename);
+					.getResourceAsStream(url);
 			String jsonTxt = IOUtils.toString(input);
 			if(jsonTxt != null){
 				JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonTxt);

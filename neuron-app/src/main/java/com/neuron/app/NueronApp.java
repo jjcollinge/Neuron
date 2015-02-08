@@ -1,5 +1,7 @@
 package com.neuron.app;
 
+import java.util.Map;
+
 import com.neuron.api.components.Application;
 import com.neuron.api.components.services.ServiceContainer;
 import com.neuron.registration.RegistrationController;
@@ -43,7 +45,7 @@ public class NueronApp {
 			
 			ServiceContainer container = null;
 			
-			if(setup("neuron-config.json")) {
+			if(setup("neuron-config.json", System.getenv("NEURON_HOME"))) {
 			
 				/**
 				 * Create a service container to handle the setup and tear down of services

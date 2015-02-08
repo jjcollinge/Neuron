@@ -82,7 +82,7 @@ public abstract class Application {
 	 * @param configFile A file path to the applications configuration file
 	 * @return boolean If setup was successful;
 	 */
-	protected boolean setup(String configFile) {
+	protected boolean setup(String configFile, String home) {
 		
 		if(databaseClassName == null || messengerClassNames.isEmpty() || proxyClassNames.isEmpty()) {
 			log.log(Level.WARNING, "You must register a data access "
@@ -98,17 +98,23 @@ public abstract class Application {
 		 * Load config file to get key value pairs for system
 		 * configuration.
 		 */
-			
+		
+		if(home == null) {
+			home = "";
+			configFile = "default-config.json";
+			log.log(Level.INFO, "Enviroment home not set, using default config");
+		}
+		
 		ConfigurationLoader loader = new ConfigurationLoader();
-		config = loader.loadConfiguration(configFile);
+		config = loader.loadConfiguration(configFile, home);
 		
 		String databaseHostname = config.getProperty("database_hostname");
-		String databasePort = config.getProperty("database_port");
-		String databaseType = config.getProperty("database_type");
-		String databaseName = config.getProperty("database_name");
-		String brokerHostname = config.getProperty("broker_host");
-		String brokerPort = config.getProperty("broker_port");
-		String brokerType = config.getProperty("broker_type");
+		String databasePort = 	  config.getProperty("database_port");
+		String databaseType = 	  config.getProperty("database_type");
+		String databaseName = 	  config.getProperty("database_name");
+		String brokerHostname =   config.getProperty("broker_host");
+		String brokerPort =       config.getProperty("broker_port");
+		String brokerType = 	  config.getProperty("broker_type");
 		InputStream input = null;
 		
 		log.log(Level.INFO, "Launching application with the following properties:\n"
