@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.components.Response;
 import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactoryImpl;
-import com.neuron.api.data.Message;
-import com.neuron.api.data.Parcel;
+import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.data.Session;
 
 /**
@@ -37,10 +37,7 @@ public class SessionDaemon implements Runnable {
 
 	public SessionDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
-	}
-
-	public void setDeviceDAO(DeviceDAO dao) {
-		deviceDao = dao;
+		deviceDao = new DeviceDAOFactory().getDeviceDAO();
 	}
 	
 	/**
@@ -87,15 +84,16 @@ public class SessionDaemon implements Runnable {
 	 */
 	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());
-		Parcel parcel = new Parcel.ParcelBuilder(new Message("PING", 
-					session.getContext().getFormat(),
-					session.getContext().getProtocol())
-				)
-				.topic("devices/" + session.getId() + "/ping/request").qos(2)
-				.build();
-		Connector connector = new ConnectorFactoryImpl().getConnector(session
+		Response response = new Response("PING");
+		response.setStatusCode(200);
+		response.addProtocol(session.getContext().getProtocol());
+		response.addFormat(session.getContext().getFormat());
+		response.addHeader("topic", "devices/" + session.getId() + "/ping/request");
+		response.addHeader("qos", "2");
+
+		Connector connector = new ConnectorFactory().getConnector(session
 				.getContext().getProtocol());
-		connector.send(parcel);
+		connector.send(response);
 	}
 	
 	public void setPingTimeout(int seconds) {

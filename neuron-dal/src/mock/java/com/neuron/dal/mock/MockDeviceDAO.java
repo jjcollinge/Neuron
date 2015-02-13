@@ -1,5 +1,4 @@
 package com.neuron.dal.mock;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,12 +6,11 @@ import java.util.logging.Logger;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.GeoPoint;
-import com.neuron.dal.MongoDBDeviceDAO;
 
 
 public class MockDeviceDAO implements DeviceDAO {
 
-	private static final Logger log = Logger.getLogger(MongoDBDeviceDAO.class
+	private static final Logger log = Logger.getLogger(MockDeviceDAO.class
 			.getName());
 	
 	public void initialise(String dbhost, int dbport, String dbname) {
@@ -35,15 +33,15 @@ public class MockDeviceDAO implements DeviceDAO {
 	}
 
 	public Device get(Integer key) {
-		return new Device();
+		return null;
 	}
 
 	public List<Device> find(String field, String value) {	
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public List<Device> getAll() {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public void clear() {
@@ -51,23 +49,23 @@ public class MockDeviceDAO implements DeviceDAO {
 	}
 
 	public List<Device> findByGeo(GeoPoint geo, int range) {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public List<Device> findBySensorCapability(String sense) {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public List<Device> findByManufacturer(String manufacturer) {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public List<Device> findByModel(String model) {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 	public List<Device> findByActuatorCapability(String capability) {
-		return new ArrayList<Device>();
+		return null;
 	}
 
 }

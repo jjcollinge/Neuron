@@ -4,13 +4,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.DeviceProxy;
+import com.neuron.api.components.Request;
+import com.neuron.api.components.Response;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
-import com.neuron.api.connectors.ConnectorFactoryImpl;
-import com.neuron.api.data.Message;
-import com.neuron.api.data.Parcel;
 import com.neuron.api.events.DataEvent;
-import com.neuron.api.events.MessageEvent;
 
 /**
  * MQTT implementation of a device proxy. Will use a mqtt
@@ -38,9 +36,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 	@Override
 	public void setup(int sessionId) {
 		this.sessionId = sessionId;
-		ConnectorFactory factory =  new ConnectorFactoryImpl();
+		ConnectorFactory factory =  new ConnectorFactory();
 		connector = factory.getConnector("mqtt");
-		connector.addMessageEventListener(this);
+		connector.addRequestListener(this);
 		ready = true;
 	}
 
@@ -53,8 +51,12 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			connector.subscribe(topic + "/stream/response", 2);
-			Message msg = new Message("START_STREAM", "MQTT", "JSON");
-			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+			Response res = new Response("START_STREAM");
+			res.addFormat("JSON");
+			res.addFormat("MQTT");
+			res.addHeader("topic", topic);
+			res.addHeader("qos", "2");
+			connector.send(res);
 		} else {
 			notReady();
 		}
@@ -69,8 +71,12 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			connector.unsubscribe(topic + "/stream/response");
-			Message msg = new Message("STOP_STREAM", "MQTT", "JSON");
-			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+			Response res = new Response("STOP_STREAM");
+			res.addFormat("JSON");
+			res.addFormat("MQTT");
+			res.addHeader("topic", topic);
+			res.addHeader("qos", "2");
+			connector.send(res);
 		} else {
 			notReady();
 		}
@@ -84,8 +90,12 @@ public class MqttDeviceProxy extends DeviceProxy {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/actuators/"
 					+ actuatorId;
-			Message msg = new Message(option, "MQTT", "JSON");
-			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+			Response res = new Response(option);
+			res.addFormat("JSON");
+			res.addFormat("MQTT");
+			res.addHeader("topic", topic);
+			res.addHeader("qos", "2");
+			connector.send(res);
 		} else {
 			notReady();
 		}
@@ -96,8 +106,8 @@ public class MqttDeviceProxy extends DeviceProxy {
 	 * response from a stream request
 	 */
 	@Override
-	public void onMessageArrived(MessageEvent event) {
-		String payload = event.getMessage().getPayload();
+	public void onRequest(Request req) {
+		String payload = (String) req.getData();
 		DataEvent dataEvent = new DataEvent(this, payload);
 		notifyListeners(dataEvent);
 	}
@@ -114,8 +124,12 @@ public class MqttDeviceProxy extends DeviceProxy {
 	public void configureDevice(int refreshRate) {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/configure";
-			Message msg = new Message(String.valueOf(refreshRate), "MQTT", "JSON");
-			connector.send(new Parcel.ParcelBuilder(msg).topic(topic).qos(2).build());
+			Response res = new Response(String.valueOf(refreshRate));
+			res.addFormat("JSON");
+			res.addFormat("MQTT");
+			res.addHeader("topic", topic);
+			res.addHeader("qos", "2");
+			connector.send(res);
 		} else {
 			notReady();
 		}

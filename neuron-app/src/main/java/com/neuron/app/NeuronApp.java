@@ -2,7 +2,7 @@ package com.neuron.app;
 
 import com.neuron.api.components.Application;
 import com.neuron.api.components.services.ServiceContainer;
-import com.neuron.registration.RegistrationController;
+import com.neuron.registration.RegistrationRequestHandler;
 import com.neuron.sessions.SessionController;
 import com.neuron.web.WebController;
 
@@ -38,7 +38,7 @@ public class NeuronApp {
 			
 			// Ideally these would be loaded from the class loader at runtime
 			registerDAOClassName("com.neuron.dal.MongoDBDeviceDAO");
-			registerMessengerClassName("com.neuron.messaging.MqttMessenger");
+			registerMessengerClassName("com.neuron.messaging.MqttAdapter");
 			registerProxyClassName("com.neuron.rest.MqttDeviceProxy");
 			
 			ServiceContainer container = null;
@@ -49,8 +49,8 @@ public class NeuronApp {
 				 * Create a service container to handle the setup and tear down of services
 				 */
 				container = new ServiceContainer(getConfig());	
-				container.addService(SessionController.getInstance());
-				container.addService(RegistrationController.getInstance());
+				container.addService(SessionController.getSingleton());
+				container.addService(new RegistrationRequestHandler());
 				container.addService(WebController.getInstance());
 				container.startServices();
 			}

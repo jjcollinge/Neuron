@@ -2,6 +2,7 @@ package com.neuron.api.components.services;
 
 import com.neuron.api.components.Configuration;
 
+
 /**
  * Required API for any Service implementations
  * @author JC
@@ -24,5 +25,5 @@ public interface Service {
 	 * Stop the service
 	 */
 	public abstract void stop();
-
+	
 }

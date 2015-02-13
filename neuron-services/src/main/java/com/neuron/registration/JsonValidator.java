@@ -1,6 +1,8 @@
 package com.neuron.registration;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
@@ -10,6 +12,10 @@ import com.neuron.api.components.Validator;
 
 public class JsonValidator implements Validator {
 
+	private static final Logger log = Logger.getLogger(JsonValidator.class
+			.getName());
+
+	
 	/**
 	 * Test the source is valid JSON
 	 */
@@ -23,9 +29,11 @@ public class JsonValidator implements Validator {
 		      while (parser.nextToken() != null) {}
 		      valid = true;
 		} catch (JsonParseException jpe) {
-		      jpe.printStackTrace();
+		      log.log(Level.INFO, "Malformed Json, not valid");
+		      valid = false;
 		} catch (IOException ioe) {
-		      ioe.printStackTrace();
+			log.log(Level.INFO, "IO exception, not valid");
+			valid = false;
 		}
 		
 	    return valid;

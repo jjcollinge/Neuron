@@ -1,8 +1,7 @@
 package com.neuron.api.components;
 
 import com.neuron.api.events.DataEventProducer;
-import com.neuron.api.events.MessageEvent;
-import com.neuron.api.events.MessageEventListener;
+import com.neuron.api.events.RequestListener;
 
 /**
  * The base proxy brings together a number of interfaces and a base class to
@@ -13,7 +12,7 @@ import com.neuron.api.events.MessageEventListener;
  * 
  */
 public abstract class DeviceProxy extends DataEventProducer implements
-		DeviceProxyInterface, MessageEventListener {
+		DeviceProxyInterface, RequestListener {
 
 	public abstract void setup(int sessionId);
 	
@@ -25,6 +24,6 @@ public abstract class DeviceProxy extends DataEventProducer implements
 
 	public abstract void operateActuator(int actuatorId, String option);
 
-	public abstract void onMessageArrived(MessageEvent event);
+	public abstract void onRequest(Request request);
 
 }

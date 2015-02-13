@@ -10,31 +10,38 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.neuron.api.connectors.Messenger;
-import com.neuron.api.data.Context;
-import com.neuron.api.data.Message;
-import com.neuron.api.data.Parcel;
-import com.neuron.api.events.MessageEvent;
+import com.neuron.api.components.Request;
+import com.neuron.api.components.Response;
+import com.neuron.api.connectors.ProtocolAdapter;
 
-public class MqttMessenger extends Messenger implements MqttCallback {
+public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 
-	private static final Logger log = Logger.getLogger(MqttMessenger.class
+	private static final Logger log = Logger.getLogger(MqttAdapter.class
 			.getName());
 
 	private MqttAsyncClient client;
 	private final String protocol = "tcp";
+	
+	/**
+	 * Stored connection information for re-connect
+	 */
+	private String host;
+	private int port;
 
-	public MqttMessenger() {
+	public MqttAdapter() {
 	}
 
 	/**
-	 * Connect to the Mqtt broker
+	 * Connect to message broker / server
+	 * @param host
+	 * @param port
 	 */
 	public void connect(String host, int port) {
 		
-		String address = protocol + "://" + host + ":" + String.valueOf(port);
+		this.host = host;
+		this.port = port;
+		
+		final String address = protocol + "://" + host + ":" + String.valueOf(port);
 		
 		try {
 			client = new MqttAsyncClient(address, MqttClient.generateClientId());
@@ -65,7 +72,7 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 	 * ---------------------------------
 	 * Expected format : { "data": "..."}
 	 */
-	public void sendMessage(Parcel parcel) {
+	public void send(Response response) {
 
 		// Check connector is connected to broker
 		if (!isConnected()) {
@@ -74,13 +81,13 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 			return;
 		}
 
-		// extract parcel components
-		Message message = parcel.getMessage();
-		String messageString = message.getPayload();
-		int qos = parcel.getQos();
+		// extract response components
+		String payload = response.getData();
+		String qos = response.getHeader("qos").get(0);
+		String topic = response.getHeader("topic").get(0);
 
 		// Pack data in expected format device
-		String pack = "{ \"data\": \"" + messageString + "\" }";
+		String pack = "{ \"data\": \"" + payload + "\" }";
 
 		// Pack JSON into MqttMessage
 		MqttMessage msg = new MqttMessage();
@@ -88,9 +95,9 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 
 		// Publish message on topic
 		try {
-			client.publish(parcel.getTopic(), msg);
+			client.publish(topic, msg);
 			log.log(Level.INFO, "Sent message " + pack + " on topic "
-					+ parcel.getTopic());
+					+ topic);
 		} catch (MqttException e) {
 			log.log(Level.SEVERE, "An exception has been thrown", e);
 		}
@@ -141,9 +148,9 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 	}
 
 	// Mqtt specfic callbacks
-	
 	public void connectionLost(Throwable e) {
 		log.log(Level.INFO, "Connection to broker has been lost", e);
+		connect(this.host, this.port);
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken e) {
@@ -157,36 +164,18 @@ public class MqttMessenger extends Messenger implements MqttCallback {
 		// forward all incoming data
 		
 		String messageString = message.toString();
-		messageString = 
-				"{ \"payload\": \""
-						+ messageString.replaceAll("\"", "\\\\\"")
-				+ "\" }";
+		//messageString = messageString.replaceAll("\"", "\\\\\"");
+
 		log.log(Level.INFO, "Received new message " + messageString
 				+ " on topic " + topic);
 
 		// Pack message into internal message
+		Request request = new Request();
+		request.setData(messageString);
+		request.setProtocol("mqtt");
 		
-		Message msg = null;
-		String format = "";
-		String protocol = "mqtt";
-		
-		//  try JSON parsing
-		try {
-			Gson gson = new Gson();
-			msg = gson.fromJson(messageString, Message.class);
-			format = "json";
-		} catch(JsonSyntaxException e) {
-			log.log(Level.INFO, "Dropping ill formatted message");
-			// try other formats
-			return;
-		}
-		
-		Context ctx = new Context(protocol, format);
-		msg.attachContext(ctx);
-
-		// Notify listeners of new message
-		MessageEvent event = new MessageEvent(this, msg);
-		notifyListeners(event);
+		notifyListeners(request);
 	}
+
 
 }

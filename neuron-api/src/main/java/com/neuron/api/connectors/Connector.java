@@ -1,25 +1,25 @@
 package com.neuron.api.connectors;
 
-import com.neuron.api.data.Parcel;
-import com.neuron.api.events.MessageEventListener;
+import com.neuron.api.components.Response;
+import com.neuron.api.events.RequestListener;
 
 /**
- * A connector wraps a messenger to facilitate
+ * A connector wraps an adapter to facilitate
  * additional functionality to be added without
- * affecting the messenger implementations.
+ * affecting the adapter implementations.
  * @author JC
  *
  */
 public class Connector {
 
-	private Messenger messenger;
+	private ProtocolAdapter adapter;
 	
 	/**
 	 * Set the messenger to use in this connector
 	 * @param messenger The messenger for this connector to use
 	 */
-	public void setMessenger(Messenger messenger) {
-		this.messenger = messenger;
+	public void setMessenger(ProtocolAdapter messenger) {
+		this.adapter = messenger;
 	}
 	
 	/**
@@ -28,22 +28,22 @@ public class Connector {
 	 * @param port The server port
 	 */
 	public void connect(String host, int port) {
-		messenger.connect(host, port);
+		adapter.connect(host, port);
 	}
 	
 	/**
 	 * Disconnect from the current server
 	 */
 	public void disconnect() {
-		messenger.disconnect();
+		adapter.disconnect();
 	}
 	
 	/**
-	 * Send a given parcel to the server
-	 * @param parcel The parcel to send
+	 * Send a given response to the server
+	 * @param response The response to send
 	 */
-	public void send(Parcel parcel) {
-		messenger.sendMessage(parcel);
+	public void send(Response response) {
+		adapter.send(response);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class Connector {
 	 * @param qos The qos to enforce
 	 */
 	public void subscribe(String topic, int qos) {
-		messenger.subscribe(topic, qos);
+		adapter.subscribe(topic, qos);
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class Connector {
 	 * @param topic The topic to stop listening to
 	 */
 	public void unsubscribe(String topic) {
-		messenger.unsubscribe(topic);
+		adapter.unsubscribe(topic);
 	}
 	
 	/**
@@ -69,25 +69,25 @@ public class Connector {
 	 * @return boolean The connection state
 	 */
 	public boolean isConnected() {
-		return messenger.isConnected();
+		return adapter.isConnected();
 	}
 	
 	/**
 	 * Add a new listener to receive messages collected
 	 * by the messenger
-	 * @param mel The new listener
+	 * @param requestListener The new listener
 	 */
-	public void addMessageEventListener(MessageEventListener mel) {
-		messenger.addMessageEventListener(mel);
+	public void addRequestListener(RequestListener requestListener) {
+		adapter.addRequestListener(requestListener);
 	}
 	
 	/**
 	 * Remove a current listener from receiving messages collected
 	 * by the messenger
-	 * @param mel The current listener
+	 * @param requestListener The current listener
 	 */
-	public void removeMessageEventListener(MessageEventListener mel) {
-		messenger.removeMessageEventListener(mel);
+	public void removeRequestListener(RequestListener requestListener) {
+		adapter.removeRequestListener(requestListener);
 	}
 		
 }

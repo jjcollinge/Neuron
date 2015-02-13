@@ -1,15 +1,19 @@
 package com.neuron.api.connectors;
 
-import com.neuron.api.events.MessageEventProducer;
+import com.neuron.api.components.Response;
 
 /**
- * Bypasses multiple inheritance restrictions by
- * augmenting the Messenger interface with a 
- * MessageEventProducer to produce a clean abstraction
- * for Messenger implementations to implement.
+ * The API for any messenger implementations
  * @author JC
  *
  */
-public abstract class Messenger extends MessageEventProducer implements MessengerInterface {
-	// Forms super type for all implemented messengers
+public interface Messenger {
+
+	public void connect(String host, int port);
+	public void disconnect();		
+	public void send(Response response);
+	public void subscribe(String topic, int qos);
+	public void unsubscribe(String topic);
+	public boolean isConnected();
+	
 }

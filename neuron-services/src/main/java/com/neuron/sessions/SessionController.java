@@ -4,13 +4,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.Configuration;
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
-import com.neuron.api.components.dal.DeviceDAO;
+import com.neuron.api.components.Request;
 import com.neuron.api.components.services.Service;
+import com.neuron.api.data.Context;
 import com.neuron.api.data.Session;
-import com.neuron.api.events.MessageEvent;
-import com.neuron.api.events.MessageEventListener;
+import com.neuron.api.events.RequestListener;
+import com.neuron.registration.Registration;
+import com.neuron.registration.RegistrationListener;
 
 /**
  * The Session Controller is one of the main services provided by the
@@ -21,14 +21,14 @@ import com.neuron.api.events.MessageEventListener;
  * @author JC
  *
  */
-public class SessionController implements Service, MessageEventListener {
+public class SessionController implements Service, RegistrationListener, RequestListener {
 
 	private static final Logger log = Logger.getLogger(SessionController.class
 			.getName());
 
-	private static SessionController instance;
-
 	private ActivityListener monitor;
+	
+	private static SessionController singleton;
 
 	/*
 	 * Daemon thread will ping in-active devices and filter out stale devices
@@ -37,20 +37,20 @@ public class SessionController implements Service, MessageEventListener {
 	private Thread daemon;
 	private SessionDaemon daemonObject;
 
+	public static SessionController getSingleton() {
+		if(singleton == null) {
+			singleton = new SessionController();
+		}
+		return singleton;
+	}
+	
 	private SessionController() {
 
 		monitor = ActivityListener.getInstance();
-		monitor.addMessageEventListener(this);
+		monitor.addRequestListener(this);
+		
 		daemonObject = new SessionDaemon();
 		daemon = new Thread(daemonObject);
-		// factory = new ConnectorFactoryImpl();
-	}
-
-	public static SessionController getInstance() {
-		if (instance == null) {
-			instance = new SessionController();
-		}
-		return instance;
 	}
 
 	/**
@@ -63,11 +63,7 @@ public class SessionController implements Service, MessageEventListener {
 	 * @see com.neuron.api.components.services.Service
 	 */
 	public void setup(Configuration config) {
-
-		AbstractDAOFactory deviceDAOFactory = DAOFactoryProducer
-				.getFactory("device");
-		DeviceDAO dao = deviceDAOFactory.getDeviceDAO();
-		daemonObject.setDeviceDAO(dao);
+		
 		String timeout = config.getProperty("ping_timeout");
 		String pollPeriod = config.getProperty("ping_polling_period");
 		if(timeout != null) {
@@ -113,12 +109,7 @@ public class SessionController implements Service, MessageEventListener {
 	 * Adds a new Session
 	 * @param session The session to add
 	 */
-	public void addSession(Session session) {
-		// Connector connector =
-		// factory.getConnector((String)session.getProperty("protocol"));
-		// connector.subscribe("devices/" + session.getId() + "/ping/response",
-		// 2);
-		// connector.addMessageEventListener(this);
+	private void addSession(Session session) {
 		daemonObject.addSession(session);
 	}
 
@@ -126,18 +117,33 @@ public class SessionController implements Service, MessageEventListener {
 	 * Remove a current Session
 	 * @param sessionId The session identified to remove
 	 */
-	public void removeSession(int sessionId) {
+	private void removeSession(int sessionId) {
 		daemonObject.getSession(sessionId);
 	}
 
-	// This is called by the Activity Listener when a message is exchanged -
-	// or when a ping response is fired
-	// should be of the format { "data" : "id" }
-	public void onMessageArrived(MessageEvent event) {
-
-		int sessionId = Integer.valueOf(event.getMessage().getPayload());
-
-		if (sessionId >= 0)
-			daemonObject.updateTimestamp(sessionId);
+	/**
+	 * This is called once a new registration has been completed
+	 */
+	public void onRegistration(Registration registration) {
+		String protocol = registration.getProperty("protocol").get(0);
+		String format = registration.getProperty("format").get(0);
+		String id = registration.getProperty("id").get(0);
+		String regAddress = registration.getRegistrationAddress();
+		
+		Session session = new Session(Integer.valueOf(id));
+		session.setContext(new Context(protocol, format));
+		session.addProperty("registrationAddress", regAddress);
+		addSession(session);
 	}
+
+	/**
+	 * This is called by the activity listener when a request is
+	 * sent on any topic from the active broker
+	 */
+	public void onRequest(Request request) {
+		String sid = request.getHeader("id").get(0);
+		int id = Integer.valueOf(sid);
+		daemonObject.updateTimestamp(id);
+	}
+	
 }

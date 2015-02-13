@@ -73,7 +73,7 @@ public class ActuatorResource {
 		// Not streaming so tell device to start publishing
 		int id = Integer.valueOf(actuatorId);
 		// Grab the devices session
-		Session session = SessionController.getInstance().getSession(Integer.valueOf(deviceId));
+		Session session = SessionController.getSingleton().getSession(Integer.valueOf(deviceId));
 		// Extract the sessions context
 		com.neuron.api.data.Context context = session.getContext();
 		DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy(context);

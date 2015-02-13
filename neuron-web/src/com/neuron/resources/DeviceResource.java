@@ -47,7 +47,7 @@ public class DeviceResource {
 	@POST
 	public void configure(int refreshRate) {
 		// Grab the devices session
-		Session session = SessionController.getInstance().getSession(Integer.valueOf(id));
+		Session session = SessionController.getSingleton().getSession(Integer.valueOf(id));
 		// Extract the sessions context
 		com.neuron.api.data.Context context = session.getContext();
 		proxy = new DeviceProxyFactory().getDeviceProxy(context);

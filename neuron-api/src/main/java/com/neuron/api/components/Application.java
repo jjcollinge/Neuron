@@ -1,19 +1,15 @@
 package com.neuron.api.components;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.components.dal.AbstractDAOFactory;
 import com.neuron.api.components.dal.DAOFactoryProducer;
 import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.connectors.ConnectorFactoryImpl;
+import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.data.ConnectorConfiguration;
 import com.neuron.api.data.DatabaseConfiguration;
 
@@ -152,7 +148,7 @@ public abstract class Application {
 		 * Load Connector factory with all supported protocol types
 		 * n.b. would need to change for multiple protocols
 		 */
-		ConnectorFactoryImpl connectorFactory = new ConnectorFactoryImpl();
+		ConnectorFactory connectorFactory = new ConnectorFactory();
 		for(String messengerClassName : messengerClassNames) {
 			ConnectorConfiguration brokerConfig;
 			try {

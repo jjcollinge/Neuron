@@ -1,5 +1,10 @@
 package com.neuron.api.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.neuron.api.components.IdGenerator;
 
 /**
@@ -16,11 +21,7 @@ public class Session {
 	private int id;
 	private Long timestamp;
 	private Context context;
-
-	public Session() {
-		id = IdGenerator.generateId();
-		timestamp = System.currentTimeMillis() / 1000L;
-	}
+	private Map<String, List<String>> properties;
 
 	public Session(Integer id) {
 		this.id = id;
@@ -49,5 +50,20 @@ public class Session {
 	
 	public Context getContext() {
 		return this.context;
+	}
+	
+	public void addProperty(String key, String...values) {
+		if(this.properties == null) {
+			properties = new  HashMap<String, List<String>>();
+		}
+		ArrayList<String> props = new ArrayList<String>();
+		for(String vals : values) {
+			props.add(vals);
+		}
+		properties.put(key, props);
+	}
+	
+	public ArrayList<String> getProperty(String key) {
+		return (ArrayList<String>) properties.get(key);
 	}
 }
