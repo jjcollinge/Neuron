@@ -1,10 +1,11 @@
 package com.neuron.app;
 
 import com.neuron.api.components.Application;
-import com.neuron.api.components.services.ServiceContainer;
-import com.neuron.registration.RegistrationRequestHandler;
-import com.neuron.sessions.SessionController;
-import com.neuron.web.WebController;
+import com.neuron.api.components.services.Controller;
+import com.neuron.registration.RegistrationActivity;
+import com.neuron.sessions.SessionActivity;
+import com.neuron.web.WebActivity;
+
 
 /**
  * The main application which is required to register
@@ -41,18 +42,28 @@ public class NeuronApp {
 			registerMessengerClassName("com.neuron.messaging.MqttAdapter");
 			registerProxyClassName("com.neuron.rest.MqttDeviceProxy");
 			
-			ServiceContainer container = null;
+			Controller container = null;
 			
 			if(setup("neuron-config.json", System.getenv("NEURON__HOME"))) {
 			
 				/**
-				 * Create a service container to handle the setup and tear down of services
+				 * Create an activity container to handle the setup and tear down of services
 				 */
-				container = new ServiceContainer(getConfig());	
-				container.addService(SessionController.getSingleton());
-				container.addService(new RegistrationRequestHandler());
-				container.addService(WebController.getInstance());
-				container.startServices();
+				RegistrationActivity registration = new RegistrationActivity("Registration");
+				
+				SessionActivity sessions = new SessionActivity("Session");
+				sessions.addService("RequestHandler", registration.getService("RequestHandler"));
+				
+				WebActivity web = new WebActivity("Web");
+				web.addService("SessionHandler", sessions.getService("SessionHandler"));
+				
+				container = Controller.getApplication();
+				container.setConfiguration(config);
+				
+				container.addActivity(registration);
+				container.addActivity(sessions);
+				container.addActivity(web);
+				container.startActivities();
 			}
 		
 		}

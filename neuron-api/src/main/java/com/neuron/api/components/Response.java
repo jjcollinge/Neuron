@@ -2,7 +2,6 @@ package com.neuron.api.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.neuron.api.data.Payload;
@@ -14,22 +13,21 @@ import com.neuron.api.data.Payload;
  */
 public class Response {
 
-	private String data;
+	private Payload payload;
 	private ArrayList<String> protocols;
 	private ArrayList<String> formats;
 	private Integer statusCode;
-	private Map<String, List<String>> headers;
+	private Map<String, String> headers;
 	
-	public Response(String data) {
-		this.data = data;
-		
+	public Response(Payload payload) {
+		this.payload = payload;	
 		this.protocols = new ArrayList<String>();
 		this.formats = new ArrayList<String>();
-		this.headers = new HashMap<String, List<String>>();
+		this.headers = new HashMap<String, String>();
 	}
 	
-	public String getData() {
-		return data;
+	public Payload getPayload() {
+		return payload;
 	}
 	
 	public void addProtocol(String protocol) {
@@ -56,19 +54,15 @@ public class Response {
 		return this.statusCode;
 	}
 	
-	public void addHeader(String key, String...values) {
-		ArrayList<String> props = new ArrayList<String>();
-		for(String prop : values) {
-			props.add(prop);
-		}
-		headers.put(key, props);
+	public void addHeader(String key, String value) {
+		headers.put(key, value);
 	}
 	
-	public ArrayList<String> getHeader(final String key) {
-		return (ArrayList<String>) headers.get(key);
+	public String getHeader(final String key) {
+		return headers.get(key);
 	}
 	
-	public Map<String, List<String>>  getHeaders() {
+	public Map<String, String> getHeaders() {
 		return headers;
 	}
 }

@@ -27,10 +27,10 @@ public abstract class Application {
 	private static final Logger log = Logger.getLogger(Application.class
 			.getName());
 	
-	private String databaseClassName;
+	private String daoStorageClassName;
 	private List<String> messengerClassNames;
 	private List<String> proxyClassNames;
-	private Configuration config;
+	protected Configuration config;
 	
 	/**
 	 * Initialises the collections
@@ -47,7 +47,7 @@ public abstract class Application {
 	 * @param classname The classname of the data access object
 	 */
 	protected void registerDAOClassName(String classname) {
-		databaseClassName = classname;
+		daoStorageClassName = classname;
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public abstract class Application {
 	 */
 	protected boolean setup(String configFile, String home) {
 		
-		if(databaseClassName == null || messengerClassNames.isEmpty() || proxyClassNames.isEmpty()) {
+		if(daoStorageClassName == null || messengerClassNames.isEmpty() || proxyClassNames.isEmpty()) {
 			log.log(Level.WARNING, "You must register a data access "
 					+ "object implementation class name, atleast 1 "
 					+ "messenger implementation class name and atleast"
@@ -137,7 +137,7 @@ public abstract class Application {
 					Integer.valueOf(databasePort),
 					databaseType,
 					databaseName,
-					Class.forName(databaseClassName));
+					Class.forName(daoStorageClassName));
 			deviceFactory.registerDAO(databaseConfig);
 		} catch (ClassNotFoundException e1) {
 			log.log(Level.WARNING, "Failed to locate class for provided dao class name, stopping setup now", e1);
@@ -186,10 +186,6 @@ public abstract class Application {
 		log.log(Level.INFO, "Succesfully setup new application");
 		return true;
 		
-	}
-	
-	public Configuration getConfig() {
-		return this.config;
 	}
 	
 }

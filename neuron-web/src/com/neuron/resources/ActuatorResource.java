@@ -13,10 +13,11 @@ import com.neuron.api.components.DeviceProxy;
 import com.neuron.api.components.DeviceProxyFactory;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
+import com.neuron.api.components.services.Controller;
 import com.neuron.api.data.Actuator;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Session;
-import com.neuron.sessions.SessionController;
+import com.neuron.sessions.SessionHandler;
 
 /**
  * A representation of an actuator in the system. Can either
@@ -28,7 +29,6 @@ import com.neuron.sessions.SessionController;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ActuatorResource {
-
 
 	@Context
 	UriInfo uriInfo;
@@ -73,7 +73,9 @@ public class ActuatorResource {
 		// Not streaming so tell device to start publishing
 		int id = Integer.valueOf(actuatorId);
 		// Grab the devices session
-		Session session = SessionController.getSingleton().getSession(Integer.valueOf(deviceId));
+		Controller controller = Controller.getApplication();
+		SessionHandler sessionHandler = (SessionHandler) controller.getActivity("Session").getService("SessionHandler");
+		Session session = sessionHandler.getSession(Integer.valueOf(deviceId));
 		// Extract the sessions context
 		com.neuron.api.data.Context context = session.getContext();
 		DeviceProxy proxy = new DeviceProxyFactory().getDeviceProxy(context);

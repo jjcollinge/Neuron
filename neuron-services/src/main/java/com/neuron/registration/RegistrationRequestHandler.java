@@ -9,9 +9,9 @@ import com.neuron.api.components.Configuration;
 import com.neuron.api.components.IdGenerator;
 import com.neuron.api.components.Request;
 import com.neuron.api.components.RequestHandler;
+import com.neuron.api.components.Service;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
-import com.neuron.api.components.services.Service;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
 
@@ -32,7 +32,7 @@ public class RegistrationRequestHandler extends RequestHandler implements
 	private HashMap<String, Connector> connectors;
 	private String regTopic = "register";
 	private RegistrationDeserializer deserializer;
-
+	
 	public RegistrationRequestHandler() {
 		connectors = new HashMap<String, Connector>();
 		listeners = new ArrayList<RegistrationListener>();
@@ -63,7 +63,9 @@ public class RegistrationRequestHandler extends RequestHandler implements
 	 * Start processing registration requests
 	 */
 	public void start() {
-		this.processingThread.start();
+		if(!this.processingThread.isAlive()) {
+			this.processingThread.start();
+		}
 	}
 
 	/**

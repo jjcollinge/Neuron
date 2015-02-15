@@ -11,6 +11,7 @@ import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.data.Payload;
 import com.neuron.api.data.Session;
 
 /**
@@ -84,7 +85,9 @@ public class SessionDaemon implements Runnable {
 	 */
 	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());
-		Response response = new Response("PING");
+		Payload payload = new Payload();
+		payload.setPayload("PING");
+		Response response = new Response(payload);
 		response.setStatusCode(200);
 		response.addProtocol(session.getContext().getProtocol());
 		response.addFormat(session.getContext().getFormat());

@@ -14,9 +14,10 @@ import com.neuron.api.components.DeviceProxy;
 import com.neuron.api.components.DeviceProxyFactory;
 import com.neuron.api.components.dal.DeviceDAO;
 import com.neuron.api.components.dal.DeviceDAOFactory;
+import com.neuron.api.components.services.Controller;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Session;
-import com.neuron.sessions.SessionController;
+import com.neuron.sessions.SessionHandler;
 
 /**
  * A representation of an in system device. Will only return
@@ -47,7 +48,9 @@ public class DeviceResource {
 	@POST
 	public void configure(int refreshRate) {
 		// Grab the devices session
-		Session session = SessionController.getSingleton().getSession(Integer.valueOf(id));
+		Controller controller = Controller.getApplication();
+		SessionHandler sessionHandler = (SessionHandler) controller.getActivity("SessionActivity").getService("SessionHandler");
+		Session session = sessionHandler.getSession(Integer.valueOf(id));
 		// Extract the sessions context
 		com.neuron.api.data.Context context = session.getContext();
 		proxy = new DeviceProxyFactory().getDeviceProxy(context);

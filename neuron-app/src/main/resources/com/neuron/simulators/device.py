@@ -64,23 +64,23 @@ def on_message(client, userdata, msg):
 
 	# Response to registration request
 	if(msg.topic == REG_RESPONSE):
-		print("Completing registration")
 		jsonData = str(msg.payload)
 		pyObj = json.loads(jsonData)
-		device.uuid = str(pyObj["data"])
+		device.uuid = str(pyObj["payload"])
 		client.subscribe("devices/"+device.uuid+"/ping/request")
 		client.subscribe("devices/"+device.uuid+"/configure")
 		for sensor in device.sensors:
 			client.subscribe("devices/"+device.uuid+"/sensors/"+sensor.uuid)
 		for actuator in device.actuators:
 			client.subscribe("devices/"+device.uuid+"/actuators/"+actuator.uuid)
+		print("Completed registration with id: " + device.uuid)
 
         # Configure device
         elif(msg.topic == "devices/"+device.uuid+"/configure"):
                 print("Configuring device")
                 jsonData = str(msg.payload)
 		pyObj = json.loads(jsonData)
-		device.refresh_rate = str(pyObj["data"])
+		device.refresh_rate = str(pyObj["payload"])
 
 	# Request for ping response to check activity
 	elif(msg.topic == "devices/"+device.uuid+"/ping/request"):
@@ -94,7 +94,7 @@ def on_message(client, userdata, msg):
 				print("Handling request for sensor "+sensor.uuid)
 				jsonData = str(msg.payload)
 				pyObj = json.loads(jsonData)
-				request = pyObj["data"]
+				request = pyObj["payload"]
 				if(request == "GET"):
 					print("GET request")
 					client.publish("devices/"+device.uuid+"/sensors/"+sensor.uuid+"/response", sensor.value)
@@ -113,7 +113,7 @@ def on_message(client, userdata, msg):
 				print("Handling request for actuator "+actuator.uuid)
 				jsonData = str(msg.payload)
 				pyObj = json.loads(jsonData)
-				request = pyObj["data"]
+				request = pyObj["payload"]
 				if(request == "ON"):
 					print("Turning LED on")
 				elif(request == "OFF"):
@@ -158,7 +158,7 @@ client.connect(HOST, PORT, 60)
 # Subscribe to registration response topic
 client.subscribe(REG_RESPONSE)
 # Build registration json string
-registration = "{\"returnAddress\":\""+ REG_RESPONSE +"\",\"device\":"+ device.descriptor +"}"
+registration = "{\"regAddress\":\""+ REG_RESPONSE +"\",\"device\":"+ device.descriptor +"}"
 print("Registration: " + registration)
 # Publish registration json string to registration topic
 client.publish(REG_REQUEST, registration)

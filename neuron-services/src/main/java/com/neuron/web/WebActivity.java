@@ -12,26 +12,18 @@ import org.apache.catalina.startup.Tomcat;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.neuron.api.components.Configuration;
-import com.neuron.api.components.services.Service;
+import com.neuron.api.components.services.Activity;
 
-public class WebController implements Service {
+public class WebActivity extends Activity {
 
-	private static final Logger log = Logger.getLogger(WebController.class
+	private static final Logger log = Logger.getLogger(WebActivity.class
 			.getName());
-
-	private static WebController instance;
 
 	private Tomcat server;
 	private volatile boolean running;
 
-	private WebController() {
-	}
-
-	public static WebController getInstance() {
-		if (instance == null) {
-			instance = new WebController();
-		}
-		return instance;
+	public WebActivity(String name) {
+		super(name);
 	}
 
 	public void setup(Configuration config) {

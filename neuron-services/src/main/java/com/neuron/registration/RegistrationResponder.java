@@ -1,9 +1,12 @@
 package com.neuron.registration;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
+import com.neuron.api.components.Configuration;
 import com.neuron.api.components.Response;
 import com.neuron.api.components.Serializer;
+import com.neuron.api.components.Service;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.data.Payload;
@@ -13,8 +16,14 @@ import com.neuron.api.data.Payload;
  * @author JC
  *
  */
-public class RegistrationResponder implements RegistrationListener {
+public class RegistrationResponder implements RegistrationListener, Service {
 
+	private static final Logger log = Logger.getLogger(RegistrationResponder.class
+			.getName());
+	
+	public RegistrationResponder() {
+	}
+	
 	/**
 	 * Send the response to ALL desired brokers
 	 * @param response
@@ -37,6 +46,8 @@ public class RegistrationResponder implements RegistrationListener {
 	 */
 	public void handleResponse(Registration registration) {
 
+		log.info("Handling registration response");
+		
 		String address = registration.getRegistrationAddress();
 		String status = registration.getProperty("status").get(0);
 		String format = registration.getProperty("format").get(0);
@@ -54,11 +65,9 @@ public class RegistrationResponder implements RegistrationListener {
 			// Service failed
 			payload.setPayload("the service failed and could not register you");
 		}
-		
-		// Serialize the payload into the required format
-		String formattedData = Serializer.serialize(format, payload);
+	
 		// Construct the response
-		Response response = new Response(formattedData);
+		Response response = new Response(payload);
 		response.setStatusCode(Integer.valueOf(status));
 		response.addFormat(format);
 		response.addProtocol(protocol);
@@ -72,6 +81,21 @@ public class RegistrationResponder implements RegistrationListener {
 	 */
 	public void onRegistration(Registration registration) {
 		handleResponse(registration);
+	}
+
+	public void setup(Configuration config) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void start() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

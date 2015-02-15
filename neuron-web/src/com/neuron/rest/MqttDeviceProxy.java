@@ -8,6 +8,7 @@ import com.neuron.api.components.Request;
 import com.neuron.api.components.Response;
 import com.neuron.api.connectors.Connector;
 import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.data.Payload;
 import com.neuron.api.events.DataEvent;
 
 /**
@@ -51,7 +52,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			connector.subscribe(topic + "/stream/response", 2);
-			Response res = new Response("START_STREAM");
+			Payload payload = new Payload();
+			payload.setPayload("START_STREAM");
+			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
@@ -71,7 +74,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			connector.unsubscribe(topic + "/stream/response");
-			Response res = new Response("STOP_STREAM");
+			Payload payload = new Payload();
+			payload.setPayload("STOP_STREAM");
+			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
@@ -90,7 +95,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/actuators/"
 					+ actuatorId;
-			Response res = new Response(option);
+			Payload payload = new Payload();
+			payload.setPayload(option);
+			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
@@ -124,7 +131,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 	public void configureDevice(int refreshRate) {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/configure";
-			Response res = new Response(String.valueOf(refreshRate));
+			Payload payload = new Payload();
+			payload.setPayload(String.valueOf(refreshRate));
+			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);

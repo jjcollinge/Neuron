@@ -20,7 +20,7 @@ import com.neuron.api.components.dal.DeviceDAOFactory;
 import com.neuron.api.data.Device;
 import com.neuron.api.data.Sensor;
 import com.neuron.api.data.Session;
-import com.neuron.sessions.SessionController;
+import com.neuron.sessions.SessionHandler;
 
 /**
  * A representation of a list of sensors associated with a

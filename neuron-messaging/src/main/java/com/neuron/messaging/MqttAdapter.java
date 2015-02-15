@@ -1,5 +1,8 @@
 package com.neuron.messaging;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,7 +15,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.neuron.api.components.Request;
 import com.neuron.api.components.Response;
+import com.neuron.api.components.Serializer;
 import com.neuron.api.connectors.ProtocolAdapter;
+import com.neuron.api.data.Payload;
 
 public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 
@@ -82,24 +87,39 @@ public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 		}
 
 		// extract response components
-		String payload = response.getData();
-		String qos = response.getHeader("qos").get(0);
-		String topic = response.getHeader("topic").get(0);
+		Payload payload = response.getPayload();
+		
+		ArrayList<String> messages = new ArrayList<String>();
+		
+		// format payload into required formats
+		for(String format : response.getFormats()) {
+			messages.add(Serializer.serialize(format, payload));
+		}
+		
+		// default
+		String qos = "2";
+		qos = response.getHeader("qos");
+		String topic = response.getHeader("topic");
+		
+		if(topic == null) {
+			log.log(Level.INFO, "Dropping response as topic was not set!");
+			return;
+		}
 
-		// Pack data in expected format device
-		String pack = "{ \"data\": \"" + payload + "\" }";
+		// send a new message for each format
+		for(int i = 0; i < messages.size(); i++) {
+			// Pack message into MqttMessage
+			MqttMessage msg = new MqttMessage();
+			msg.setPayload(messages.get(i).getBytes());
 
-		// Pack JSON into MqttMessage
-		MqttMessage msg = new MqttMessage();
-		msg.setPayload(pack.getBytes());
-
-		// Publish message on topic
-		try {
-			client.publish(topic, msg);
-			log.log(Level.INFO, "Sent message " + pack + " on topic "
-					+ topic);
-		} catch (MqttException e) {
-			log.log(Level.SEVERE, "An exception has been thrown", e);
+			// Publish message on topic
+			try {
+				client.publish(topic, msg);
+				log.log(Level.INFO, "Sent message " + payload.getPayload().toString() + " on topic "
+						+ topic);
+			} catch (MqttException e) {
+				log.log(Level.SEVERE, "An exception has been thrown", e);
+			}
 		}
 	}
 
@@ -147,16 +167,28 @@ public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 		return client.isConnected();
 	}
 
-	// Mqtt specfic callbacks
+	/**
+	 * Mqtt Callback methods
+	 */
+	
+	/**
+	 * Called on connection lost
+	 */
 	public void connectionLost(Throwable e) {
 		log.log(Level.INFO, "Connection to broker has been lost", e);
 		connect(this.host, this.port);
 	}
 
+	/**
+	 * Called on delivery of message
+	 */
 	public void deliveryComplete(IMqttDeliveryToken e) {
 		log.log(Level.FINE, "Delivery of message complete");
 	}
 
+	/**
+	 * Called on receipt of message
+	 */
 	public void messageArrived(String topic, MqttMessage message)
 			throws Exception {
 
@@ -164,7 +196,6 @@ public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 		// forward all incoming data
 		
 		String messageString = message.toString();
-		//messageString = messageString.replaceAll("\"", "\\\\\"");
 
 		log.log(Level.INFO, "Received new message " + messageString
 				+ " on topic " + topic);
@@ -173,6 +204,7 @@ public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
 		Request request = new Request();
 		request.setData(messageString);
 		request.setProtocol("mqtt");
+		request.addHeader("topic", topic);
 		
 		notifyListeners(request);
 	}

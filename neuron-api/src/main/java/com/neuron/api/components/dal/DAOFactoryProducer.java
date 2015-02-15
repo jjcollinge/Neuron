@@ -20,7 +20,9 @@ public class DAOFactoryProducer {
 
 		if (type.equalsIgnoreCase("device")) {
 			return new DeviceDAOFactory();
-		} else {
+		} /*else if(type.equalsIgnoreCase("session")) {
+			return new SessionDAOFactory();
+		} */else {
 			return null;
 		}
 	}
