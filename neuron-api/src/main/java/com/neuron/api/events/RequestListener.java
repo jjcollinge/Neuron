@@ -1,6 +1,6 @@
 package com.neuron.api.events;
 
-import com.neuron.api.components.Request;
+import com.neuron.api.request.Request;
 
 /**
  * An interface for classes whom wish to listen to request events

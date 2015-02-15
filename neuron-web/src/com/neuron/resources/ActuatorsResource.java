@@ -10,11 +10,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
-import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.data.Actuator;
-import com.neuron.api.data.Device;
+import com.neuron.api.data_access.AbstractDAOFactory;
+import com.neuron.api.data_access.DAOFactoryProducer;
+import com.neuron.api.data_access.DeviceDAO;
+import com.neuron.api.model.Actuator;
+import com.neuron.api.model.Device;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -2,7 +2,7 @@ package com.neuron.api.events;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.neuron.api.components.Request;
+import com.neuron.api.request.Request;
 
 /**
  * In case any requests need forwarding onto another location

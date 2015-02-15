@@ -8,10 +8,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.components.dal.DeviceDAOFactory;
-import com.neuron.api.data.Device;
-import com.neuron.api.data.Sensor;
+import com.neuron.api.data_access.DeviceDAO;
+import com.neuron.api.data_access.DeviceDAOFactory;
+import com.neuron.api.model.Device;
+import com.neuron.api.model.Sensor;
 
 /**
  * A representation of an in system sensor. This is only the data

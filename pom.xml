@@ -8,9 +8,6 @@
 	<modules>
 		<module>neuron-api</module>
 		<module>neuron-app</module>
-		<module>neuron-dal</module>
-		<module>neuron-messaging</module>
-		<module>neuron-services</module>
 		<module>neuron-web</module>
 	</modules>
 	<build>

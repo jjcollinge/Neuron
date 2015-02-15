@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.neuron.api.data.ConnectorConfiguration;
+import com.neuron.api.configuration.ConnectorConfiguration;
 
 /**
  * Provide the implementation details for the Connector

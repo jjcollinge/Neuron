@@ -23,12 +23,12 @@ import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.neuron.api.components.dal.AbstractDAOFactory;
-import com.neuron.api.components.dal.DAOFactoryProducer;
-import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.data.Device;
-import com.neuron.api.data.GeoPoint;
-import com.neuron.rest.ResourceManager;
+import com.neuron.api.data_access.AbstractDAOFactory;
+import com.neuron.api.data_access.DAOFactoryProducer;
+import com.neuron.api.data_access.DeviceDAO;
+import com.neuron.api.model.Device;
+import com.neuron.api.model.GeoPoint;
+import com.neuron.web.ResourceManager;
 
 /**
  * Device resources root. Any resource associated with a device

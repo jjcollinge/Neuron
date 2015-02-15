@@ -1,6 +1,6 @@
 package com.neuron.api.connectors;
 
-import com.neuron.api.components.Response;
+import com.neuron.api.response.Response;
 
 /**
  * The API for any messenger implementations

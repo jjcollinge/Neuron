@@ -13,14 +13,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import com.neuron.api.components.DeviceProxy;
-import com.neuron.api.components.DeviceProxyFactory;
-import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.components.dal.DeviceDAOFactory;
-import com.neuron.api.data.Device;
-import com.neuron.api.data.Sensor;
-import com.neuron.api.data.Session;
-import com.neuron.sessions.SessionHandler;
+import com.neuron.api.data_access.DeviceDAO;
+import com.neuron.api.data_access.DeviceDAOFactory;
+import com.neuron.api.model.Device;
+import com.neuron.api.model.Sensor;
+import com.neuron.api.model.Session;
+import com.neuron.api.proxy.DeviceProxy;
+import com.neuron.api.proxy.DeviceProxyFactory;
+import com.neuron.app.activities.sessionisation.SessionHandler;
 
 /**
  * A representation of a list of sensors associated with a

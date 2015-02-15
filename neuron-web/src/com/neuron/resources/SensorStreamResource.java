@@ -15,13 +15,13 @@ import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
 
-import com.neuron.api.components.DeviceProxy;
-import com.neuron.api.components.DeviceProxyFactory;
-import com.neuron.api.components.services.Controller;
-import com.neuron.api.data.Session;
+import com.neuron.api.core.Controller;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.events.DataEventListener;
-import com.neuron.sessions.SessionHandler;
+import com.neuron.api.model.Session;
+import com.neuron.api.proxy.DeviceProxy;
+import com.neuron.api.proxy.DeviceProxyFactory;
+import com.neuron.app.activities.sessionisation.SessionHandler;
 
 /**
  * Handles dispatching start and stop keywords to a device
@@ -102,7 +102,7 @@ public class SensorStreamResource implements DataEventListener {
 			SessionHandler sessionHandler = (SessionHandler) controller.getActivity("Session").getService("SessionHandler");
 			Session session = sessionHandler.getSession(Integer.valueOf(deviceId));
 			// Extract the sessions context
-			com.neuron.api.data.Context context = session.getContext();
+			com.neuron.api.model.Context context = session.getContext();
 			proxy = new DeviceProxyFactory().getDeviceProxy(context);
 			proxy.setup(Integer.valueOf(deviceId).intValue());
 			proxy.addDataEventListener(this);

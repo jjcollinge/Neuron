@@ -1,10 +1,10 @@
 package com.neuron.app;
 
-import com.neuron.api.components.Application;
-import com.neuron.api.components.services.Controller;
-import com.neuron.registration.RegistrationActivity;
-import com.neuron.sessions.SessionActivity;
-import com.neuron.web.WebActivity;
+import com.neuron.api.core.Application;
+import com.neuron.api.core.Controller;
+import com.neuron.app.activities.registration.RegistrationActivity;
+import com.neuron.app.activities.sessionisation.SessionActivity;
+import com.neuron.app.activities.webification.WebActivity;
 
 
 /**
@@ -38,9 +38,9 @@ public class NeuronApp {
 		public void run() {
 			
 			// Ideally these would be loaded from the class loader at runtime
-			registerDAOClassName("com.neuron.dal.MongoDBDeviceDAO");
-			registerMessengerClassName("com.neuron.messaging.MqttAdapter");
-			registerProxyClassName("com.neuron.rest.MqttDeviceProxy");
+			registerDAOClassName("com.neuron.app.dal.MongoDBDeviceDAO");
+			registerMessengerClassName("com.neuron.app.adapters.MqttAdapter");
+			registerProxyClassName("com.neuron.app.proxy.MqttDeviceProxy");
 			
 			Controller container = null;
 			

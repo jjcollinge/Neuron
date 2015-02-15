@@ -10,14 +10,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import com.neuron.api.components.DeviceProxy;
-import com.neuron.api.components.DeviceProxyFactory;
-import com.neuron.api.components.dal.DeviceDAO;
-import com.neuron.api.components.dal.DeviceDAOFactory;
-import com.neuron.api.components.services.Controller;
-import com.neuron.api.data.Device;
-import com.neuron.api.data.Session;
-import com.neuron.sessions.SessionHandler;
+import com.neuron.api.core.Controller;
+import com.neuron.api.data_access.DeviceDAO;
+import com.neuron.api.data_access.DeviceDAOFactory;
+import com.neuron.api.model.Device;
+import com.neuron.api.model.Session;
+import com.neuron.api.proxy.DeviceProxy;
+import com.neuron.api.proxy.DeviceProxyFactory;
+import com.neuron.app.activities.sessionisation.SessionHandler;
 
 /**
  * A representation of an in system device. Will only return
@@ -52,7 +52,7 @@ public class DeviceResource {
 		SessionHandler sessionHandler = (SessionHandler) controller.getActivity("SessionActivity").getService("SessionHandler");
 		Session session = sessionHandler.getSession(Integer.valueOf(id));
 		// Extract the sessions context
-		com.neuron.api.data.Context context = session.getContext();
+		com.neuron.api.model.Context context = session.getContext();
 		proxy = new DeviceProxyFactory().getDeviceProxy(context);
 		proxy.setup(Integer.valueOf(id).intValue());
 		proxy.configureDevice(refreshRate);

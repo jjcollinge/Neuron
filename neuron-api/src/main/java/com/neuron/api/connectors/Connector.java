@@ -1,7 +1,7 @@
 package com.neuron.api.connectors;
 
-import com.neuron.api.components.Response;
 import com.neuron.api.events.RequestListener;
+import com.neuron.api.response.Response;
 
 /**
  * A connector wraps an adapter to facilitate
