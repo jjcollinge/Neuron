@@ -52,8 +52,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			adapter.subscribe(topic + "/stream/response", 2);
-			Payload payload = new Payload();
-			payload.setPayload("START_STREAM");
+			Payload payload = new Payload("START_STREAM");
 			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
@@ -74,8 +73,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
 			adapter.unsubscribe(topic + "/stream/response");
-			Payload payload = new Payload();
-			payload.setPayload("STOP_STREAM");
+			Payload payload = new Payload("STOP_STREAM");
 			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
@@ -95,8 +93,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/actuators/"
 					+ actuatorId;
-			Payload payload = new Payload();
-			payload.setPayload(option);
+			Payload payload = new Payload(option);
 			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");
@@ -131,8 +128,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 	public void configureDevice(int refreshRate) {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/configure";
-			Payload payload = new Payload();
-			payload.setPayload(String.valueOf(refreshRate));
+			Payload payload = new Payload(String.valueOf(refreshRate));
 			Response res = new Response(payload);
 			res.addFormat("JSON");
 			res.addFormat("MQTT");

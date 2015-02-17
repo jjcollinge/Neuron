@@ -11,5 +11,6 @@ import com.neuron.api.events.RequestEventProducer;
  *
  */
 public abstract class Adapter extends RequestEventProducer implements Messenger {
-	// Forms super type for all implemented messengers	
+	// Forms super type for all implemented messengers
+	
 }

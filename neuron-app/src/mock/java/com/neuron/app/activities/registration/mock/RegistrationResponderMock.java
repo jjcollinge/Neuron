@@ -39,20 +39,20 @@ public class RegistrationResponderMock implements RegistrationListener, Service 
 		String format = null;
 		String protocol = null;
 		
-		Payload payload = new Payload();
+		Payload payload = null;
 		
 		if(status.equalsIgnoreCase("200")) {
 			// Successful registration
 			address = registration.getRegistrationAddress();
 			format = registration.getProperty("format").get(0);
 			protocol = registration.getProperty("protocol").get(0);
-			payload.setPayload(registration.getProperty("id").get(0));
+			payload = new Payload(registration.getProperty("id").get(0));
 		} else if(status.equalsIgnoreCase("400")) {
 			// registration failed
-			payload.setPayload("BAD registration attempt");
+			payload = new Payload("BAD registration attempt");
 		} else if(status.equalsIgnoreCase("500")) {
 			// Service failed
-			payload.setPayload("the service failed and could not register you");
+			payload = new Payload("the service failed and could not register you");
 		}
 	
 		if(address == null || format == null || protocol == null) {

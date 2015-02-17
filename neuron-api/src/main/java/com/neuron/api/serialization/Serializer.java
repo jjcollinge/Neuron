@@ -15,6 +15,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class Serializer {
 
 	public static String serialize(String format, Object object) {
+		
+		if(object == null) return null;
+		
 		String serializedString = null;
 		
 		if(format.equalsIgnoreCase("json")) {

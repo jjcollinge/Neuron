@@ -86,8 +86,7 @@ public class SessionDaemonImpl implements SessionDaemon {
 	 */
 	private synchronized void pingDevice(Session session) {
 		log.log(Level.INFO, "Pinging device " + session.getId());
-		Payload payload = new Payload();
-		payload.setPayload("PING");
+		Payload payload = new Payload("PING");
 		Response response = new Response(payload);
 		response.setStatusCode(200);
 		response.addProtocol(session.getContext().getProtocol());

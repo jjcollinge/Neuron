@@ -4,10 +4,7 @@ public class Payload {
 
 	private Object payload;
 	
-	public Payload() {
-	}
-	
-	public void setPayload(Object data) {
+	public Payload(Object data) {
 		this.payload = data;
 	}
 	

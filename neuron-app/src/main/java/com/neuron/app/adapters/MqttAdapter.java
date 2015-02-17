@@ -64,6 +64,23 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 			log.log(Level.WARNING, "Couldn't connect to Mqtt broker " + address);
 		}
 	}
+	
+	/**
+	 * Connect to message broker / server
+	 * @param host
+	 * @param port
+	 */
+	public void connect(MqttAsyncClient client) {
+		try {
+			this.client = client;
+			this.client.connect().waitForCompletion(1000);
+			this.client.setCallback(this);
+			log.log(Level.INFO, "Connected to Mqtt broker " + client.getServerURI());
+		} catch (MqttException e) {
+			log.log(Level.WARNING, "Couldn't connect to Mqtt broker " + client.getServerURI());
+		}
+	}
+
 
 	/**
 	 * Disconnect from Mqtt broker
@@ -100,7 +117,14 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 		
 		// format payload into required formats
 		for(String format : response.getFormats()) {
-			messages.add(Serializer.serialize(format, payload));
+			String message = Serializer.serialize(format, payload);
+			if(message == null) {
+				log.log(Level.WARNING, "Dropping format " + format + " as I couldn't serialize it");
+			} else if(message.isEmpty()) {
+				log.log(Level.WARNING, "Dropping format " + format + " as message is empty");
+			} else {
+				messages.add(message);
+			}
 		}
 		
 		// default
@@ -112,9 +136,10 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 			log.log(Level.INFO, "Dropping response as topic was not set!");
 			return;
 		}
-
+		
+		int i = 0;
 		// send a new message for each format
-		for(int i = 0; i < messages.size(); i++) {
+		for(/*int i = 0*/; i < messages.size(); i++) {
 			// Pack message into MqttMessage
 			MqttMessage msg = new MqttMessage();
 			msg.setPayload(messages.get(i).getBytes());
@@ -127,6 +152,9 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 			} catch (MqttException e) {
 				log.log(Level.SEVERE, "An exception has been thrown", e);
 			}
+		}
+		if(i == 0) {
+			log.log(Level.WARNING, "No message was sent as no formats were attached");
 		}
 	}
 
@@ -215,6 +243,5 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 		
 		notifyListeners(request);
 	}
-
 
 }
