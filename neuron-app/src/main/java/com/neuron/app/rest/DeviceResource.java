@@ -1,4 +1,4 @@
-package com.neuron.resources;
+package com.neuron.app.rest;
 
 
 import javax.ws.rs.Consumes;

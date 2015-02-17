@@ -1,4 +1,4 @@
-package com.neuron.resources;
+package com.neuron.app.rest;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -145,7 +145,6 @@ public class SensorStreamResource implements DataEventListener {
 	/**
 	 * Called when a new data event is received from a device
 	 */
-	@Override
 	public void onDataArrived(DataEvent dataEvent) {
 		String data = (String) dataEvent.getData();
 		if(streaming) {

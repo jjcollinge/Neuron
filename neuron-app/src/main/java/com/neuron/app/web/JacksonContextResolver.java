@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.app.web;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +29,6 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
         .configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 
-    @Override
     public ObjectMapper getContext(Class<?> objectType) {
         return objectMapper;
     }

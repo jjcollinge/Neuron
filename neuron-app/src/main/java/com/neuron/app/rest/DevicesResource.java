@@ -1,4 +1,4 @@
-package com.neuron.resources;
+package com.neuron.app.rest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import com.neuron.api.data_access.DAOFactoryProducer;
 import com.neuron.api.data_access.DeviceDAO;
 import com.neuron.api.model.Device;
 import com.neuron.api.model.GeoPoint;
-import com.neuron.web.ResourceManager;
+import com.neuron.app.web.ResourceManager;
 
 /**
  * Device resources root. Any resource associated with a device

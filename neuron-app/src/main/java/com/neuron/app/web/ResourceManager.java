@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.app.web;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.app.web;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -24,7 +24,6 @@ public class CORSResponseFilter implements ContainerResponseFilter {
 
 	private final static Logger log = Logger.getLogger( CORSResponseFilter.class.getName() );
 	
-	@Override
 	public void filter(ContainerRequestContext requestContext,
 			ContainerResponseContext responseContext) throws IOException {
 		

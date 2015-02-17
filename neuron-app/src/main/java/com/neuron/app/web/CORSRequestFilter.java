@@ -1,4 +1,4 @@
-package com.neuron.web;
+package com.neuron.app.web;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -9,6 +9,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
 
 /**
  * Applies a filter to any incoming requests. The filter will
@@ -24,7 +25,6 @@ public class CORSRequestFilter implements ContainerRequestFilter {
 
 	private final static Logger log = Logger.getLogger( CORSRequestFilter.class.getName() );
 	
-	@Override
 	public void filter(ContainerRequestContext requestContext)
 			throws IOException {
 		
