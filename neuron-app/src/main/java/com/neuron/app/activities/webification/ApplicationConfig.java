@@ -18,7 +18,7 @@ public class ApplicationConfig extends ResourceConfig {
 	public ApplicationConfig() {
 
 		super(SseFeature.class);
-		packages("com.neuron.resources", "com.neuron.web");
+		packages("com.neuron.app.rest", "com.neuron.app.web");
 		property(ServerProperties.TRACING, "ALL");
 	}
 
