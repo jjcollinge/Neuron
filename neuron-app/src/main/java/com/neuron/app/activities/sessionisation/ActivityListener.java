@@ -3,27 +3,36 @@ package com.neuron.app.activities.sessionisation;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.neuron.api.adapters.Adapter;
+import com.neuron.api.adapters.AdapterFactory;
 import com.neuron.api.configuration.Configuration;
-import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.core.Service;
 import com.neuron.api.events.RequestEventProducer;
 import com.neuron.api.events.RequestListener;
 import com.neuron.api.request.Request;
 
+/**
+ * Responsible for listening to all communication
+ * and notifying the relevant clients. This stops
+ * the session controller pinging the devices whilst
+ * they are busy talking to other parts of the system.
+ * This conserves the limited battery life of devices.
+ * @author JC
+ *
+ */
 public class ActivityListener extends RequestEventProducer implements
 		RequestListener, Service {
 
 	private static final Logger log = Logger.getLogger(ActivityListener.class
 			.getName());
 
-	private ArrayList<Connector> connectors;
+	private ArrayList<Adapter> adapters;
 
 	/**
 	 * Create a connector for all protocols, they will already be connected
 	 */
 	public ActivityListener() {
-		connectors = new ArrayList<Connector>();
+		adapters = new ArrayList<Adapter>();
 	}
 
 	/**
@@ -50,20 +59,20 @@ public class ActivityListener extends RequestEventProducer implements
 	}
 
 	public void start() {
-		ConnectorFactory factory = new ConnectorFactory();
+		AdapterFactory factory = new AdapterFactory();
 		ArrayList<String> types = (ArrayList<String>) factory.getCatalogue();
 		for (String type : types) {
-			Connector connector = factory.getConnector(type);
-			connector.addRequestListener(this);
-			connector.subscribe("devices/#", 2);
-			connectors.add(connector);
+			Adapter adapter = factory.getAdapter(type);
+			adapter.addRequestListener(this);
+			adapter.subscribe("devices/#", 2);
+			adapters.add(adapter);
 		}
 	}
 
 	public void stop() {
-		for(Connector connector : connectors) {
-			connector.unsubscribe("devices/#");
-			connector.removeRequestListener(this);
+		for(Adapter adapter : adapters) {
+			adapter.unsubscribe("devices/#");
+			adapter.removeRequestListener(this);
 		}
 	}
 }

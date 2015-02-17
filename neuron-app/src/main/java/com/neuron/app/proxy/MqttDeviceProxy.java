@@ -3,8 +3,8 @@ package com.neuron.app.proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.adapters.Adapter;
+import com.neuron.api.adapters.AdapterFactory;
 import com.neuron.api.events.DataEvent;
 import com.neuron.api.model.Payload;
 import com.neuron.api.proxy.DeviceProxy;
@@ -24,7 +24,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			.getName());
 
 	private int sessionId;
-	private Connector connector;
+	private Adapter adapter;
 	private boolean ready;
 
 	public MqttDeviceProxy() {
@@ -37,9 +37,9 @@ public class MqttDeviceProxy extends DeviceProxy {
 	@Override
 	public void setup(int sessionId) {
 		this.sessionId = sessionId;
-		ConnectorFactory factory =  new ConnectorFactory();
-		connector = factory.getConnector("mqtt");
-		connector.addRequestListener(this);
+		AdapterFactory factory =  new AdapterFactory();
+		adapter = factory.getAdapter("mqtt");
+		adapter.addRequestListener(this);
 		ready = true;
 	}
 
@@ -51,7 +51,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
-			connector.subscribe(topic + "/stream/response", 2);
+			adapter.subscribe(topic + "/stream/response", 2);
 			Payload payload = new Payload();
 			payload.setPayload("START_STREAM");
 			Response res = new Response(payload);
@@ -59,7 +59,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
-			connector.send(res);
+			adapter.send(res);
 		} else {
 			notReady();
 		}
@@ -73,7 +73,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 		if (ready) {
 			String topic = "devices/" + sessionId + "/sensors/"
 					+ sensorId;
-			connector.unsubscribe(topic + "/stream/response");
+			adapter.unsubscribe(topic + "/stream/response");
 			Payload payload = new Payload();
 			payload.setPayload("STOP_STREAM");
 			Response res = new Response(payload);
@@ -81,7 +81,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
-			connector.send(res);
+			adapter.send(res);
 		} else {
 			notReady();
 		}
@@ -102,7 +102,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
-			connector.send(res);
+			adapter.send(res);
 		} else {
 			notReady();
 		}
@@ -138,7 +138,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			res.addFormat("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
-			connector.send(res);
+			adapter.send(res);
 		} else {
 			notReady();
 		}

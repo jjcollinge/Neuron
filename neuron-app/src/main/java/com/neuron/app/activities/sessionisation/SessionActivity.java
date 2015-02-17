@@ -7,8 +7,7 @@ import com.neuron.app.activities.registration.RegistrationListener;
 import com.neuron.app.activities.registration.RegistrationRequestHandler;
 
 /**
- * Wraps all session management sub services and provides
- * a single controlling class.
+ * Encapsulates the session business logic
  * @author JC
  *
  */

@@ -1,4 +1,4 @@
-package com.neuron.api.connectors;
+package com.neuron.api.adapters;
 
 import com.neuron.api.events.RequestEventProducer;
 
@@ -10,6 +10,6 @@ import com.neuron.api.events.RequestEventProducer;
  * @author JC
  *
  */
-public abstract class ProtocolAdapter extends RequestEventProducer implements Messenger {
-	// Forms super type for all implemented messengers
+public abstract class Adapter extends RequestEventProducer implements Messenger {
+	// Forms super type for all implemented messengers	
 }

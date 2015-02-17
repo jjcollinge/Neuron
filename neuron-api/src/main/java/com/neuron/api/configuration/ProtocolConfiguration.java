@@ -7,7 +7,7 @@ package com.neuron.api.configuration;
  * @author JC
  *
  */
-public class ConnectorConfiguration {
+public class ProtocolConfiguration {
 
 	private String hostname;
 	private int port;
@@ -17,7 +17,7 @@ public class ConnectorConfiguration {
 	@SuppressWarnings("rawtypes")
 	private Class messengerClass;
 	
-	public ConnectorConfiguration(String hostname, int port, String type, @SuppressWarnings("rawtypes") Class messengerClass) {
+	public ProtocolConfiguration(String hostname, int port, String type, @SuppressWarnings("rawtypes") Class messengerClass) {
 		this.hostname = hostname;
 		this.port = port;
 		this.type = type;

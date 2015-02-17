@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.adapters.AdapterFactory;
 import com.neuron.api.configuration.Configuration;
 import com.neuron.api.configuration.ConfigurationLoader;
-import com.neuron.api.configuration.ConnectorConfiguration;
+import com.neuron.api.configuration.ProtocolConfiguration;
 import com.neuron.api.configuration.DatabaseConfiguration;
-import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.data_access.AbstractDAOFactory;
 import com.neuron.api.data_access.DAOFactoryProducer;
 import com.neuron.api.data_access.DeviceDAO;
@@ -151,16 +151,16 @@ public abstract class Application {
 		 * Load Connector factory with all supported protocol types
 		 * n.b. would need to change for multiple protocols
 		 */
-		ConnectorFactory connectorFactory = new ConnectorFactory();
+		AdapterFactory connectorFactory = new AdapterFactory();
 		for(String messengerClassName : messengerClassNames) {
-			ConnectorConfiguration brokerConfig;
+			ProtocolConfiguration brokerConfig;
 			try {
-				brokerConfig = new ConnectorConfiguration(
+				brokerConfig = new ProtocolConfiguration(
 						brokerHostname,
 						Integer.valueOf(brokerPort),
 						brokerType,
 						Class.forName(messengerClassName));
-				connectorFactory.registerConnector(brokerConfig);
+				connectorFactory.registerAdapter(brokerConfig);
 			} catch (ClassNotFoundException e) {
 				log.log(Level.WARNING, "Failed to find class for provided messenger class name, stopping setup now", e);
 				return false;

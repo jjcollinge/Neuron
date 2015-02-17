@@ -6,6 +6,12 @@ import java.util.Map;
 
 import com.neuron.api.data_access.ObjectMapperStrategy;
 
+/**
+ * Responsible for applying a serialization/deserialization
+ * strategies to incoming registration requests.
+ * @author JC
+ *
+ */
 public class RegistrationDeserializer {
 
 	private HashMap<String, ObjectMapperStrategy<Registration, String>> supportedFormats;

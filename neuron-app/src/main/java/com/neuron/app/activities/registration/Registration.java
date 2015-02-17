@@ -10,6 +10,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.neuron.api.model.Device;
 
+/**
+ * An in system representation of a registration.
+ * This will be handled as a representation once
+ * the original request has been deserialized.
+ * @author JC
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Registration {
 
@@ -51,6 +58,13 @@ public class Registration {
 	
 	public ArrayList<String> getProperty(String key) {
 		return (ArrayList<String>) properties.get(key);
+	}
+	
+	public boolean isOk() {
+		if(regAddress == null || device == null) {
+			return false;
+		}
+		return true;
 	}
 
 }

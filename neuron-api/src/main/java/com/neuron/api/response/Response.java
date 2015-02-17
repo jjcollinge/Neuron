@@ -7,7 +7,13 @@ import java.util.Map;
 import com.neuron.api.model.Payload;
 
 /**
- * Wraps a response object
+ * Wraps a response to enable multiple format
+ * and protocol support. Any additional headers
+ * required by a protocol can be set in the 
+ * headers map. If a response should be sent to
+ * multiple different servers in multiple formats
+ * then they should all be added to the same response
+ * and the multicast will be handled by the adapter.
  * @author JC
  *
  */

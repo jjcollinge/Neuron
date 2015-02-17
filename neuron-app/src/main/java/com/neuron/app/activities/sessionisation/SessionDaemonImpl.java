@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactory;
+import com.neuron.api.adapters.Adapter;
+import com.neuron.api.adapters.AdapterFactory;
+import com.neuron.api.core.SessionDaemon;
 import com.neuron.api.data_access.DeviceDAO;
 import com.neuron.api.data_access.DeviceDAOFactory;
 import com.neuron.api.model.Payload;
@@ -23,7 +24,7 @@ import com.neuron.api.response.Response;
  * @author JC
  *
  */
-public class SessionDaemon implements Runnable {
+public class SessionDaemonImpl implements SessionDaemon {
 
 	private static final Logger log = Logger.getLogger(SessionDaemon.class
 			.getName());
@@ -36,7 +37,7 @@ public class SessionDaemon implements Runnable {
 	private int timeout = SEC * 20;
 	private int polling_period = SEC * 30;
 
-	public SessionDaemon() {
+	public SessionDaemonImpl() {
 		activeSessions = new HashMap<Integer, Session>();
 		deviceDao = new DeviceDAOFactory().getDeviceDAO();
 	}
@@ -94,9 +95,9 @@ public class SessionDaemon implements Runnable {
 		response.addHeader("topic", "devices/" + session.getId() + "/ping/request");
 		response.addHeader("qos", "2");
 
-		Connector connector = new ConnectorFactory().getConnector(session
+		Adapter adapter = new AdapterFactory().getAdapter(session
 				.getContext().getProtocol());
-		connector.send(response);
+		adapter.send(response);
 	}
 	
 	public void setPingTimeout(int seconds) {

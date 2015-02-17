@@ -7,6 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Wraps a request on the system. Enables
+ * multiple protocols and formats to
+ * be supported by the system. Requests 
+ * can have an expiration period set
+ * which when reached will render the
+ * request obsolete.
+ * @author JC
+ *
+ */
 public class Request {
 
 	private Object data;

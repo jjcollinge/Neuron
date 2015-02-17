@@ -2,6 +2,13 @@ package com.neuron.api.configuration;
 
 import java.util.HashMap;
 
+/**
+ * A generic configuration file which wraps
+ * a map.
+ * CAUTION: Only supports key value pairs
+ * @author JC
+ *
+ */
 public class Configuration {
 
 	private HashMap<String, String> properties;

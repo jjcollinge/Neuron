@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.neuron.api.adapters.Adapter;
+import com.neuron.api.adapters.AdapterFactory;
 import com.neuron.api.configuration.Configuration;
-import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.core.Service;
 import com.neuron.api.data_access.DeviceDAO;
 import com.neuron.api.data_access.DeviceDAOFactory;
@@ -29,14 +29,16 @@ public class RegistrationRequestHandler extends RequestHandler implements
 			.getName());
 	
 	private ArrayList<RegistrationListener> listeners;
-	private HashMap<String, Connector> connectors;
+	private HashMap<String, Adapter> adapters;
 	private String regTopic = "register";
 	private RegistrationDeserializer deserializer;
+	private DeviceDAO deviceDao;
 	
 	public RegistrationRequestHandler() {
-		connectors = new HashMap<String, Connector>();
+		adapters = new HashMap<String, Adapter>();
 		listeners = new ArrayList<RegistrationListener>();
 		deserializer = new RegistrationDeserializer();
+		deviceDao = new DeviceDAOFactory().getDeviceDAO();
 	}
 
 	/**
@@ -49,12 +51,12 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		if (topic != null)
 			regTopic = topic;
 
-		ConnectorFactory factory = new ConnectorFactory();
-		for (String connectorType : factory.getCatalogue()) {
-			Connector connector = factory.getConnector(connectorType);
-			connectors.put(connectorType, connector);
-			connector.addRequestListener(this);
-			connector.subscribe(regTopic, 2);
+		AdapterFactory factory = new AdapterFactory();
+		for (String protocol : factory.getCatalogue()) {
+			Adapter adapter = factory.getAdapter(protocol);
+			adapters.put(protocol, adapter);
+			adapter.addRequestListener(this);
+			adapter.subscribe(regTopic, 2);
 		}
 		deserializer.addFormat("json", new JsonRegistrationMapper());
 	}
@@ -78,13 +80,16 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		for (Connector connector : connectors.values()) {
-			connector.removeRequestListener(this);
-			;
-			connector.unsubscribe(regTopic);
+		for (Adapter adapter : adapters.values()) {
+			adapter.removeRequestListener(this);
+			adapter.unsubscribe(regTopic);
 		}
 	}
 
+	public void setDeviceDao(DeviceDAO dao) {
+		this.deviceDao = dao;
+	}
+	
 	/**
 	 * Handle a single request
 	 */
@@ -99,11 +104,10 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		// attempt to deserialize the registration and set the format
 		Registration registration = deserializer.deserialize(payload);
 		
-		if (registration != null) {
+		if (registration != null && registration.isOk()) {
 			
-			// get a device data access object and store the device
-			DeviceDAO dao = new DeviceDAOFactory().getDeviceDAO();
-			dao.insert(registration.getDevice());
+			// store the device
+			deviceDao.insert(registration.getDevice());
 
 			registration.addProperty("protocol", request.getProtocol());
 			registration.addProperty("status", "200");
@@ -112,7 +116,11 @@ public class RegistrationRequestHandler extends RequestHandler implements
 			
 			log.log(Level.INFO, "Successful registration");
 
-		} // else handle errors...
+		} // else handle errors... 
+		else {
+			registration = new Registration();
+			registration.addProperty("status", "400");
+		}
 		notifyListeners(registration);
 	}
 

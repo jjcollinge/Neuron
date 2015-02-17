@@ -7,7 +7,10 @@ import com.neuron.api.configuration.Configuration;
 
 
 /**
- * Required API for any Service implementations
+ * An activity encapsulates services and is used to
+ * describe the main business logic. Core services
+ * should be initialised inside the contructor and
+ * dependencies should be added externally.
  * @author JC
  *
  */

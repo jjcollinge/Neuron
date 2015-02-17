@@ -1,8 +1,6 @@
 package com.neuron.app.adapters;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,13 +11,22 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import com.neuron.api.connectors.ProtocolAdapter;
+import com.neuron.api.adapters.Adapter;
 import com.neuron.api.model.Payload;
 import com.neuron.api.request.Request;
 import com.neuron.api.response.Response;
 import com.neuron.api.serialization.Serializer;
 
-public class MqttAdapter extends ProtocolAdapter implements MqttCallback {
+/**
+ * Responsible for talking to an mqtt broker.
+ * Must convert a system response into the
+ * required formats and send them to the given
+ * topic. Will also pack any incoming data into
+ * a system request and forward on.
+ * @author JC
+ *
+ */
+public class MqttAdapter extends Adapter implements MqttCallback {
 
 	private static final Logger log = Logger.getLogger(MqttAdapter.class
 			.getName());

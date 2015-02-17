@@ -12,7 +12,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author JC
  * 
  */
-@JsonIgnoreProperties("sessionId")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Device {
 
 	private int sessionId;
@@ -27,6 +27,11 @@ public class Device {
 	@JsonProperty("actuators")
 	protected ArrayList<Actuator> actuators;
 
+	public Device() {
+		sensors = new ArrayList<Sensor>();
+		actuators = new ArrayList<Actuator>();
+	}
+	
 	// Setters
 	public void setSessionId(int id) {
 		this.sessionId = id;

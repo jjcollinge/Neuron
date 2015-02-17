@@ -14,6 +14,11 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import com.neuron.api.configuration.Configuration;
 import com.neuron.api.core.Activity;
 
+/**
+ * Encapsulates the web business logic
+ * @author JC
+ *
+ */
 public class WebActivity extends Activity {
 
 	private static final Logger log = Logger.getLogger(WebActivity.class

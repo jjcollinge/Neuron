@@ -4,7 +4,8 @@ import com.neuron.api.configuration.Configuration;
 import com.neuron.api.core.Activity;
 
 /**
- * Wraps all registration sub services and provides a single controlling class.
+ * Encapsulates the registration
+ * business logic
  * 
  * @author JC
  * 

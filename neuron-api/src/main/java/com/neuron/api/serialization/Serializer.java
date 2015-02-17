@@ -6,6 +6,12 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+/**
+ * Convert a POJO into one of the supported
+ * serialized formats.
+ * @author JC
+ *
+ */
 public class Serializer {
 
 	public static String serialize(String format, Object object) {

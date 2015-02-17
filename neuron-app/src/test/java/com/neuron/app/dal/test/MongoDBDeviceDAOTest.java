@@ -19,6 +19,8 @@ public class MongoDBDeviceDAOTest {
 
 	@Test
 	public void testInsertAndRetrieveDevice() {
+		
+		//Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -44,9 +46,11 @@ public class MongoDBDeviceDAOTest {
 		testDevice.addActuator(testActuator);
 		testDevice.addSensor(testSensor);
 		
+		// When
 		dao.insert(testDevice);
 		Device returnedDevice = dao.get(0);
 		
+		// Should
 		assertEquals("Device ids should be equal", testDevice.getSessionId(), returnedDevice.getSessionId());
 		
 		dao.clear();
@@ -54,6 +58,8 @@ public class MongoDBDeviceDAOTest {
 	
 	@Test
 	public void testInsertRemoveAndRetrieveDevice() {
+		
+		//Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -72,10 +78,16 @@ public class MongoDBDeviceDAOTest {
 		
 		testDevice.addSensor(testSensor);
 		
+		// When
 		dao.insert(testDevice);
+		
+		// Should
 		assertTrue("Device should get deleted", dao.remove(testDevice.getSessionId()));
+		
+		// When
 		Device returnedDevice = dao.get(0);
 		
+		// Should
 		assertNull("Device should be null", returnedDevice);
 		
 		dao.clear();
@@ -84,13 +96,20 @@ public class MongoDBDeviceDAOTest {
 	@Test
 	public void testRemoveAndRetrieveNonExistentDevice() {
 		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
+		
+		// When
 		dao.setCollection("testDevices");
 		dao.clear();
 		
+		// Should
 		assertFalse("Device shouldn't be deleted", dao.remove(1337));
+		
+		// When
 		Device returnedDevice = dao.get(1337);
 		
+		// Should
 		assertNull("Device should be null", returnedDevice);
 		
 	}
@@ -98,6 +117,7 @@ public class MongoDBDeviceDAOTest {
 	@Test
 	public void testFindDeviceByQuery() {
 		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -105,6 +125,7 @@ public class MongoDBDeviceDAOTest {
 		String manufacturer = "testManufacturer";
 		int numberOfDevice = 10;
 		
+		// When
 		for(int i = 0; i < numberOfDevice; i++) {
 			Device testDevice = new Device();
 			testDevice.setSessionId(i);
@@ -116,6 +137,7 @@ public class MongoDBDeviceDAOTest {
 		dummyDevice.setSessionId(numberOfDevice + 1);
 		dummyDevice.setManufacurer("redHerringManufacturer");
 		
+		// Should
 		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByManufacturer(manufacturer);
 		assertTrue(devicesFound.size() == numberOfDevice);
 		
@@ -128,6 +150,8 @@ public class MongoDBDeviceDAOTest {
 	
 	@Test
 	public void testFindDeviceWithSensor() {
+		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -153,9 +177,11 @@ public class MongoDBDeviceDAOTest {
 		testDevice.addActuator(testActuator);
 		testDevice.addSensor(testSensor);
 		
+		// When
 		dao.insert(testDevice);
 		ArrayList<Device> returnedDevices = (ArrayList<Device>) dao.findBySensorCapability("temperature");
 
+		// Should
 		assertEquals("Device ids should be equal", testDevice.getSessionId(), returnedDevices.get(0).getSessionId());
 		
 		dao.clear();
@@ -164,6 +190,7 @@ public class MongoDBDeviceDAOTest {
 	@Test
 	public void testFindDeviceByGeo() {
 		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -180,9 +207,11 @@ public class MongoDBDeviceDAOTest {
 		badDevice.setSessionId(2);
 		badDevice.setGeo(53.208284, -2.166643);
 
+		// When
 		dao.insert(goodDevice);
 		dao.insert(badDevice);
 		
+		// Should
 		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByGeo(point, metersProximity);
 		assertTrue("Should be one device in range, found: " + devicesFound.size(), devicesFound.size() == 1);
 		assertTrue("Device in range id should be 1", devicesFound.get(0).getSessionId() == 1);
@@ -193,6 +222,7 @@ public class MongoDBDeviceDAOTest {
 	@Test
 	public void testUpdateDevice() {
 		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -209,10 +239,17 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setType("test");
 		testSensor.setUnit("test");
 		
+		// When
 		testDevice.addSensor(testSensor);	
 		dao.insert(testDevice);
+		
+		// Should
 		assertTrue(dao.update(0, "model", "Rhino"));
+		
+		// When
 		Device result = dao.get(0);
+		
+		// Should
 		assertEquals(result.getModel(), "Rhino");
 		
 	}
@@ -220,6 +257,7 @@ public class MongoDBDeviceDAOTest {
 	@Test
 	public void testUpdateOnUnknownField() {
 		
+		// Given
 		MongoDBDeviceDAO dao = new MongoDBDeviceDAO();
 		dao.setCollection("testDevices");
 		dao.clear();
@@ -235,9 +273,13 @@ public class MongoDBDeviceDAOTest {
 		testSensor.setSense("test");
 		testSensor.setType("test");
 		testSensor.setUnit("test");
+
+		testDevice.addSensor(testSensor);
 		
-		testDevice.addSensor(testSensor);	
+		// When
 		dao.insert(testDevice);
+		
+		// Should
 		assertFalse(dao.update(0, "colour", "blue"));
 		
 	}

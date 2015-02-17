@@ -10,6 +10,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.neuron.api.validation.Validator;
 
+/**
+ * Validates a string for Json syntax or against
+ * a provided Json schema.
+ * @author JC
+ *
+ */
 public class JsonValidator implements Validator {
 
 	private static final Logger log = Logger.getLogger(JsonValidator.class

@@ -4,8 +4,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.configuration.Configuration;
-import com.neuron.api.core.Activity;
 import com.neuron.api.core.Service;
+import com.neuron.api.core.SessionDaemon;
 import com.neuron.api.events.RequestListener;
 import com.neuron.api.model.Context;
 import com.neuron.api.model.Session;
@@ -14,7 +14,7 @@ import com.neuron.app.activities.registration.Registration;
 import com.neuron.app.activities.registration.RegistrationListener;
 
 /**
- * The SessionHandler is one of the main services provided by the Neuron
+ * The SessionHandler is one of the main activities provided by the Neuron
  * platform and thus has to implements the start and stop methods in order to
  * allow command and control. The purpose of the session controller is to check
  * for session that have become stale and remove them from the device
@@ -37,15 +37,13 @@ public class SessionHandler implements Service, RegistrationListener,
 	private SessionDaemon daemonObject;
 
 	public SessionHandler() {
-		daemonObject = new SessionDaemon();
+		daemonObject = new SessionDaemonImpl();
 		daemon = new Thread(daemonObject);
 	}
 
-	/**
-	 * -------------------------------------------------------------------------
-	 * Service Layer
-	 * -------------------------------------------------------------------------
-	 */
+	public void setDaemon(SessionDaemon daemon) {
+		daemonObject = daemon;
+	}
 
 	/**
 	 * @see com.neuron.api.core.Activity
@@ -121,15 +119,20 @@ public class SessionHandler implements Service, RegistrationListener,
 	 * This is called once a new registration has been completed
 	 */
 	public void onRegistration(Registration registration) {
-		String protocol = registration.getProperty("protocol").get(0);
-		String format = registration.getProperty("format").get(0);
-		String id = registration.getProperty("id").get(0);
-		String regAddress = registration.getRegistrationAddress();
-
-		Session session = new Session(Integer.valueOf(id));
-		session.setContext(new Context(protocol, format));
-		session.addProperty("registrationAddress", regAddress);
-		addSession(session);
+		
+		String status = registration.getProperty("status").get(0);
+		
+		if(status.equals("200")) {		
+			String protocol = registration.getProperty("protocol").get(0);
+			String format = registration.getProperty("format").get(0);
+			String id = registration.getProperty("id").get(0);
+			String regAddress = registration.getRegistrationAddress();
+	
+			Session session = new Session(Integer.valueOf(id));
+			session.setContext(new Context(protocol, format));
+			session.addProperty("registrationAddress", regAddress);
+			addSession(session);
+		}
 	}
 
 	/**
@@ -140,10 +143,6 @@ public class SessionHandler implements Service, RegistrationListener,
 		String sid = request.getHeader("id").get(0);
 		int id = Integer.valueOf(sid);
 		daemonObject.updateTimestamp(id);
-	}
-
-	public void attachDependency(Activity dependency) {
-
 	}
 
 }

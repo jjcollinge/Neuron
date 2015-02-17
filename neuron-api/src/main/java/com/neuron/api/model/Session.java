@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.neuron.api.identification.IdGenerator;
-
 /**
  * Holds information about a particular connected device.
  * Session are only persistent for the duration of the

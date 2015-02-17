@@ -2,6 +2,11 @@ package com.neuron.api.events;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Produces or forwards sensor data events
+ * @author JC
+ *
+ */
 public class DataEventProducer {
 	
 	protected CopyOnWriteArrayList<DataEventListener> listeners;

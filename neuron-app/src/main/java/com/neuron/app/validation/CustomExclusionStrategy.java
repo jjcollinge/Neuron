@@ -6,12 +6,9 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 
 /**
- * Name: CustomExclusionStrategy
- * ---------------------------------------------------------------
- * Desc: Restricts the classes Gson attempts to deserialize when
- * 		 using fromJson
- * 
- * @author jcollinge
+ * Blacklists certain classes from being
+ * serialized/deserialized
+ * @author JC
  *
  */
 public class CustomExclusionStrategy implements ExclusionStrategy {

@@ -11,6 +11,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.neuron.api.data_access.ObjectMapperStrategy;
 
+/**
+ * Responsible for mapping a serialized registration to a POJO
+ * and back again.
+ * @author JC
+ *
+ */
 public class JsonRegistrationMapper implements ObjectMapperStrategy<Registration, String> {
 
 	private static final Logger log = Logger.getLogger(JsonRegistrationMapper.class
@@ -49,6 +55,7 @@ public class JsonRegistrationMapper implements ObjectMapperStrategy<Registration
 				log.log(Level.WARNING, "Failed to parse JSON: io exception", e);
 			} 
 		}
+		
 		return reg;
 	}
 

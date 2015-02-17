@@ -3,13 +3,12 @@ package com.neuron.app.activities.registration;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.neuron.api.adapters.Adapter;
+import com.neuron.api.adapters.AdapterFactory;
 import com.neuron.api.configuration.Configuration;
-import com.neuron.api.connectors.Connector;
-import com.neuron.api.connectors.ConnectorFactory;
 import com.neuron.api.core.Service;
 import com.neuron.api.model.Payload;
 import com.neuron.api.response.Response;
-import com.neuron.api.serialization.Serializer;
 
 /**
  * Responsible for responding to a registration request.
@@ -30,13 +29,15 @@ public class RegistrationResponder implements RegistrationListener, Service {
 	 */
 	private void sendResponse(Response response) {
 		
-		ConnectorFactory factory = new ConnectorFactory();
+		AdapterFactory factory = new AdapterFactory();
 		ArrayList<String> protocols = response.getProtocols();
 
 		for(String protocol : protocols) {
-			Connector connector = factory.getConnector(protocol);
-			connector.send(response);
-			connector.disconnect();
+			Adapter adapter = factory.getAdapter(protocol);
+			if(adapter != null) {
+				adapter.send(response);
+				adapter.disconnect();
+			}
 		}
 	}
 
@@ -48,15 +49,19 @@ public class RegistrationResponder implements RegistrationListener, Service {
 
 		log.info("Handling registration response");
 		
-		String address = registration.getRegistrationAddress();
 		String status = registration.getProperty("status").get(0);
-		String format = registration.getProperty("format").get(0);
-		String protocol = registration.getProperty("protocol").get(0);
+		
+		String address = null;
+		String format = null;
+		String protocol = null;
 		
 		Payload payload = new Payload();
 		
 		if(status.equalsIgnoreCase("200")) {
 			// Successful registration
+			address = registration.getRegistrationAddress();
+			format = registration.getProperty("format").get(0);
+			protocol = registration.getProperty("protocol").get(0);
 			payload.setPayload(registration.getProperty("id").get(0));
 		} else if(status.equalsIgnoreCase("400")) {
 			// registration failed
