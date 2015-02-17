@@ -71,9 +71,9 @@ public class DevicesResource {
 	 */
 	@GET
 	@Path("hello")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String greet() {
-		return "Hello World";
+		return "{ \"message\" : \"Hello World\" }";
 	}
 
 	/**
