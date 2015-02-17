@@ -1,4 +1,4 @@
-package com.neuron.app.activities.registration.mock;
+package com.neuron.app.mocks;
 
 import com.neuron.api.configuration.Configuration;
 import com.neuron.api.core.Service;

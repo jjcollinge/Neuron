@@ -1,6 +1,7 @@
 package com.neuron.app.activities.sessionisation.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -8,11 +9,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.neuron.api.core.SessionDaemon;
 import com.neuron.api.model.Session;
 import com.neuron.app.activities.registration.Registration;
 import com.neuron.app.activities.sessionisation.SessionHandler;
-import com.neuron.app.activities.sessionisation.mock.SessionDaemonMock;
+import com.neuron.app.mocks.SessionDaemonMock;
 
 public class SessionHandlerTest {
 

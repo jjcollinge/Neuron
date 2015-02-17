@@ -1,4 +1,4 @@
-package com.neuron.app.adapters.mock;
+package com.neuron.app.mocks;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;

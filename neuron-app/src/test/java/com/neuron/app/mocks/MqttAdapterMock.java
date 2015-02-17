@@ -1,4 +1,4 @@
-package com.neuron.app.adapters.mock;
+package com.neuron.app.mocks;
 
 import com.neuron.api.adapters.Adapter;
 import com.neuron.api.response.Response;

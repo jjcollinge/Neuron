@@ -1,4 +1,4 @@
-package com.neuron.app.activities.sessionisation.mock;
+package com.neuron.app.mocks;
 
 import com.neuron.api.core.SessionDaemon;
 import com.neuron.api.model.Session;

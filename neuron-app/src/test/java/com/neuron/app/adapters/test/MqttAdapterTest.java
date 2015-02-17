@@ -1,6 +1,7 @@
 package com.neuron.app.adapters.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -13,7 +14,7 @@ import org.junit.Test;
 import com.neuron.api.model.Payload;
 import com.neuron.api.response.Response;
 import com.neuron.app.adapters.MqttAdapter;
-import com.neuron.app.adapters.mock.MqttAsyncClientMock;
+import com.neuron.app.mocks.MqttAsyncClientMock;
 
 public class MqttAdapterTest {
 

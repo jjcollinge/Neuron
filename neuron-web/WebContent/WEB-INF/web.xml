@@ -13,7 +13,7 @@
 		</init-param>
 		<init-param>
 			<param-name>javax.ws.rs.Application</param-name>
-			<param-value>com.neuron.web.ApplicationConfig</param-value>
+			<param-value>com.neuron.app.activities.webification.ApplicationConfig</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 		<async-supported>true</async-supported>

@@ -8,7 +8,7 @@ import org.glassfish.jersey.server.ServerProperties;
 
 /**
  * Sets the required coniguration needed
- * by rax-rs to find the REST resources.
+ * by jax-rs to find the REST resources.
  * @author JC
  *
  */
@@ -18,7 +18,7 @@ public class ApplicationConfig extends ResourceConfig {
 	public ApplicationConfig() {
 
 		super(SseFeature.class);
-		packages("com.neuron.resources", "com.neuron.rest");
+		packages("com.neuron.resources", "com.neuron.web");
 		property(ServerProperties.TRACING, "ALL");
 	}
 

@@ -1,6 +1,7 @@
 package com.neuron.app.activities.registration.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -14,7 +15,7 @@ import com.neuron.api.model.Device;
 import com.neuron.api.response.Response;
 import com.neuron.app.activities.registration.Registration;
 import com.neuron.app.activities.registration.RegistrationResponder;
-import com.neuron.app.adapters.mock.MqttAdapterMock;
+import com.neuron.app.mocks.MqttAdapterMock;
 
 public class RegistrationResponderTest {
 

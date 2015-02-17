@@ -1,6 +1,7 @@
 package com.neuron.app.activities.registration.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -14,8 +15,8 @@ import com.neuron.api.model.GeoPoint;
 import com.neuron.api.request.Request;
 import com.neuron.app.activities.registration.Registration;
 import com.neuron.app.activities.registration.RegistrationRequestHandler;
-import com.neuron.app.activities.registration.mock.DeviceDAOMock;
-import com.neuron.app.activities.registration.mock.RegistrationResponderMock;
+import com.neuron.app.mocks.DeviceDAOMock;
+import com.neuron.app.mocks.RegistrationResponderMock;
 
 public class RegistrationRequestHandlerTest {
 
