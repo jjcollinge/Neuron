@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.5">
+<TITLE>com.neuron.app.activities.webification.ApplicationConfig (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">ApplicationConfig.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<FONT ID="LN">1   </FONT><A NAME="1"></A><FONT ID="Package">package</FONT> com.neuron.app.activities.webification;
+<FONT ID="LN">2   </FONT><A NAME="2"></A>
+<FONT ID="LN">3   </FONT><A NAME="3"></A><FONT ID="Import">import</FONT> javax.ws.rs.ApplicationPath;
+<FONT ID="LN">4   </FONT><A NAME="4"></A>
+<FONT ID="LN">5   </FONT><A NAME="5"></A><FONT ID="Import">import</FONT> org.glassfish.jersey.media.sse.SseFeature;
+<FONT ID="LN">6   </FONT><A NAME="6"></A><FONT ID="Import">import</FONT> org.glassfish.jersey.server.ResourceConfig;
+<FONT ID="LN">7   </FONT><A NAME="7"></A><FONT ID="Import">import</FONT> org.glassfish.jersey.server.ServerProperties;
+<FONT ID="LN">8   </FONT><A NAME="8"></A>
+<FONT ID="LN">9   </FONT><A NAME="9"></A><FONT ID="FormalComment">/**
+<FONT ID="LN">10  </FONT><A NAME="10"></A> * Sets the required coniguration needed
+<FONT ID="LN">11  </FONT><A NAME="11"></A> * by jax-rs to find the REST resources.
+<FONT ID="LN">12  </FONT><A NAME="12"></A> * @author JC
+<FONT ID="LN">13  </FONT><A NAME="13"></A> *
+<FONT ID="LN">14  </FONT><A NAME="14"></A> */</FONT>
+<FONT ID="LN">15  </FONT><A NAME="15"></A>@ApplicationPath(<FONT ID="StringLiteral">"/"</FONT>)
+<FONT ID="LN">16  </FONT><A NAME="16"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> ApplicationConfig <FONT ID="Extends">extends</FONT> ResourceConfig {
+<FONT ID="LN">17  </FONT><A NAME="17"></A>
+<FONT ID="LN">18  </FONT><A NAME="18"></A>    <FONT ID="Public">public</FONT> ApplicationConfig() {
+<FONT ID="LN">19  </FONT><A NAME="19"></A>
+<FONT ID="LN">20  </FONT><A NAME="20"></A>        <FONT ID="Super">super</FONT>(SseFeature.<FONT ID="Class">class</FONT>);
+<FONT ID="LN">21  </FONT><A NAME="21"></A>        packages(<FONT ID="StringLiteral">"com.neuron.app.rest"</FONT>, <FONT ID="StringLiteral">"com.neuron.app.web"</FONT>);
+<FONT ID="LN">22  </FONT><A NAME="22"></A>        property(ServerProperties.TRACING, <FONT ID="StringLiteral">"ALL"</FONT>);
+<FONT ID="LN">23  </FONT><A NAME="23"></A>    }
+<FONT ID="LN">24  </FONT><A NAME="24"></A>
+<FONT ID="LN">25  </FONT><A NAME="25"></A>}
+<FONT ID="LN">26  </FONT><A NAME="26"></A></pre>
+</BODY>
+</HTML>

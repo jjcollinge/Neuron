@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.5">
+<TITLE>com.neuron.app.dal.MongoDBDeviceMapperStrategy (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">MongoDBDeviceMapperStrategy.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<FONT ID="LN">1   </FONT><A NAME="1"></A><FONT ID="Package">package</FONT> com.neuron.app.dal;
+<FONT ID="LN">2   </FONT><A NAME="2"></A>
+<FONT ID="LN">3   </FONT><A NAME="3"></A><FONT ID="Import">import</FONT> java.io.IOException;
+<FONT ID="LN">4   </FONT><A NAME="4"></A><FONT ID="Import">import</FONT> java.util.HashMap;
+<FONT ID="LN">5   </FONT><A NAME="5"></A>
+<FONT ID="LN">6   </FONT><A NAME="6"></A><FONT ID="Import">import</FONT> org.codehaus.jackson.JsonGenerationException;
+<FONT ID="LN">7   </FONT><A NAME="7"></A><FONT ID="Import">import</FONT> org.codehaus.jackson.map.JsonMappingException;
+<FONT ID="LN">8   </FONT><A NAME="8"></A><FONT ID="Import">import</FONT> org.codehaus.jackson.map.ObjectMapper;
+<FONT ID="LN">9   </FONT><A NAME="9"></A>
+<FONT ID="LN">10  </FONT><A NAME="10"></A><FONT ID="Import">import</FONT> com.mongodb.BasicDBList;
+<FONT ID="LN">11  </FONT><A NAME="11"></A><FONT ID="Import">import</FONT> com.mongodb.BasicDBObject;
+<FONT ID="LN">12  </FONT><A NAME="12"></A><FONT ID="Import">import</FONT> com.mongodb.DBObject;
+<FONT ID="LN">13  </FONT><A NAME="13"></A><FONT ID="Import">import</FONT> com.mongodb.util.JSON;
+<FONT ID="LN">14  </FONT><A NAME="14"></A><FONT ID="Import">import</FONT> com.neuron.api.data_access.ObjectMapperStrategy;
+<FONT ID="LN">15  </FONT><A NAME="15"></A><FONT ID="Import">import</FONT> com.neuron.api.model.Actuator;
+<FONT ID="LN">16  </FONT><A NAME="16"></A><FONT ID="Import">import</FONT> com.neuron.api.model.Device;
+<FONT ID="LN">17  </FONT><A NAME="17"></A><FONT ID="Import">import</FONT> com.neuron.api.model.Sensor;
+<FONT ID="LN">18  </FONT><A NAME="18"></A>
+<FONT ID="LN">19  </FONT><A NAME="19"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> MongoDBDeviceMapperStrategy <FONT ID="Implements">implements</FONT> ObjectMapperStrategy&lt;Device, DBObject&gt; {
+<FONT ID="LN">20  </FONT><A NAME="20"></A>    
+<FONT ID="LN">21  </FONT><A NAME="21"></A>    <FONT ID="Public">public</FONT> DBObject serialize(Device device) {
+<FONT ID="LN">22  </FONT><A NAME="22"></A>        
+<FONT ID="LN">23  </FONT><A NAME="23"></A>        ObjectMapper mapper = <FONT ID="New">new</FONT> ObjectMapper();
+<FONT ID="LN">24  </FONT><A NAME="24"></A>        
+<FONT ID="LN">25  </FONT><A NAME="25"></A>        HashMap&lt;String, Object&gt; map = <FONT ID="New">new</FONT> HashMap&lt;String, Object&gt;();
+<FONT ID="LN">26  </FONT><A NAME="26"></A>        map.put(<FONT ID="StringLiteral">"sessionId"</FONT>, device.getSessionId());
+<FONT ID="LN">27  </FONT><A NAME="27"></A>        map.put(<FONT ID="StringLiteral">"manufacturer"</FONT>, device.getManufacturer());
+<FONT ID="LN">28  </FONT><A NAME="28"></A>        map.put(<FONT ID="StringLiteral">"model"</FONT>, device.getModel());
+<FONT ID="LN">29  </FONT><A NAME="29"></A>        <FONT ID="If">if</FONT>(device.getGeo() != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">30  </FONT><A NAME="30"></A>            Double[] loc = {device.getGeo().getLongitude(), device.getGeo().getLatitude()};
+<FONT ID="LN">31  </FONT><A NAME="31"></A>            map.put(<FONT ID="StringLiteral">"loc"</FONT>, loc);
+<FONT ID="LN">32  </FONT><A NAME="32"></A>        }
+<FONT ID="LN">33  </FONT><A NAME="33"></A>        map.put(<FONT ID="StringLiteral">"sensors"</FONT>, device.getSensors());
+<FONT ID="LN">34  </FONT><A NAME="34"></A>        map.put(<FONT ID="StringLiteral">"actuators"</FONT>, device.getActuators());
+<FONT ID="LN">35  </FONT><A NAME="35"></A>        
+<FONT ID="LN">36  </FONT><A NAME="36"></A>        String json = <FONT ID="StringLiteral">""</FONT>;
+<FONT ID="LN">37  </FONT><A NAME="37"></A>        <FONT ID="Try">try</FONT> {
+<FONT ID="LN">38  </FONT><A NAME="38"></A>            json = mapper.writeValueAsString(map);
+<FONT ID="LN">39  </FONT><A NAME="39"></A>        } <FONT ID="Catch">catch</FONT> (JsonGenerationException e) {
+<FONT ID="LN">40  </FONT><A NAME="40"></A>            <FONT ID="Return">return</FONT> <FONT ID="Null">null</FONT>;
+<FONT ID="LN">41  </FONT><A NAME="41"></A>        } <FONT ID="Catch">catch</FONT> (JsonMappingException e) {
+<FONT ID="LN">42  </FONT><A NAME="42"></A>            <FONT ID="Return">return</FONT> <FONT ID="Null">null</FONT>;
+<FONT ID="LN">43  </FONT><A NAME="43"></A>        } <FONT ID="Catch">catch</FONT> (IOException e) {
+<FONT ID="LN">44  </FONT><A NAME="44"></A>            <FONT ID="Return">return</FONT> <FONT ID="Null">null</FONT>;
+<FONT ID="LN">45  </FONT><A NAME="45"></A>        }
+<FONT ID="LN">46  </FONT><A NAME="46"></A>        DBObject bson = (DBObject) JSON.parse(json);
+<FONT ID="LN">47  </FONT><A NAME="47"></A>        <FONT ID="Return">return</FONT> bson;
+<FONT ID="LN">48  </FONT><A NAME="48"></A>    }
+<FONT ID="LN">49  </FONT><A NAME="49"></A>
+<FONT ID="LN">50  </FONT><A NAME="50"></A>    <FONT ID="Public">public</FONT> Device deserialize(DBObject obj) {
+<FONT ID="LN">51  </FONT><A NAME="51"></A>        
+<FONT ID="LN">52  </FONT><A NAME="52"></A>        Device device = <FONT ID="New">new</FONT> Device();
+<FONT ID="LN">53  </FONT><A NAME="53"></A>        device.setSessionId((Integer) obj.get(<FONT ID="StringLiteral">"sessionId"</FONT>));
+<FONT ID="LN">54  </FONT><A NAME="54"></A>        device.setManufacurer((String) obj.get(<FONT ID="StringLiteral">"manufacturer"</FONT>));
+<FONT ID="LN">55  </FONT><A NAME="55"></A>        device.setModel((String) obj.get(<FONT ID="StringLiteral">"model"</FONT>));
+<FONT ID="LN">56  </FONT><A NAME="56"></A>        <FONT ID="If">if</FONT>(obj.get(<FONT ID="StringLiteral">"loc"</FONT>) != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">57  </FONT><A NAME="57"></A>            BasicDBList coordinates =  (BasicDBList) obj.get(<FONT ID="StringLiteral">"loc"</FONT>);
+<FONT ID="LN">58  </FONT><A NAME="58"></A>            <FONT ID="Double">double</FONT> lon = (Double) coordinates.get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">59  </FONT><A NAME="59"></A>            <FONT ID="Double">double</FONT> lat = (Double) coordinates.get(<FONT ID="IntegerLiteral">1</FONT>);
+<FONT ID="LN">60  </FONT><A NAME="60"></A>            device.setGeo(lat, lon);
+<FONT ID="LN">61  </FONT><A NAME="61"></A>        }
+<FONT ID="LN">62  </FONT><A NAME="62"></A>        BasicDBList dbSensors = (BasicDBList) obj.get(<FONT ID="StringLiteral">"sensors"</FONT>);
+<FONT ID="LN">63  </FONT><A NAME="63"></A>        <FONT ID="If">if</FONT>(dbSensors != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">64  </FONT><A NAME="64"></A>            BasicDBObject[] dbSensorsArray = dbSensors.toArray(<FONT ID="New">new</FONT> BasicDBObject[<FONT ID="IntegerLiteral">0</FONT>]);
+<FONT ID="LN">65  </FONT><A NAME="65"></A>            <FONT ID="For">for</FONT>(DBObject dbSensor : dbSensorsArray) {
+<FONT ID="LN">66  </FONT><A NAME="66"></A>                <FONT ID="Int">int</FONT> sensorId = (Integer) dbSensor.get(<FONT ID="StringLiteral">"id"</FONT>);
+<FONT ID="LN">67  </FONT><A NAME="67"></A>                String name = (String) dbSensor.get(<FONT ID="StringLiteral">"name"</FONT>);
+<FONT ID="LN">68  </FONT><A NAME="68"></A>                String sense = (String) dbSensor.get(<FONT ID="StringLiteral">"sense"</FONT>);
+<FONT ID="LN">69  </FONT><A NAME="69"></A>                String unit = (String) dbSensor.get(<FONT ID="StringLiteral">"unit"</FONT>);
+<FONT ID="LN">70  </FONT><A NAME="70"></A>                String type = (String) dbSensor.get(<FONT ID="StringLiteral">"type"</FONT>);
+<FONT ID="LN">71  </FONT><A NAME="71"></A>                Sensor s = <FONT ID="New">new</FONT> Sensor();
+<FONT ID="LN">72  </FONT><A NAME="72"></A>                s.setId(sensorId);
+<FONT ID="LN">73  </FONT><A NAME="73"></A>                s.setName(name);
+<FONT ID="LN">74  </FONT><A NAME="74"></A>                s.setSense(sense);
+<FONT ID="LN">75  </FONT><A NAME="75"></A>                s.setType(type);
+<FONT ID="LN">76  </FONT><A NAME="76"></A>                s.setUnit(unit);
+<FONT ID="LN">77  </FONT><A NAME="77"></A>                device.addSensor(s);
+<FONT ID="LN">78  </FONT><A NAME="78"></A>            }
+<FONT ID="LN">79  </FONT><A NAME="79"></A>        }
+<FONT ID="LN">80  </FONT><A NAME="80"></A>        BasicDBList dbActuators = (BasicDBList) obj.get(<FONT ID="StringLiteral">"actuators"</FONT>);
+<FONT ID="LN">81  </FONT><A NAME="81"></A>        <FONT ID="If">if</FONT>(dbActuators != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">82  </FONT><A NAME="82"></A>            BasicDBObject[] dbActuatorArray = dbActuators.toArray(<FONT ID="New">new</FONT> BasicDBObject[<FONT ID="IntegerLiteral">0</FONT>]);
+<FONT ID="LN">83  </FONT><A NAME="83"></A>            <FONT ID="For">for</FONT>(DBObject dbActuator : dbActuatorArray) {
+<FONT ID="LN">84  </FONT><A NAME="84"></A>                <FONT ID="Int">int</FONT> actuatorId = (Integer) dbActuator.get(<FONT ID="StringLiteral">"id"</FONT>);
+<FONT ID="LN">85  </FONT><A NAME="85"></A>                String name = (String) dbActuator.get(<FONT ID="StringLiteral">"name"</FONT>);
+<FONT ID="LN">86  </FONT><A NAME="86"></A>                BasicDBList dbOptions = (BasicDBList) dbActuator.get(<FONT ID="StringLiteral">"options"</FONT>);
+<FONT ID="LN">87  </FONT><A NAME="87"></A>                String[] dbOptionsArray = dbOptions.toArray(<FONT ID="New">new</FONT> String[<FONT ID="IntegerLiteral">0</FONT>]);
+<FONT ID="LN">88  </FONT><A NAME="88"></A>                Actuator a = <FONT ID="New">new</FONT> Actuator();
+<FONT ID="LN">89  </FONT><A NAME="89"></A>                <FONT ID="For">for</FONT>(String dbOption : dbOptionsArray) {
+<FONT ID="LN">90  </FONT><A NAME="90"></A>                    a.addOption(dbOption.toString());
+<FONT ID="LN">91  </FONT><A NAME="91"></A>                }
+<FONT ID="LN">92  </FONT><A NAME="92"></A>                a.setId(actuatorId);
+<FONT ID="LN">93  </FONT><A NAME="93"></A>                a.setName(name);
+<FONT ID="LN">94  </FONT><A NAME="94"></A>                device.addActuator(a);
+<FONT ID="LN">95  </FONT><A NAME="95"></A>            }
+<FONT ID="LN">96  </FONT><A NAME="96"></A>        };
+<FONT ID="LN">97  </FONT><A NAME="97"></A>        <FONT ID="Return">return</FONT> device;
+<FONT ID="LN">98  </FONT><A NAME="98"></A>    }
+<FONT ID="LN">99  </FONT><A NAME="99"></A>    
+<FONT ID="LN">100 </FONT><A NAME="100"></A>}
+<FONT ID="LN">101 </FONT><A NAME="101"></A></pre>
+</BODY>
+</HTML>

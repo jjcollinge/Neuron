@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.5">
+<TITLE>com.neuron.app.activities.sessionisation.SessionHandler (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">SessionHandler.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<FONT ID="LN">1   </FONT><A NAME="1"></A><FONT ID="Package">package</FONT> com.neuron.app.activities.sessionisation;
+<FONT ID="LN">2   </FONT><A NAME="2"></A>
+<FONT ID="LN">3   </FONT><A NAME="3"></A><FONT ID="Import">import</FONT> java.util.logging.Level;
+<FONT ID="LN">4   </FONT><A NAME="4"></A><FONT ID="Import">import</FONT> java.util.logging.Logger;
+<FONT ID="LN">5   </FONT><A NAME="5"></A>
+<FONT ID="LN">6   </FONT><A NAME="6"></A><FONT ID="Import">import</FONT> com.neuron.api.configuration.Configuration;
+<FONT ID="LN">7   </FONT><A NAME="7"></A><FONT ID="Import">import</FONT> com.neuron.api.core.Service;
+<FONT ID="LN">8   </FONT><A NAME="8"></A><FONT ID="Import">import</FONT> com.neuron.api.core.SessionDaemon;
+<FONT ID="LN">9   </FONT><A NAME="9"></A><FONT ID="Import">import</FONT> com.neuron.api.events.RequestListener;
+<FONT ID="LN">10  </FONT><A NAME="10"></A><FONT ID="Import">import</FONT> com.neuron.api.model.Context;
+<FONT ID="LN">11  </FONT><A NAME="11"></A><FONT ID="Import">import</FONT> com.neuron.api.model.Session;
+<FONT ID="LN">12  </FONT><A NAME="12"></A><FONT ID="Import">import</FONT> com.neuron.api.request.Request;
+<FONT ID="LN">13  </FONT><A NAME="13"></A><FONT ID="Import">import</FONT> <A HREF="../../../../../com/neuron/app/activities/registration/Registration.java.html">com.neuron.app.activities.registration.Registration</A>;
+<FONT ID="LN">14  </FONT><A NAME="14"></A><FONT ID="Import">import</FONT> <A HREF="../../../../../com/neuron/app/activities/registration/RegistrationListener.java.html">com.neuron.app.activities.registration.RegistrationListener</A>;
+<FONT ID="LN">15  </FONT><A NAME="15"></A>
+<FONT ID="LN">16  </FONT><A NAME="16"></A><FONT ID="FormalComment">/**
+<FONT ID="LN">17  </FONT><A NAME="17"></A> * The SessionHandler is one of the main activities provided by the Neuron
+<FONT ID="LN">18  </FONT><A NAME="18"></A> * platform and thus has to implements the start and stop methods in order to
+<FONT ID="LN">19  </FONT><A NAME="19"></A> * allow command and control. The purpose of the session controller is to check
+<FONT ID="LN">20  </FONT><A NAME="20"></A> * for session that have become stale and remove them from the device
+<FONT ID="LN">21  </FONT><A NAME="21"></A> * repository.
+<FONT ID="LN">22  </FONT><A NAME="22"></A> * 
+<FONT ID="LN">23  </FONT><A NAME="23"></A> * @author JC
+<FONT ID="LN">24  </FONT><A NAME="24"></A> * 
+<FONT ID="LN">25  </FONT><A NAME="25"></A> */</FONT>
+<FONT ID="LN">26  </FONT><A NAME="26"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> SessionHandler <FONT ID="Implements">implements</FONT> Service, <A HREF="../../../../../com/neuron/app/activities/registration/RegistrationListener.java.html">RegistrationListener</A>,
+<FONT ID="LN">27  </FONT><A NAME="27"></A>        RequestListener {
+<FONT ID="LN">28  </FONT><A NAME="28"></A>
+<FONT ID="LN">29  </FONT><A NAME="29"></A>    <FONT ID="Private">private</FONT> <FONT ID="Static">static</FONT> <FONT ID="Final">final</FONT> Logger log = Logger.getLogger(<A HREF="../../../../../com/neuron/app/activities/sessionisation/SessionHandler.java.html">SessionHandler</A>.<FONT ID="Class">class</FONT>
+<FONT ID="LN">30  </FONT><A NAME="30"></A>            .getName());
+<FONT ID="LN">31  </FONT><A NAME="31"></A>
+<FONT ID="LN">32  </FONT><A NAME="32"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">33  </FONT><A NAME="33"></A>     * Daemon thread will ping in-active devices and filter out stale devices
+<FONT ID="LN">34  </FONT><A NAME="34"></A>     * which do not respond.
+<FONT ID="LN">35  </FONT><A NAME="35"></A>     */</FONT>
+<FONT ID="LN">36  </FONT><A NAME="36"></A>    <FONT ID="Private">private</FONT> Thread daemon;
+<FONT ID="LN">37  </FONT><A NAME="37"></A>    <FONT ID="Private">private</FONT> SessionDaemon daemonObject;
+<FONT ID="LN">38  </FONT><A NAME="38"></A>
+<FONT ID="LN">39  </FONT><A NAME="39"></A>    <FONT ID="Public">public</FONT> SessionHandler() {
+<FONT ID="LN">40  </FONT><A NAME="40"></A>        daemonObject = <FONT ID="New">new</FONT> <A HREF="../../../../../com/neuron/app/activities/sessionisation/SessionDaemonImpl.java.html">SessionDaemonImpl</A>();
+<FONT ID="LN">41  </FONT><A NAME="41"></A>        daemon = <FONT ID="New">new</FONT> Thread(daemonObject);
+<FONT ID="LN">42  </FONT><A NAME="42"></A>    }
+<FONT ID="LN">43  </FONT><A NAME="43"></A>
+<FONT ID="LN">44  </FONT><A NAME="44"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setDaemon(SessionDaemon daemon) {
+<FONT ID="LN">45  </FONT><A NAME="45"></A>        daemonObject = daemon;
+<FONT ID="LN">46  </FONT><A NAME="46"></A>    }
+<FONT ID="LN">47  </FONT><A NAME="47"></A>
+<FONT ID="LN">48  </FONT><A NAME="48"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">49  </FONT><A NAME="49"></A>     * @see com.neuron.api.core.Activity
+<FONT ID="LN">50  </FONT><A NAME="50"></A>     */</FONT>
+<FONT ID="LN">51  </FONT><A NAME="51"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setup(Configuration config) {
+<FONT ID="LN">52  </FONT><A NAME="52"></A>
+<FONT ID="LN">53  </FONT><A NAME="53"></A>        String timeout = config.getProperty(<FONT ID="StringLiteral">"ping_timeout"</FONT>);
+<FONT ID="LN">54  </FONT><A NAME="54"></A>        String pollPeriod = config.getProperty(<FONT ID="StringLiteral">"ping_polling_period"</FONT>);
+<FONT ID="LN">55  </FONT><A NAME="55"></A>        <FONT ID="If">if</FONT> (timeout != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">56  </FONT><A NAME="56"></A>            daemonObject.setPingTimeout(Integer.valueOf(timeout));
+<FONT ID="LN">57  </FONT><A NAME="57"></A>        }
+<FONT ID="LN">58  </FONT><A NAME="58"></A>        <FONT ID="If">if</FONT> (pollPeriod != <FONT ID="Null">null</FONT>) {
+<FONT ID="LN">59  </FONT><A NAME="59"></A>            daemonObject.setPingPollingPeriod(Integer.valueOf(pollPeriod));
+<FONT ID="LN">60  </FONT><A NAME="60"></A>        }
+<FONT ID="LN">61  </FONT><A NAME="61"></A>    }
+<FONT ID="LN">62  </FONT><A NAME="62"></A>
+<FONT ID="LN">63  </FONT><A NAME="63"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">64  </FONT><A NAME="64"></A>     * @see com.neuron.api.core.Activity
+<FONT ID="LN">65  </FONT><A NAME="65"></A>     */</FONT>
+<FONT ID="LN">66  </FONT><A NAME="66"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> start() {
+<FONT ID="LN">67  </FONT><A NAME="67"></A>        daemon.start();
+<FONT ID="LN">68  </FONT><A NAME="68"></A>        log.log(Level.INFO, <FONT ID="StringLiteral">"Started service: "</FONT>
+<FONT ID="LN">69  </FONT><A NAME="69"></A>                + <FONT ID="This">this</FONT>.getClass().getSimpleName());
+<FONT ID="LN">70  </FONT><A NAME="70"></A>    }
+<FONT ID="LN">71  </FONT><A NAME="71"></A>
+<FONT ID="LN">72  </FONT><A NAME="72"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">73  </FONT><A NAME="73"></A>     * @see com.neuron.api.core.Activity
+<FONT ID="LN">74  </FONT><A NAME="74"></A>     */</FONT>
+<FONT ID="LN">75  </FONT><A NAME="75"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> stop() {
+<FONT ID="LN">76  </FONT><A NAME="76"></A>        <FONT ID="Try">try</FONT> {
+<FONT ID="LN">77  </FONT><A NAME="77"></A>            daemonObject.stop();
+<FONT ID="LN">78  </FONT><A NAME="78"></A>            daemon.interrupt();
+<FONT ID="LN">79  </FONT><A NAME="79"></A>            daemon.join();
+<FONT ID="LN">80  </FONT><A NAME="80"></A>        } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<FONT ID="LN">81  </FONT><A NAME="81"></A>            e.printStackTrace();
+<FONT ID="LN">82  </FONT><A NAME="82"></A>        }
+<FONT ID="LN">83  </FONT><A NAME="83"></A>        log.log(Level.INFO, <FONT ID="StringLiteral">"Stopped service: "</FONT>
+<FONT ID="LN">84  </FONT><A NAME="84"></A>                + <FONT ID="This">this</FONT>.getClass().getSimpleName());
+<FONT ID="LN">85  </FONT><A NAME="85"></A>    }
+<FONT ID="LN">86  </FONT><A NAME="86"></A>
+<FONT ID="LN">87  </FONT><A NAME="87"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">88  </FONT><A NAME="88"></A>     * Gets the daemon thread to return a Session
+<FONT ID="LN">89  </FONT><A NAME="89"></A>     * 
+<FONT ID="LN">90  </FONT><A NAME="90"></A>     * @param sessionId
+<FONT ID="LN">91  </FONT><A NAME="91"></A>     *            The session id
+<FONT ID="LN">92  </FONT><A NAME="92"></A>     * @return Session The session matching the given session id
+<FONT ID="LN">93  </FONT><A NAME="93"></A>     */</FONT>
+<FONT ID="LN">94  </FONT><A NAME="94"></A>    <FONT ID="Public">public</FONT> Session getSession(<FONT ID="Int">int</FONT> sessionId) {
+<FONT ID="LN">95  </FONT><A NAME="95"></A>        <FONT ID="Return">return</FONT> daemonObject.getSession(sessionId);
+<FONT ID="LN">96  </FONT><A NAME="96"></A>    }
+<FONT ID="LN">97  </FONT><A NAME="97"></A>
+<FONT ID="LN">98  </FONT><A NAME="98"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">99  </FONT><A NAME="99"></A>     * Adds a new Session
+<FONT ID="LN">100 </FONT><A NAME="100"></A>     * 
+<FONT ID="LN">101 </FONT><A NAME="101"></A>     * @param session
+<FONT ID="LN">102 </FONT><A NAME="102"></A>     *            The session to add
+<FONT ID="LN">103 </FONT><A NAME="103"></A>     */</FONT>
+<FONT ID="LN">104 </FONT><A NAME="104"></A>    <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> addSession(Session session) {
+<FONT ID="LN">105 </FONT><A NAME="105"></A>        daemonObject.addSession(session);
+<FONT ID="LN">106 </FONT><A NAME="106"></A>    }
+<FONT ID="LN">107 </FONT><A NAME="107"></A>
+<FONT ID="LN">108 </FONT><A NAME="108"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">109 </FONT><A NAME="109"></A>     * Remove a current Session
+<FONT ID="LN">110 </FONT><A NAME="110"></A>     * 
+<FONT ID="LN">111 </FONT><A NAME="111"></A>     * @param sessionId
+<FONT ID="LN">112 </FONT><A NAME="112"></A>     *            The session identified to remove
+<FONT ID="LN">113 </FONT><A NAME="113"></A>     */</FONT>
+<FONT ID="LN">114 </FONT><A NAME="114"></A>    <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> removeSession(<FONT ID="Int">int</FONT> sessionId) {
+<FONT ID="LN">115 </FONT><A NAME="115"></A>        daemonObject.getSession(sessionId);
+<FONT ID="LN">116 </FONT><A NAME="116"></A>    }
+<FONT ID="LN">117 </FONT><A NAME="117"></A>
+<FONT ID="LN">118 </FONT><A NAME="118"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">119 </FONT><A NAME="119"></A>     * This is called once a new registration has been completed
+<FONT ID="LN">120 </FONT><A NAME="120"></A>     */</FONT>
+<FONT ID="LN">121 </FONT><A NAME="121"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> onRegistration(<A HREF="../../../../../com/neuron/app/activities/registration/Registration.java.html">Registration</A> registration) {
+<FONT ID="LN">122 </FONT><A NAME="122"></A>        
+<FONT ID="LN">123 </FONT><A NAME="123"></A>        String status = registration.getProperty(<FONT ID="StringLiteral">"status"</FONT>).get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">124 </FONT><A NAME="124"></A>        
+<FONT ID="LN">125 </FONT><A NAME="125"></A>        <FONT ID="If">if</FONT>(status.equals(<FONT ID="StringLiteral">"200"</FONT>)) {      
+<FONT ID="LN">126 </FONT><A NAME="126"></A>            String protocol = registration.getProperty(<FONT ID="StringLiteral">"protocol"</FONT>).get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">127 </FONT><A NAME="127"></A>            String format = registration.getProperty(<FONT ID="StringLiteral">"format"</FONT>).get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">128 </FONT><A NAME="128"></A>            String id = registration.getProperty(<FONT ID="StringLiteral">"id"</FONT>).get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">129 </FONT><A NAME="129"></A>            String regAddress = registration.getRegistrationAddress();
+<FONT ID="LN">130 </FONT><A NAME="130"></A>    
+<FONT ID="LN">131 </FONT><A NAME="131"></A>            Session session = <FONT ID="New">new</FONT> Session(Integer.valueOf(id));
+<FONT ID="LN">132 </FONT><A NAME="132"></A>            session.setContext(<FONT ID="New">new</FONT> Context(protocol, format));
+<FONT ID="LN">133 </FONT><A NAME="133"></A>            session.addProperty(<FONT ID="StringLiteral">"registrationAddress"</FONT>, regAddress);
+<FONT ID="LN">134 </FONT><A NAME="134"></A>            addSession(session);
+<FONT ID="LN">135 </FONT><A NAME="135"></A>        }
+<FONT ID="LN">136 </FONT><A NAME="136"></A>    }
+<FONT ID="LN">137 </FONT><A NAME="137"></A>
+<FONT ID="LN">138 </FONT><A NAME="138"></A>    <FONT ID="FormalComment">/**
+<FONT ID="LN">139 </FONT><A NAME="139"></A>     * This is called by the activity listener when a request is sent on any
+<FONT ID="LN">140 </FONT><A NAME="140"></A>     * topic from the active broker
+<FONT ID="LN">141 </FONT><A NAME="141"></A>     */</FONT>
+<FONT ID="LN">142 </FONT><A NAME="142"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> onRequest(Request request) {
+<FONT ID="LN">143 </FONT><A NAME="143"></A>        String sid = request.getHeader(<FONT ID="StringLiteral">"id"</FONT>).get(<FONT ID="IntegerLiteral">0</FONT>);
+<FONT ID="LN">144 </FONT><A NAME="144"></A>        <FONT ID="Int">int</FONT> id = Integer.valueOf(sid);
+<FONT ID="LN">145 </FONT><A NAME="145"></A>        daemonObject.updateTimestamp(id);
+<FONT ID="LN">146 </FONT><A NAME="146"></A>    }
+<FONT ID="LN">147 </FONT><A NAME="147"></A>
+<FONT ID="LN">148 </FONT><A NAME="148"></A>}
+<FONT ID="LN">149 </FONT><A NAME="149"></A></pre>
+</BODY>
+</HTML>
