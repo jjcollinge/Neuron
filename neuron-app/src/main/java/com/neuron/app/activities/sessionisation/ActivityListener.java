@@ -59,7 +59,7 @@ public class ActivityListener extends RequestEventProducer implements
 	}
 
 	public void start() {
-		AdapterFactory factory = new AdapterFactory();
+		AdapterFactory factory = AdapterFactory.getFactory();
 		ArrayList<String> types = (ArrayList<String>) factory.getCatalogue();
 		for (String type : types) {
 			Adapter adapter = factory.getAdapter(type);

@@ -8,7 +8,6 @@
 	<modules>
 		<module>neuron-api</module>
 		<module>neuron-app</module>
-		<module>neuron-web</module>
 	</modules>
 	<build>
 		<plugins>

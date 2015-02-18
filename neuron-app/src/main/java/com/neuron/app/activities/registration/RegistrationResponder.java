@@ -29,7 +29,7 @@ public class RegistrationResponder implements RegistrationListener, Service {
 	 */
 	private void sendResponse(Response response) {
 		
-		AdapterFactory factory = new AdapterFactory();
+		AdapterFactory factory = AdapterFactory.getFactory();
 		ArrayList<String> protocols = response.getProtocols();
 
 		for(String protocol : protocols) {

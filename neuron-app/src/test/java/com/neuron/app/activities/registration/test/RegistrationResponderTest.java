@@ -24,7 +24,7 @@ public class RegistrationResponderTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		responder = new RegistrationResponder();
-		AdapterFactory factory = new AdapterFactory();
+		AdapterFactory factory = AdapterFactory.getFactory();
 		factory.registerAdapter(new ProtocolConfiguration("", 0, "mock", MqttAdapterMock.class));
 	}
 

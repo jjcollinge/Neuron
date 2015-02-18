@@ -51,7 +51,7 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		if (topic != null)
 			regTopic = topic;
 
-		AdapterFactory factory = new AdapterFactory();
+		AdapterFactory factory = AdapterFactory.getFactory();
 		for (String protocol : factory.getCatalogue()) {
 			Adapter adapter = factory.getAdapter(protocol);
 			adapters.put(protocol, adapter);

@@ -94,7 +94,7 @@ public class SessionDaemonImpl implements SessionDaemon {
 		response.addHeader("topic", "devices/" + session.getId() + "/ping/request");
 		response.addHeader("qos", "2");
 
-		Adapter adapter = new AdapterFactory().getAdapter(session
+		Adapter adapter = AdapterFactory.getFactory().getAdapter(session
 				.getContext().getProtocol());
 		adapter.send(response);
 	}

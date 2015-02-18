@@ -113,11 +113,22 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 		// extract response components
 		Payload payload = response.getPayload();
 		
-		ArrayList<String> messages = new ArrayList<String>();
+		ArrayList<String> messages = new ArrayList<String>();		
 		
 		// format payload into required formats
 		for(String format : response.getFormats()) {
-			String message = Serializer.serialize(format, payload);
+			
+			String message = "";
+			// if raw extract payload
+			String raw = response.getHeader("raw");
+			if(raw != null) {
+				message = Serializer.serialize(format, payload.getPayload());
+				message = message.replaceAll("\\\\\"", "\"");
+				message = message.substring(1, message.length() - 1);
+			} else {
+				message = Serializer.serialize(format, payload);
+			}
+
 			if(message == null) {
 				log.log(Level.WARNING, "Dropping format " + format + " as I couldn't serialize it");
 			} else if(message.isEmpty()) {

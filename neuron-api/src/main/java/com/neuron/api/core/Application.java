@@ -151,7 +151,7 @@ public abstract class Application {
 		 * Load Connector factory with all supported protocol types
 		 * n.b. would need to change for multiple protocols
 		 */
-		AdapterFactory connectorFactory = new AdapterFactory();
+		AdapterFactory adapterFactory = AdapterFactory.getFactory();
 		for(String messengerClassName : messengerClassNames) {
 			ProtocolConfiguration brokerConfig;
 			try {
@@ -160,7 +160,7 @@ public abstract class Application {
 						Integer.valueOf(brokerPort),
 						brokerType,
 						Class.forName(messengerClassName));
-				connectorFactory.registerAdapter(brokerConfig);
+				adapterFactory.registerAdapter(brokerConfig);
 			} catch (ClassNotFoundException e) {
 				log.log(Level.WARNING, "Failed to find class for provided messenger class name, stopping setup now", e);
 				return false;

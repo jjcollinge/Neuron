@@ -37,7 +37,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 	@Override
 	public void setup(int sessionId) {
 		this.sessionId = sessionId;
-		AdapterFactory factory =  new AdapterFactory();
+		AdapterFactory factory =  AdapterFactory.getFactory();
 		adapter = factory.getAdapter("mqtt");
 		adapter.addRequestListener(this);
 		ready = true;

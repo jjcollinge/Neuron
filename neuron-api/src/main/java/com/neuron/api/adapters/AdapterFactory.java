@@ -15,15 +15,26 @@ import com.neuron.api.configuration.ProtocolConfiguration;
  */
 public class AdapterFactory {
 
-	private static HashMap<String, ProtocolConfiguration> adapters;
-
+	private HashMap<String, ProtocolConfiguration> adapters;
+	private static AdapterFactory instance;
+	
 	/**
 	 * Initialise the adapters collection if it has not already
 	 */
-	public AdapterFactory() {
+	private AdapterFactory() {
 		if (adapters == null) {
 			adapters = new HashMap<String, ProtocolConfiguration>();
 		}
+	}
+	
+	/**
+	 * Singleton
+	 */
+	public static AdapterFactory getFactory() {
+		if(instance == null) {
+			instance = new AdapterFactory();
+		}
+		return instance;
 	}
 
 	/**
@@ -37,7 +48,7 @@ public class AdapterFactory {
 	 * Create and return a new Connector of the desired protocol
 	 * @return a implementation specific connector
 	 */
-	public Adapter getAdapter(String protocol) {
+	public  Adapter getAdapter(String protocol) {
 
 		ProtocolConfiguration config = adapters.get(protocol);
 
