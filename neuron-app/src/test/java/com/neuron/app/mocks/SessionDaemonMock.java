@@ -1,9 +1,9 @@
 package com.neuron.app.mocks;
 
-import com.neuron.api.core.SessionDaemon;
+import com.neuron.api.core.Daemon;
 import com.neuron.api.model.Session;
 
-public class SessionDaemonMock implements SessionDaemon {
+public class SessionDaemonMock implements Daemon {
 
 	private static Session lastSession = null;
 	

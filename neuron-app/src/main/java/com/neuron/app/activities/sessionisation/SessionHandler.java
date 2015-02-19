@@ -4,8 +4,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.configuration.Configuration;
+import com.neuron.api.core.Daemon;
 import com.neuron.api.core.Service;
-import com.neuron.api.core.SessionDaemon;
 import com.neuron.api.events.RequestListener;
 import com.neuron.api.model.Context;
 import com.neuron.api.model.Session;
@@ -37,12 +37,12 @@ public class SessionHandler implements Service, RegistrationListener,
 	private SessionDaemon daemonObject;
 
 	public SessionHandler() {
-		daemonObject = new SessionDaemonImpl();
+		daemonObject = new SessionDaemon();
 		daemon = new Thread(daemonObject);
 	}
 
-	public void setDaemon(SessionDaemon daemon) {
-		daemonObject = daemon;
+	public void setDaemon(Daemon daemon) {
+		daemonObject = (SessionDaemon) daemon;
 	}
 
 	/**

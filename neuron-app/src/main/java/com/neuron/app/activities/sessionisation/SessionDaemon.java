@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import com.neuron.api.adapters.Adapter;
 import com.neuron.api.adapters.AdapterFactory;
-import com.neuron.api.core.SessionDaemon;
+import com.neuron.api.core.Daemon;
 import com.neuron.api.data_access.DeviceDAO;
 import com.neuron.api.data_access.DeviceDAOFactory;
 import com.neuron.api.model.Payload;
@@ -24,9 +24,9 @@ import com.neuron.api.response.Response;
  * @author JC
  *
  */
-public class SessionDaemonImpl implements SessionDaemon {
+public class SessionDaemon implements Daemon {
 
-	private static final Logger log = Logger.getLogger(SessionDaemon.class
+	private static final Logger log = Logger.getLogger(Daemon.class
 			.getName());
 
 	private HashMap<Integer, Session> activeSessions;
@@ -37,7 +37,7 @@ public class SessionDaemonImpl implements SessionDaemon {
 	private int timeout = SEC * 20;
 	private int polling_period = SEC * 30;
 
-	public SessionDaemonImpl() {
+	public SessionDaemon() {
 		activeSessions = new HashMap<Integer, Session>();
 		deviceDao = new DeviceDAOFactory().getDeviceDAO();
 	}

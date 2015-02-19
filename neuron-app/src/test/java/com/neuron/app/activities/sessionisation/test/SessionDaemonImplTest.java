@@ -10,15 +10,15 @@ import org.junit.Test;
 
 import com.neuron.api.model.Context;
 import com.neuron.api.model.Session;
-import com.neuron.app.activities.sessionisation.SessionDaemonImpl;
+import com.neuron.app.activities.sessionisation.SessionDaemon;
 
 public class SessionDaemonImplTest {
 
-	private static SessionDaemonImpl daemon;
+	private static SessionDaemon daemon;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		daemon = new SessionDaemonImpl();
+		daemon = new SessionDaemon();
 	}
 
 	@AfterClass
