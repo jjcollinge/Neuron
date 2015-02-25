@@ -56,7 +56,7 @@ public abstract class RequestHandler implements RequestListener, Runnable {
 	 * New request event arrived
 	 */
 	public void onRequest(Request request) {
-		handleRequest(request);
+		addRequest(request);
 	}
 	
 	/**
@@ -66,6 +66,7 @@ public abstract class RequestHandler implements RequestListener, Runnable {
 		while(true) {
 			if(!requestQueue.isEmpty()) {
 				Request request = requestQueue.lastElement();
+				requestQueue.removeElementAt(requestQueue.size()-1);
 				if(!request.hasExpired()) {
 					handleRequest(request);
 				}
