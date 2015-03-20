@@ -16,8 +16,7 @@ public class GeoPoint {
 	@JsonProperty("latitude")
 	private double latitude;
 	
-	public GeoPoint() {
-		
+	public GeoPoint() {	
 	}
 	
 	public GeoPoint(double lon, double lat) {
@@ -25,7 +24,9 @@ public class GeoPoint {
 		this.latitude = lat;
 	}
 	
-	// Setters
+	/**
+	 * Setters
+	 */
 	public void setLongitude(double lon) {
 		this.longitude = lon;
 	}
@@ -34,7 +35,9 @@ public class GeoPoint {
 		this.latitude = lat;
 	}
 
-	// Getters
+	/**
+	 * Getters
+	 */
 	public double getLongitude() {
 		return this.longitude;
 	}

@@ -28,6 +28,11 @@ public class DeviceProxyFactory {
 		proxies.put(protocol, klass);
 	}
 	
+	/**
+	 * Get device proxy
+	 * @param context
+	 * @return
+	 */
 	public DeviceProxy getDeviceProxy(Context context) {
 		
 		DeviceProxy proxy = null;	

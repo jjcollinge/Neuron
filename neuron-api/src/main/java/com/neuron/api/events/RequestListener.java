@@ -9,6 +9,10 @@ import com.neuron.api.request.Request;
  */
 public interface RequestListener {
 
+	/**
+	 * Event listener for request event
+	 * @param request
+	 */
 	public void onRequest(Request request);
 	
 }

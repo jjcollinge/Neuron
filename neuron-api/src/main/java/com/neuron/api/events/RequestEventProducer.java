@@ -18,14 +18,26 @@ public abstract class RequestEventProducer {
 		listeners = new CopyOnWriteArrayList<RequestListener>();
 	}
 
+	/**
+	 * Add a request event listener
+	 * @param l
+	 */
 	public void addRequestListener(RequestListener l) {
 		this.listeners.add(l);
 	}
 
+	/**
+	 * Remove a request event listener
+	 * @param l
+	 */
 	public void removeRequestListener(RequestListener l) {
 		this.listeners.remove(l);
 	}
 
+	/**
+	 * Notify listener of a request event
+	 * @param request
+	 */
 	protected void notifyListeners(Request request) {
 
 		for (RequestListener listener : listeners) {

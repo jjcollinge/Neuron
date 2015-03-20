@@ -32,7 +32,10 @@ public class Device {
 		actuators = new ArrayList<Actuator>();
 	}
 	
-	// Setters
+	/**
+	 * Setters
+	 */
+	
 	public void setSessionId(int id) {
 		this.sessionId = id;
 	}
@@ -74,7 +77,10 @@ public class Device {
 
 	}
 
-	// Getters
+	/**
+	 * Getters
+	 */
+	
 	public int getSessionId() {
 		return this.sessionId;
 	}

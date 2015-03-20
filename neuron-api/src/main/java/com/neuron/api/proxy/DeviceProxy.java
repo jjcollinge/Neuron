@@ -15,16 +15,35 @@ import com.neuron.api.request.Request;
 public abstract class DeviceProxy extends DataEventProducer implements
 		DeviceProxyInterface, RequestListener {
 
+	/**
+	 * Setup the device proxy with a session id
+	 */
 	public abstract void setup(int sessionId);
 	
+	/**
+	 * Set any configuration information
+	 * @param refreshRate
+	 */
 	public abstract void configureDevice(int refreshRate);
 
+	/**
+	 * Start sensor streaming
+	 */
 	public abstract void startSensorStreaming(int sensorId);
 
+	/**
+	 * Stop sensor streaming
+	 */
 	public abstract void stopSensorStreaming(int sensorId);
 
+	/**
+	 * Operate an actuator
+	 */
 	public abstract void operateActuator(int actuatorId, String option);
 
+	/**
+	 * On request event
+	 */
 	public abstract void onRequest(Request request);
 
 }

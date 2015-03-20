@@ -17,10 +17,20 @@ public class Configuration {
 		properties = new HashMap<String, String>();
 	}
 	
+	/**
+	 * Add a property
+	 * @param key
+	 * @param value
+	 */
 	public void addProperty(String key, String value) {
 		properties.put(key, value);
 	}
 	
+	/**
+	 * Get a property
+	 * @param key
+	 * @return
+	 */
 	public String getProperty(String key) {
 		return properties.get(key);
 	}

@@ -7,6 +7,10 @@ package com.neuron.api.events;
  */
 public interface DataEventListener {
 	
+	/**
+	 * Event handler on data arrived
+	 * @param dataEvent
+	 */
 	public void onDataArrived(DataEvent dataEvent);
 		
 }

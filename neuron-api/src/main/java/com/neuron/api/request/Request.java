@@ -25,6 +25,10 @@ public class Request {
 	private Calendar expiration;
 	private Map<String, List<String>> headers;
 	
+	/**
+	 * Ctor with data
+	 * @param data
+	 */
 	public Request(Object data) {
 		this.data = data;
 		this.headers = new HashMap<String, List<String>>();
@@ -33,6 +37,9 @@ public class Request {
 		expiration.add(Calendar.HOUR_OF_DAY, 1);
 	}
 	
+	/**
+	 * Ctor
+	 */
 	public Request() {
 		this.headers = new HashMap<String, List<String>>();
 		expiration = new Calendar.Builder().build();
@@ -40,30 +47,59 @@ public class Request {
 		expiration.add(Calendar.HOUR_OF_DAY, 1);
 	}
 	
+	/**
+	 * Set the data
+	 * @param data
+	 */
 	public void setData(Object data) {
 		this.data = data;
 	}
 	
+	/**
+	 * Get data
+	 * @return
+	 */
 	public Object getData() {
 		return data;
 	}
 	
+	/**
+	 * Set the request protocol
+	 * @param protocol
+	 */
 	public void setProtocol(String protocol) {
 		this.sourceProtocol = protocol;
 	}
 	
+	/**
+	 * Set the request format
+	 * @param format
+	 */
 	public void setFormat(String format) {
 		this.sourceFormat = format;
 	}
 	
+	/**
+	 * Get request protocol
+	 * @return
+	 */
 	public String getProtocol() {
 		return this.sourceProtocol;
 	}
 	
+	/**
+	 * Get request format
+	 * @return
+	 */
 	public String getFormat() {
 		return this.sourceFormat;
 	}
 	
+	/**
+	 * Add a header
+	 * @param key
+	 * @param values
+	 */
 	public void addHeader(String key, String...values) {
 		ArrayList<String> props = new ArrayList<String>();
 		for(String prop : values) {
@@ -72,14 +108,27 @@ public class Request {
 		headers.put(key, props);
 	}
 	
+	/**
+	 * Boolean check if request has expired
+	 * @return
+	 */
 	public boolean hasExpired() {
 		return expiration.after(new Date());
 	}
 	
+	/**
+	 * Get a header
+	 * @param key
+	 * @return
+	 */
 	public ArrayList<String> getHeader(final String key) {
 		return (ArrayList<String>) headers.get(key);
 	}
 	
+	/**
+	 * Get all headers
+	 * @return
+	 */
 	public Map<String, List<String>>  getHeaders() {
 		return headers;
 	}

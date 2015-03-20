@@ -25,7 +25,10 @@ public class Sensor {
 	
 	public Sensor() {}
 
-	// Setters
+	/**
+	 * Setters
+	 */
+	
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -46,7 +49,10 @@ public class Sensor {
 		this.type = type;
 	}
 
-	// Getters
+	/**
+	 * Getters
+	 */
+	
 	public int getId() {
 		return this.id;
 	}

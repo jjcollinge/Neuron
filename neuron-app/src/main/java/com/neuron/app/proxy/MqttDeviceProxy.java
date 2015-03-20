@@ -55,7 +55,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			Payload payload = new Payload("START_STREAM");
 			Response res = new Response(payload);
 			res.addFormat("JSON");
-			res.addFormat("MQTT");
+			res.addProtocol("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
 			adapter.send(res);
@@ -76,7 +76,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			Payload payload = new Payload("STOP_STREAM");
 			Response res = new Response(payload);
 			res.addFormat("JSON");
-			res.addFormat("MQTT");
+			res.addProtocol("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
 			adapter.send(res);
@@ -96,7 +96,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			Payload payload = new Payload(option);
 			Response res = new Response(payload);
 			res.addFormat("JSON");
-			res.addFormat("MQTT");
+			res.addProtocol("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
 			adapter.send(res);
@@ -131,7 +131,7 @@ public class MqttDeviceProxy extends DeviceProxy {
 			Payload payload = new Payload(String.valueOf(refreshRate));
 			Response res = new Response(payload);
 			res.addFormat("JSON");
-			res.addFormat("MQTT");
+			res.addProtocol("MQTT");
 			res.addHeader("topic", topic);
 			res.addHeader("qos", "2");
 			adapter.send(res);

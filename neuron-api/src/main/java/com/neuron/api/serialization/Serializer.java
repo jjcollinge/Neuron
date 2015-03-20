@@ -14,6 +14,12 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class Serializer {
 
+	/**
+	 * Serialize an object
+	 * @param format
+	 * @param object
+	 * @return
+	 */
 	public static String serialize(String format, Object object) {
 		
 		if(object == null) return null;

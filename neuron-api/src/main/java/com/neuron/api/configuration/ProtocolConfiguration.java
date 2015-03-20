@@ -24,30 +24,58 @@ public class ProtocolConfiguration {
 		this.messengerClass = messengerClass;
 	}
 	
+	/**
+	 * Set protocol server username
+	 * @param username
+	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 	
+	/**
+	 * Set protocol server password
+	 * @param password
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
+	/**
+	 * Get protocol server hostname
+	 * @return
+	 */
 	public String getHostname() {
 		return this.hostname;
 	}
 	
+	/**
+	 * Get protocol server port
+	 * @return
+	 */
 	public int getPort() {
 		return this.port;
 	}
 	
+	/**
+	 * Get protocol server type
+	 * @return
+	 */
 	public String getType() {
 		return this.type;
 	}
 	
+	/**
+	 * Get protocol server username
+	 * @return
+	 */
 	public String getUsername() {
 		return this.username;
 	}
 	
+	/**
+	 * Get protocol server password
+	 * @return
+	 */
 	public String getPassword() {
 		return this.password;
 	}
