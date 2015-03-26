@@ -10,7 +10,7 @@
         {
             "desc": "Oven thermistor",
             "sense": "temperature",
-            "unit": "celcius",
+            "unit": "celsius",
             "tags": {}
         }
     ],
