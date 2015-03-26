@@ -1,0 +1,22 @@
+{
+    "name": "Audio A4 2015 Automobile",
+    "geo": {
+        "latitude": -12.57033663,
+        "longitude": 12.1618752
+    },
+    "tags": 
+        {"Reg": "BD51 SMR",
+         "MOT": "12/02/2015",
+         "Owner": "John smith",
+         "Insurer": "Admiral"},
+    "sensors": [
+        {
+            "desc": "Axell speed monitor",
+            "sense": "speed",
+            "unit": "mph",
+            "tags": {}
+        }
+    ],
+    "actuators": [
+    ]
+}

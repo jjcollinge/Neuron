@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 import paho.mqtt.client as mqtt
 import time
 import json
@@ -21,8 +22,8 @@ class Device:
 	uuid = -1
         refresh_rate = 10
         
-	def __init__(self, descriptor):
-		self.descriptor = descriptor
+	def __init__(self, name):
+		self.name = name
 		self.sensors = []
 		self.actuators = []
 
@@ -115,10 +116,9 @@ def on_message(client, userdata, msg):
 				jsonData = str(msg.payload)
 				pyObj = json.loads(jsonData)
 				request = pyObj["payload"]
-				if(request == "ON"):
-					print("Turning LED on")
-				elif(request == "OFF"):
-					print("Turning LED off")
+				for opt in actuator.options:
+					if(request == opt):
+						print "doing " + opt
 
 def on_publish(client, userdata, mid):
 	print("Published")
@@ -143,23 +143,35 @@ client.on_publish 	= on_publish
 client.on_log 		= on_log
 client.on_subscribe = on_subscribe
 
+fileNumber = 0;
+
+if len(sys.argv) > 1:
+	fileNumber = sys.argv[1]
+
 # Read in json document and initialise device/sensors
-file = open("device.json", 'r');
+file = open("device" + str(fileNumber) + ".json", 'r');
 descriptor = file.read();
-device = Device(descriptor)
-sensor = Sensor("0", "Oven thermistor", "temperature", "celcius", {})
-device.addSensor(sensor)
-actuator = Actuator("0", "Temperature reached LED", {})
-actuator.addOption("ON")
-actuator.addOption("OFF")
-device.addActuator(actuator)
+jsonDevice = json.loads(descriptor);
+device = Device(jsonDevice['name'])
+c = 0
+for jsonSensor in jsonDevice['sensors']:
+	sensor = Sensor(str(c), jsonSensor['desc'], jsonSensor['sense'], jsonSensor['unit'], jsonSensor['tags'])
+	device.addSensor(sensor)
+	c = c + 1
+c = 0
+for jsonActuator in jsonDevice['actuators']:
+	actuator = Actuator(str(c), jsonActuator['desc'], jsonActuator['tags'])
+	for jsonOpt in jsonActuator['options']:
+		actuator.addOption(jsonOpt)
+	device.addActuator(actuator)
+	c = c + 1
 
 # Connect to broker
 client.connect(HOST, PORT, 60)
 # Subscribe to registration response topic
 client.subscribe(REG_RESPONSE)
 # Build registration json string
-registration = "{\"regAddress\":\""+ REG_RESPONSE +"\",\"device\":"+ device.descriptor +"}"
+registration = "{\"regAddress\":\""+ REG_RESPONSE +"\",\"device\":"+ descriptor +"}"
 print("Registration: " + registration)
 # Publish registration json string to registration topic
 client.publish(REG_REQUEST, registration)

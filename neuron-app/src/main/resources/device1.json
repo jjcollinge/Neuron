@@ -1,0 +1,33 @@
+{
+    "name": "Elevator safety system",
+    "geo": {
+        "latitude": 12.37831623,
+        "longitude": -11.4618752
+    },
+    "tags": 
+        {"Status": "working"},
+    "sensors": [
+        {
+            "desc": "Cable tension monitor",
+            "sense": "tension",
+            "unit": "newton",
+            "tags": {"Repaired":"02-10-14",
+                     "Audited":"01-03-14"}
+        },
+        {
+            "desc": "Hydraulic temperature monitor",
+            "sense": "temperature",
+            "unit": "celsius",
+            "tags": {"Repaired":"never",
+                     "Audited":"01-03-14"}
+        }
+    ],
+    "actuators": [
+        {
+            "desc": "Emergency cable lock",
+            "options": ["Engage", "Disengage"],
+            "tags": {"Repaired":"never",
+                     "Audited":"01-03-14"}
+        }
+    ]
+}

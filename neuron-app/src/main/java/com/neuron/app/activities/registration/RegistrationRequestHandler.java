@@ -106,13 +106,17 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		
 		if (registration != null && registration.isOk()) {
 			
+			// allocate the device a session id
+			int id = IdGenerator.generateId();
+			registration.getDevice().setSessionId(id);
+			
 			// store the device
 			deviceDao.insert(registration.getDevice());
 
 			registration.addProperty("protocol", request.getProtocol());
 			registration.addProperty("status", "200");
 			registration.addProperty("id",
-					String.valueOf(IdGenerator.generateId()));
+					String.valueOf(id));
 			
 			log.log(Level.INFO, "Successful registration");
 

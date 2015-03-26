@@ -108,7 +108,7 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 			log.log(Level.INFO, "Removed device " + id + " from the database.");
 			return true;
 		} else {
-			log.log(Level.INFO, "Cannot delete device as it is not in the collection");
+			log.log(Level.INFO, "Cannot delete device " + id + " as it is not in the collection");
 			return false;
 		}
 	}

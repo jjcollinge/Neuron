@@ -110,12 +110,14 @@ public class Device {
 	public void addSensor(Sensor sensor) {
 		if (sensors == null)
 			sensors = new ArrayList<Sensor>();
+		sensor.setId(sensors.size());
 		sensors.add(sensor);
 	}
 
 	public void addActuator(Actuator actuator) {
 		if (actuators == null)
 			actuators = new ArrayList<Actuator>();
+		actuator.setId(actuators.size());
 		actuators.add(actuator);
 
 	}
