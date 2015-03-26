@@ -41,6 +41,10 @@ public class SessionHandler implements Service, RegistrationListener,
 		daemon = new Thread(daemonObject);
 	}
 
+	/**
+	 * Set the session daemon
+	 * @param daemon
+	 */
 	public void setDaemon(Daemon daemon) {
 		daemonObject = (SessionDaemon) daemon;
 	}

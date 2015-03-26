@@ -20,10 +20,19 @@ public class RegistrationDeserializer {
 		supportedFormats = new HashMap<String, ObjectMapperStrategy<Registration, String>>();
 	}
 
+	/**
+	 * Add a supported format
+	 * @param format
+	 * @param mapper
+	 */
 	public void addFormat(String format, ObjectMapperStrategy<Registration, String> mapper) {
 		supportedFormats.put(format, mapper);
 	}
 
+	/**
+	 * Remove a supported format
+	 * @param format
+	 */
 	public void removeFormat(String format) {
 		supportedFormats.remove(format);
 	}

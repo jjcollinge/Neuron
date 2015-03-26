@@ -27,19 +27,17 @@ public class MongoDBDeviceDAOTest {
 		
 		Device testDevice = new Device();
 		testDevice.setSessionId(0);
-		testDevice.setModel("test");
-		testDevice.setManufacurer("test");
+		testDevice.setName("test");
 		testDevice.setGeo(10.0, 10.0);
 		
 		Sensor testSensor = new Sensor();
 		testSensor.setId(0);
 		testSensor.setSense("test");
-		testSensor.setType("test");
 		testSensor.setUnit("test");
 		
 		Actuator testActuator = new Actuator();
 		testActuator.setId(0);
-		testActuator.setName("test");
+		testActuator.setDesc("test");
 		testActuator.addOption("OPEN");
 		testActuator.addOption("CLOSE");
 		
@@ -66,14 +64,13 @@ public class MongoDBDeviceDAOTest {
 		
 		Device testDevice = new Device();
 		testDevice.setSessionId(0);
-		testDevice.setModel("test");
-		testDevice.setManufacurer("test");
+		testDevice.setName("test");
+		
 		testDevice.setGeo(10.0, 10.0);
 		
 		Sensor testSensor = new Sensor();
 		testSensor.setId(0);
 		testSensor.setSense("test");
-		testSensor.setType("test");
 		testSensor.setUnit("test");
 		
 		testDevice.addSensor(testSensor);
@@ -122,27 +119,27 @@ public class MongoDBDeviceDAOTest {
 		dao.setCollection("testDevices");
 		dao.clear();
 		
-		String manufacturer = "testManufacturer";
+		String name = "testName";
 		int numberOfDevice = 10;
 		
 		// When
 		for(int i = 0; i < numberOfDevice; i++) {
 			Device testDevice = new Device();
 			testDevice.setSessionId(i);
-			testDevice.setManufacurer(manufacturer);
+			testDevice.setName(name);
 			dao.insert(testDevice);
 		}
 		
 		Device dummyDevice = new Device();
 		dummyDevice.setSessionId(numberOfDevice + 1);
-		dummyDevice.setManufacurer("redHerringManufacturer");
+		dummyDevice.setName("redHerringName");
 		
 		// Should
-		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByManufacturer(manufacturer);
+		ArrayList<Device> devicesFound = (ArrayList<Device>) dao.findByName(name);
 		assertTrue(devicesFound.size() == numberOfDevice);
 		
 		for(Device device :  devicesFound) {
-			assertTrue(device.getManufacturer().equals(manufacturer));
+			assertTrue(device.getName().equals(name));
 		}
 		
 		dao.clear();
@@ -158,19 +155,18 @@ public class MongoDBDeviceDAOTest {
 		
 		Device testDevice = new Device();
 		testDevice.setSessionId(0);
-		testDevice.setModel("test");
-		testDevice.setManufacurer("test");
+		testDevice.setName("test");
+		
 		testDevice.setGeo(10.0, 10.0);
 		
 		Sensor testSensor = new Sensor();
 		testSensor.setId(0);
 		testSensor.setSense("temperature");
-		testSensor.setType("test");
 		testSensor.setUnit("test");
 		
 		Actuator testActuator = new Actuator();
 		testActuator.setId(0);
-		testActuator.setName("test");
+		testActuator.setDesc("test");
 		testActuator.addOption("OPEN");
 		testActuator.addOption("CLOSE");
 		
@@ -229,14 +225,13 @@ public class MongoDBDeviceDAOTest {
 		
 		Device testDevice = new Device();
 		testDevice.setSessionId(0);
-		testDevice.setModel("test");
-		testDevice.setManufacurer("test");
+		testDevice.setName("test");
+		
 		testDevice.setGeo(10.0, 10.0);
 		
 		Sensor testSensor = new Sensor();
 		testSensor.setId(0);
 		testSensor.setSense("test");
-		testSensor.setType("test");
 		testSensor.setUnit("test");
 		
 		// When
@@ -244,13 +239,13 @@ public class MongoDBDeviceDAOTest {
 		dao.insert(testDevice);
 		
 		// Should
-		assertTrue(dao.update(0, "model", "Rhino"));
+		assertTrue(dao.update(0, "name", "Rhino"));
 		
 		// When
 		Device result = dao.get(0);
 		
 		// Should
-		assertEquals(result.getModel(), "Rhino");
+		assertEquals(result.getName(), "Rhino");
 		
 	}
 	
@@ -264,14 +259,12 @@ public class MongoDBDeviceDAOTest {
 		
 		Device testDevice = new Device();
 		testDevice.setSessionId(0);
-		testDevice.setModel("test");
-		testDevice.setManufacurer("test");
+		testDevice.setName("test");
 		testDevice.setGeo(10.0, 10.0);
 		
 		Sensor testSensor = new Sensor();
 		testSensor.setId(0);
 		testSensor.setSense("test");
-		testSensor.setType("test");
 		testSensor.setUnit("test");
 
 		testDevice.addSensor(testSensor);

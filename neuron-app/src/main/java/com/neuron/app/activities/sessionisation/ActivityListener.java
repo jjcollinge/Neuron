@@ -53,11 +53,16 @@ public class ActivityListener extends RequestEventProducer implements
 		}
 	}
 
+	/**
+	 * Setup - configure activity listener
+	 */
 	public void setup(Configuration config) {
 		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * Start the activity listener
+	 */
 	public void start() {
 		AdapterFactory factory = AdapterFactory.getFactory();
 		ArrayList<String> types = (ArrayList<String>) factory.getCatalogue();
@@ -69,6 +74,9 @@ public class ActivityListener extends RequestEventProducer implements
 		}
 	}
 
+	/**
+	 * Stop the activity listener
+	 */
 	public void stop() {
 		for(Adapter adapter : adapters) {
 			adapter.unsubscribe("devices/#");

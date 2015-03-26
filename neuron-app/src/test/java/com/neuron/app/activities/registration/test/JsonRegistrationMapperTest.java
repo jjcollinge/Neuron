@@ -39,26 +39,24 @@ public class JsonRegistrationMapperTest {
 		
 		// Given
 		Device expectedDevice = new Device();
-		expectedDevice.setManufacurer("RaspberryPi");
-		expectedDevice.setModel("B+");
+		expectedDevice.setName("Smoke alarm");
 		expectedDevice.setGeo(new GeoPoint(53.37831623, -1.4618752));
 		
 		String registration = "{\"regAddress\":\"2077\",\"device\":{" +
-							    "\"manufacturer\": \"RaspberryPi\", " +
-							    "\"model\": \"B+\"," +
+							    "\"name\": \"Smoke alarm\", "+
 							    "\"geo\": {"+
 							        "\"latitude\": 53.37831623,"+
 							        "\"longitude\": -1.4618752"+
 							    "},"+
 							    "\"sensors\": [],"+
-							    "\"actuators\": []"+
+							    "\"actuators\": [],"+
+							    "\"tags\": {}"+
 							"}}";
 		// When
 		Registration reg = mapper.deserialize(registration);
 
 		// Should
-		assertEquals(reg.getDevice().getManufacturer(), expectedDevice.getManufacturer());
-		assertEquals(reg.getDevice().getModel(), expectedDevice.getModel());
+		assertEquals(reg.getDevice().getName(), expectedDevice.getName());
 		assertArrayEquals(reg.getDevice().getSensors().toArray(), expectedDevice.getSensors().toArray());
 		assertArrayEquals(reg.getDevice().getActuators().toArray(), expectedDevice.getActuators().toArray());
 		assertEquals(reg.getRegistrationAddress(), "2077");
@@ -70,14 +68,14 @@ public class JsonRegistrationMapperTest {
 		
 		// Given
 		String registration = "{\"regAddress\":\"2077\",\"device\":{" +
-							    "\"manufacturer\": \"RaspberryPi\",, " +
-							    "\"model\": \"B+\"," +
+							    "\"name\": \"Smoke alarm\",, " +
 							    "\"geo\": {"+
 							        "\"latitude\": 53.37831623,"+
 							        "\"longitude\": -1.4618752"+
 							    "},"+
 							    "\"sensors\": [],"+
 							    "\"actuators\": []"+
+							    "\"tags\": {}"+
 							"}}";
 		// When
 		Registration reg = mapper.deserialize(registration);
@@ -94,7 +92,8 @@ public class JsonRegistrationMapperTest {
 		Device expectedDevice = new Device();
 		String registration = "{\"regAddress\":\"2077\",\"device\":{" +
 							    "\"sensors\": [],"+
-							    "\"actuators\": []"+
+							    "\"actuators\": [],"+
+							    "\"tags\": {}"+
 							"}}";
 		// When
 		Registration reg = mapper.deserialize(registration);
@@ -111,12 +110,10 @@ public class JsonRegistrationMapperTest {
 		
 		// Given
 		Device expectedDevice = new Device();
-		expectedDevice.setManufacurer("RaspberryPi");
-		expectedDevice.setModel("B+");
+		expectedDevice.setName("Greenhouse control unit");
 		expectedDevice.setGeo(new GeoPoint(53.37831623, -1.4618752));
 		String registration = "{\"regAddress\":\"2077\",\"device\":{" +
-							    "\"manufacturer\": \"RaspberryPi\"," +
-							    "\"model\": \"B+\"," +
+							    "\"name\": \"Greenhouse control unit\"," +
 							    "\"geo\": {"+
 							        "\"latitude\": 53.37831623,"+
 							        "\"longitude\": -1.4618752"+
@@ -130,8 +127,7 @@ public class JsonRegistrationMapperTest {
 		Registration reg = mapper.deserialize(registration);
 		
 		// Should
-		assertEquals(reg.getDevice().getManufacturer(), expectedDevice.getManufacturer());
-		assertEquals(reg.getDevice().getModel(), expectedDevice.getModel());
+		assertEquals(reg.getDevice().getName(), expectedDevice.getName());
 		assertArrayEquals(reg.getDevice().getSensors().toArray(), expectedDevice.getSensors().toArray());
 		assertArrayEquals(reg.getDevice().getActuators().toArray(), expectedDevice.getActuators().toArray());
 		assertEquals(reg.getRegistrationAddress(), "2077");

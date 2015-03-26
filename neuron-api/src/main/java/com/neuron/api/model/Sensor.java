@@ -1,5 +1,8 @@
 package com.neuron.api.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -14,63 +17,58 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class Sensor {
 
 	private int id = 0;
-	@JsonProperty("name")
-	private String name;
+	@JsonProperty("desc")
+	private String desc;
 	@JsonProperty("sense")
 	private String sense;
 	@JsonProperty("unit")
 	private String unit;
-	@JsonProperty("type")
-	private String type;
+	@JsonProperty("tags")
+	protected HashMap<String, String> tags;
 	
-	public Sensor() {}
+	public Sensor() {
+		this.tags = new HashMap<String, String>();
+	}
 
-	/**
-	 * Setters
-	 */
-	
+	public int getId() {
+		return id;
+	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setSense(String sense) {
-		this.sense = sense;
-	}
-	
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-	
-	public void setType(String type) {
-		this.type = type;
+
+	public String getDesc() {
+		return desc;
 	}
 
-	/**
-	 * Getters
-	 */
-	
-	public int getId() {
-		return this.id;
-	}
-	
-	public String getName() {
-		return this.name;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 	public String getSense() {
-		return this.sense;
+		return sense;
+	}
+
+	public void setSense(String sense) {
+		this.sense = sense;
 	}
 
 	public String getUnit() {
-		return this.unit;
+		return unit;
 	}
 
-	public String getType() {
-		return this.type;
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
+
+	public HashMap<String, String> getTags() {
+		return tags;
+	}
+	
+	public void setTags(HashMap<String, String> tags) {
+		this.tags = tags;
+	}
+
 	
 }

@@ -19,6 +19,9 @@ public class SessionActivity extends Activity {
 		addService("ActivityListener", new ActivityListener());
 	}
 	
+	/**
+	 * Setup - configure the session activity
+	 */
 	public void setup(Configuration config) {
 		getService("SessionHandler").setup(config);
 		ActivityListener al = (ActivityListener) getService("ActivityListener");

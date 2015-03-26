@@ -19,6 +19,9 @@ public class CustomExclusionStrategy implements ExclusionStrategy {
      this.excludedClasses = excludedClasses;
    }
 
+   /**
+    * Check if class should be excluded
+    */
    public boolean shouldSkipClass(Class<?> clazz) {
      if(excludedClasses.contains(clazz))
     	 return true;
@@ -26,6 +29,9 @@ public class CustomExclusionStrategy implements ExclusionStrategy {
     	 return false;
    }
 
+   /**
+    * Check if class field should be excluded
+    */
    public boolean shouldSkipField(FieldAttributes f) {
      if(excludedClasses.contains(f.getDeclaredClass()))
     	return true;

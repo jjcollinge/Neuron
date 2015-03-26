@@ -78,10 +78,17 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		client.close();
 	}
 	
+	/**
+	 * Set the dao collection name
+	 * @param collectionName
+	 */
 	public void setCollection(String collectionName) {
 		devices = deviceDatabase.getCollection(collectionName);
 	}
 	
+	/**
+	 * Insert a device
+	 */
 	public void insert(Device device) {
 		BasicDBObject doc = (BasicDBObject) mapper.serialize(device);
 		log.log(Level.INFO, "document: " + doc);
@@ -89,6 +96,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		log.log(Level.INFO, "Inserted device " + device.getSessionId() + " to the database.");
 	}
 
+	/**
+	 * Remove a device
+	 */
 	public boolean remove(Integer id) {
 		BasicDBObject doc = new BasicDBObject();
 		doc.put("sessionId", id);
@@ -103,6 +113,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 	
+	/**
+	 * Upadate a device
+	 */
 	public boolean update(Integer key, String field, Object value) {
 		BasicDBObject doc = new BasicDBObject();
 		doc.append("$set", new BasicDBObject().append(field, value));
@@ -118,6 +131,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 
+	/**
+	 * Get a device
+	 */
 	public Device get(Integer id) {
 		BasicDBObject doc = new BasicDBObject();
 		doc.put("sessionId", id);
@@ -131,6 +147,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 
+	/**
+	 * Find devices by geo location
+	 */
 	public List<Device> findByGeo(GeoPoint geo, int proximityInMeters) {
 		// Rough conversion from miles to degrees
 		double proximityInDegrees = (proximityInMeters/1000.0)/111.12;
@@ -143,30 +162,80 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		return findByQuery(query);
 	}
 
+	/**
+	 * Find devices by sense
+	 */
 	public List<Device> findBySensorCapability(String sense) {
 		BasicDBObject query = new BasicDBObject();
 		query.put("sensors.sense", sense);
 		return findByQuery(query);
 	}
 
-	public List<Device> findByManufacturer(String manufacturer) {
+	/**
+	 * Find devices by name
+	 */
+	public List<Device> findByName(String name) {
 		BasicDBObject query = new BasicDBObject();
-		query.put("manufacturer", manufacturer);
+		query.put("name", name);
 		return findByQuery(query);
 	}
 
+	/**
+	 * Find devices by model
+	 */
 	public List<Device> findByModel(String model) {
 		BasicDBObject query = new BasicDBObject();
 		query.put("model", model);
 		return findByQuery(query);
 	}
 
+	/**
+	 * Find devices by actuator capability
+	 */
 	public List<Device> findByActuatorCapability(String capbability) {
 		BasicDBObject query = new BasicDBObject();
 		query.put("actuators.capbability", capbability);
 		return findByQuery(query);
 	}
 	
+	/**
+	 * Find devices by tag
+	 * @param tag
+	 * @return
+	 */
+	public List<Device> findByDeviceTag(String tag) {
+		BasicDBObject query = new BasicDBObject();
+		query.put("tags", tag);
+		return findByQuery(query);
+	}
+	
+	/**
+	 * Find devices by sensor tag
+	 * @param tag
+	 * @return
+	 */
+	public List<Device> findBySensorTag(String tag) {
+		BasicDBObject query = new BasicDBObject();
+		query.put("sensors.tags", tag);
+		return findByQuery(query);
+	}
+	
+	/**
+	 * Find devices by actuator tag
+	 * @param tag
+	 * @return
+	 */
+	public List<Device> findByActuatorsTag(String tag) {
+		BasicDBObject query = new BasicDBObject();
+		query.put("actuators.tags", tag);
+		return findByQuery(query);
+	}
+	
+	/**
+	 * Find devices by query
+	 * @param query
+	 * @return
+	 */
 	public List<Device> findByQuery(BasicDBObject query) {
 		List<Device> matchingDevices = new ArrayList<Device>();
 		DBCursor cursor = devices.find(query);
@@ -177,6 +246,9 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		return matchingDevices;
 	}
 	
+	/**
+	 * Clear a collection
+	 */
 	public void clear() {
 		WriteResult result = devices.remove(new BasicDBObject());
 		if (result.getN() > 0) {
@@ -186,12 +258,19 @@ public class MongoDBDeviceDAO implements DeviceDAO {
 		}
 	}
 
+	/**
+	 * Find devices by key value pair
+	 */
 	public List<Device> find(String field, String value) {
 		BasicDBObject query = new BasicDBObject().append(field, value);
 		return findByQuery(query);
 	}
 
+	/**
+	 * Retrieve all devices
+	 */
 	public List<Device> getAll() {
 		return findByQuery(new BasicDBObject());
 	}
+
 }

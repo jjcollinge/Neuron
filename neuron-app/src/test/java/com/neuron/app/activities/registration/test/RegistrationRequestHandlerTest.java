@@ -38,10 +38,12 @@ public class RegistrationRequestHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		handler.start();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		handler.stop();
 	}
 
 	@Test
@@ -50,22 +52,21 @@ public class RegistrationRequestHandlerTest {
 		// Given
 		Request request = new Request();
 		request.setData("{\"regAddress\":\"2077\",\"device\":{" +
-					    "\"manufacturer\": \"RaspberryPi\", " +
-					    "\"model\": \"B+\"," +
+					    "\"name\": \"Greenhouse control unit\", " +
 					    "\"geo\": {"+
 					        "\"latitude\": 53.37831623,"+
 					        "\"longitude\": -1.4618752"+
 					    "},"+
 					    "\"sensors\": [],"+
-					    "\"actuators\": []"+
+					    "\"actuators\": [],"+
+					    "\"tags\": {}"+
 						"}}");
 		request.setFormat("json");
 		request.setProtocol("mqtt");
 		request.addHeader("topic", "1773");
 		
 		Device expectedDevice = new Device();
-		expectedDevice.setManufacurer("RaspberryPi");
-		expectedDevice.setModel("B+");
+		expectedDevice.setName("Greenhouse control unit");
 		expectedDevice.setGeo(new GeoPoint(53.37831623, -1.4618752));
 		Registration expectedRegistration = new Registration();
 		expectedRegistration.setDevice(expectedDevice);
@@ -77,10 +78,17 @@ public class RegistrationRequestHandlerTest {
 		handler.addRegistrationListener(responder);
 		handler.onRequest(request);
 
+		try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		// Should
 		assertEquals(expectedRegistration.getRegistrationAddress(), responder.getLastRegistration().getRegistrationAddress());
-		assertEquals(expectedRegistration.getDevice().getManufacturer(), responder.getLastRegistration().getDevice().getManufacturer());
-		assertEquals(expectedRegistration.getDevice().getModel(), responder.getLastRegistration().getDevice().getModel());
+		assertEquals(expectedRegistration.getDevice().getName(), responder.getLastRegistration().getDevice().getName());
+		
+		handler.removeRegistrationListener(responder);
 	}
 	
 	@Test
@@ -98,7 +106,7 @@ public class RegistrationRequestHandlerTest {
 		// When
 		handler.addRegistrationListener(responder);
 		handler.onRequest(request);
-
+		
 		// Should
 		assertNull(responder.getLastRegistration());
 	}

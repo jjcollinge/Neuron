@@ -68,6 +68,7 @@ public class RegistrationResponderMock implements RegistrationListener, Service 
 		response.addProtocol(protocol);
 		response.addHeader("topic", address);
 		
+		System.out.println("Setting response");
 		this.lastResponse = response;
 		
 	}

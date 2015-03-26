@@ -31,6 +31,9 @@ public class WebActivity extends Activity {
 		super(name);
 	}
 
+	/**
+	 * Setup - configure the web activity
+	 */
 	public void setup(Configuration config) {
 		try {
 			// Define a folder to hold web application contents.

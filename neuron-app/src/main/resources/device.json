@@ -1,22 +1,24 @@
 {
-    "manufacturer": "RaspberryPi",
-    "model": "B+",
+    "name": "Oven control unit",
     "geo": {
         "latitude": 53.37831623,
         "longitude": -1.4618752
     },
+    "tags": 
+        {"room": "kitchen"},
     "sensors": [
         {
-            "name": "Temperature sensor",
+            "desc": "Oven thermistor",
             "sense": "temperature",
             "unit": "celcius",
-            "type": "float"
+            "tags": {}
         }
     ],
     "actuators": [
         {
-            "name": "LED light bulb",
-            "options": ["ON", "OFF"]
+            "desc": "Temperature reached LED",
+            "options": ["ON", "OFF"],
+            "tags": {}
         }
     ]
 }

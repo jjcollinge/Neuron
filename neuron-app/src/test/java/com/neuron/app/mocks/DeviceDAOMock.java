@@ -73,4 +73,9 @@ public class DeviceDAOMock implements DeviceDAO {
 		return null;
 	}
 
+	public List<Device> findByName(String manufacturer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

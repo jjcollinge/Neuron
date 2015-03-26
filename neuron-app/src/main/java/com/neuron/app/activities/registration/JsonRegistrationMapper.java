@@ -22,6 +22,9 @@ public class JsonRegistrationMapper implements ObjectMapperStrategy<Registration
 	private static final Logger log = Logger.getLogger(JsonRegistrationMapper.class
 			.getName());
 	
+	/**
+	 * Serialize a registration
+	 */
 	public String serialize(Registration source) {
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -39,6 +42,9 @@ public class JsonRegistrationMapper implements ObjectMapperStrategy<Registration
 		return result;		
 	}
 
+	/**
+	 * Deserialize a registration
+	 */
 	public Registration deserialize(String source) {
 
 		ObjectMapper mapper = new ObjectMapper();

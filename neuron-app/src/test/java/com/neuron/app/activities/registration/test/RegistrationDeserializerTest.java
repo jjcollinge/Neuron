@@ -43,25 +43,25 @@ public class RegistrationDeserializerTest {
 		
 		// Given
 		Device expectedDevice = new Device();
-		expectedDevice.setManufacurer("RaspberryPi");
-		expectedDevice.setModel("B+");
+		expectedDevice.setName("Greenhouse control unit");
 		expectedDevice.setGeo(new GeoPoint(53.37831623, -1.4618752));
-		String registration = "{\"regAddress\":\"2077\",\"device\":{" +
-							    "\"manufacturer\": \"RaspberryPi\", " +
-							    "\"model\": \"B+\"," +
-							    "\"geo\": {"+
-							        "\"latitude\": 53.37831623,"+
-							        "\"longitude\": -1.4618752"+
-							    "},"+
-							    "\"sensors\": [],"+
-							    "\"actuators\": []"+
-							"}}";
+		String registration = "{\"regAddress\":\"2077\","+
+								"\"device\":{" +
+								    "\"name\": \"Greenhouse control unit\","+
+								    "\"geo\": {"+
+								        "\"latitude\": 53.37831623,"+
+								        "\"longitude\": -1.4618752"+
+								    "},"+
+								    "\"sensors\": [],"+
+								    "\"actuators\": [],"+
+								    "\"tags\": {}"+
+								 "}"+
+							  "}";
 		// When
 		Registration reg = deserializer.deserialize(registration);
 		
 		// Should
-		assertEquals(reg.getDevice().getManufacturer(), expectedDevice.getManufacturer());
-		assertEquals(reg.getDevice().getModel(), expectedDevice.getModel());
+		assertEquals(reg.getDevice().getName(), expectedDevice.getName());
 		assertArrayEquals(reg.getDevice().getSensors().toArray(), expectedDevice.getSensors().toArray());
 		assertArrayEquals(reg.getDevice().getActuators().toArray(), expectedDevice.getActuators().toArray());
 		assertEquals(reg.getRegistrationAddress(), "2077");

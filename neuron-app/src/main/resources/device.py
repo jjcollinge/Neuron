@@ -36,19 +36,20 @@ class Sensor:
 	streaming = False;
 	value = 0.0
 
-	def __init__(self, uuid, name, sense, unit, type):
+	def __init__(self, uuid, desc, sense, unit, tags):
 		self.uuid = uuid
-		self.name = name
+		self.desc = desc
 		self.sense = sense
 		self.unit = unit
-		self.type = type
+		self.tags = tags
 
 class Actuator:
 
-	def __init__(self, uuid, name):
+	def __init__(self, uuid, desc, tags):
 		self.uuid = uuid
-		self.name = name
+		self.desc = desc
 		self.options = []
+		self.tags = tags
 
 	def addOption(self, option):
 		self.options.append(option)
@@ -146,9 +147,9 @@ client.on_subscribe = on_subscribe
 file = open("device.json", 'r');
 descriptor = file.read();
 device = Device(descriptor)
-sensor = Sensor("0", "Temperature Sensor", "temperature", "celcius", "float")
+sensor = Sensor("0", "Oven thermistor", "temperature", "celcius", {})
 device.addSensor(sensor)
-actuator = Actuator("0", "LED light bulb")
+actuator = Actuator("0", "Temperature reached LED", {})
 actuator.addOption("ON")
 actuator.addOption("OFF")
 device.addActuator(actuator)

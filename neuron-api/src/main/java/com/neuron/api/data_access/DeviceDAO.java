@@ -36,7 +36,7 @@ public interface DeviceDAO extends DAO<Device, Integer> {
 	 * @param manufacturer Device manufacturer
 	 * @return list of devices meeting the given criteria
 	 */
-	public List<Device> findByManufacturer(String manufacturer);
+	public List<Device> findByName(String manufacturer);
 
 	/**
 	 * Find devices based on a given model

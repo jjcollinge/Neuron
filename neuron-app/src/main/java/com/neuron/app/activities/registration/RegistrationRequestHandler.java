@@ -74,12 +74,12 @@ public class RegistrationRequestHandler extends RequestHandler implements
 	 * Stop processing registration requests
 	 */
 	public void stop() {
-		try {
+		//try {
 			this.processingThread.interrupt();
-			this.processingThread.join();
-		} catch (InterruptedException e) {
+			//this.processingThread.join();
+		/*} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 		for (Adapter adapter : adapters.values()) {
 			adapter.removeRequestListener(this);
 			adapter.unsubscribe(regTopic);
@@ -119,7 +119,7 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		} // else handle errors... 
 		else {
 			registration = new Registration();
-			registration.addProperty("status", "400");
+			registration.addProperty("status", "500");
 		}
 		notifyListeners(registration);
 	}

@@ -18,6 +18,9 @@ public class RegistrationActivity extends Activity {
 		addService("ResponseHandler", new RegistrationResponder());
 	}
 
+	/**
+	 * Setup - configure registration activity
+	 */
 	public void setup(Configuration config) {
 		RegistrationRequestHandler requestHandler = (RegistrationRequestHandler) getService("RequestHandler");
 		requestHandler.setup(config);

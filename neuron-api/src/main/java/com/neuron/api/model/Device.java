@@ -1,6 +1,7 @@
 package com.neuron.api.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -16,54 +17,96 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class Device {
 
 	private int sessionId;
-	@JsonProperty("manufacturer")
-	private String manufacturer;
-	@JsonProperty("model")
-	private String model;
+	@JsonProperty("name")
+	private String name;
 	@JsonProperty("geo")
 	private GeoPoint geo;
 	@JsonProperty("sensors")
 	protected ArrayList<Sensor> sensors;
 	@JsonProperty("actuators")
 	protected ArrayList<Actuator> actuators;
+	@JsonProperty("tags")
+	protected HashMap<String, String> tags;
 
 	public Device() {
 		sensors = new ArrayList<Sensor>();
 		actuators = new ArrayList<Actuator>();
 	}
 	
-	/**
-	 * Setters
-	 */
+	public int getSessionId() {
+		return sessionId;
+	}
+
+
+
+	public void setSessionId(int sessionId) {
+		this.sessionId = sessionId;
+	}
+
+
+
+	public String getName() {
+		return name;
+	}
+
 	
-	public void setSessionId(int id) {
-		this.sessionId = id;
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setManufacurer(String manufacturer) {
-		this.manufacturer = manufacturer;
+
+
+	public GeoPoint getGeo() {
+		return geo;
 	}
 
-	public void setModel(String model) {
-		this.model = model;
-	}
+
 
 	public void setGeo(GeoPoint geo) {
 		this.geo = geo;
 	}
 
-	public void setGeo(double lon, double lat) {
-		this.geo = new GeoPoint(lon, lat);
+	
+	public void setGeo(Double lat, Double lon) {
+		this.geo = new GeoPoint(lat, lon);
 	}
+
+
+	public ArrayList<Sensor> getSensors() {
+		return sensors;
+	}
+
+
 
 	public void setSensors(ArrayList<Sensor> sensors) {
 		this.sensors = sensors;
 	}
 
+
+
+	public ArrayList<Actuator> getActuators() {
+		return actuators;
+	}
+
+
+
 	public void setActuators(ArrayList<Actuator> actuators) {
 		this.actuators = actuators;
 	}
 
+
+
+	public HashMap<String, String> getTags() {
+		return tags;
+	}
+
+
+
+	public void setTags(HashMap<String, String> tags) {
+		this.tags = tags;
+	}
+	
 	public void addSensor(Sensor sensor) {
 		if (sensors == null)
 			sensors = new ArrayList<Sensor>();
@@ -76,41 +119,12 @@ public class Device {
 		actuators.add(actuator);
 
 	}
-
-	/**
-	 * Getters
-	 */
 	
-	public int getSessionId() {
-		return this.sessionId;
-	}
-
-	public String getManufacturer() {
-		return this.manufacturer;
-	}
-
-	public String getModel() {
-		return this.model;
-	}
-
-	public GeoPoint getGeo() {
-		return this.geo;
-	}
-
-	public ArrayList<Sensor> getSensors() {
-		return this.sensors;
-	}
-
-	public ArrayList<Actuator> getActuators() {
-		return this.actuators;
-	}
-
-	public Sensor getSensor(int index) {
-		return this.sensors.get(index);
-	}
-
 	public Actuator getActuator(int index) {
 		return this.actuators.get(index);
 	}
-
+	
+	public Sensor getSensor(int index) {
+		return this.sensors.get(index);
+	}
 }
