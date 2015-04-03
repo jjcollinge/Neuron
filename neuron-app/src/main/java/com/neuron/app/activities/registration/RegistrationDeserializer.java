@@ -47,6 +47,8 @@ public class RegistrationDeserializer {
 
 		Registration registration = null;
 		boolean done = false;
+		
+		datastream = datastream.replaceAll("'", "\"");
 
 		Iterator iter = supportedFormats.entrySet().iterator();
 		while (iter.hasNext() && !done) {

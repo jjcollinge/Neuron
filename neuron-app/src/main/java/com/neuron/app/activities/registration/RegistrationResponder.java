@@ -1,6 +1,7 @@
 package com.neuron.app.activities.registration;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.neuron.api.adapters.Adapter;
@@ -54,6 +55,7 @@ public class RegistrationResponder implements RegistrationListener, Service {
 		String address = null;
 		String format = null;
 		String protocol = null;
+		String desc = "";
 		
 		Payload payload = null;
 		
@@ -65,7 +67,7 @@ public class RegistrationResponder implements RegistrationListener, Service {
 			payload = new Payload(registration.getProperty("id").get(0));
 		} else if(status.equalsIgnoreCase("400")) {
 			// registration failed
-			payload = new Payload("BAD registration attempt");
+			payload = new Payload("Bad registration attempt");
 		} else if(status.equalsIgnoreCase("500")) {
 			// Service failed
 			payload = new Payload("the service failed and could not register you");
@@ -77,6 +79,9 @@ public class RegistrationResponder implements RegistrationListener, Service {
 		response.addFormat(format);
 		response.addProtocol(protocol);
 		response.addHeader("topic", address);
+		response.addHeader("desc", desc);
+		
+		log.log(Level.INFO, "Response: " + "{ payload: " + payload.getPayload() + ", status_code: " + status + ", format: " + format + ", protocol: " + protocol + ", topic: " + address + " }");
 		
 		sendResponse(response);
 	}

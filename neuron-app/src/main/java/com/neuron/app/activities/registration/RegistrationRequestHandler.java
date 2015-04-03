@@ -124,6 +124,8 @@ public class RegistrationRequestHandler extends RequestHandler implements
 		else {
 			registration = new Registration();
 			registration.addProperty("status", "500");
+			
+			log.log(Level.INFO, "Unsuccessful registration");
 		}
 		notifyListeners(registration);
 	}
