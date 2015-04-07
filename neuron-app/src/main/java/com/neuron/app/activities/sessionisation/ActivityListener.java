@@ -42,7 +42,7 @@ public class ActivityListener extends RequestEventProducer implements
 
 		String topic = request.getHeader("topic").get(0);
 		
-		if(topic.contains("/response")) {
+		if(topic.contains("/response") || topic.contains("/set")) {
 			String parts[] = topic.split("/");
 			String sid = parts[1];
 			
