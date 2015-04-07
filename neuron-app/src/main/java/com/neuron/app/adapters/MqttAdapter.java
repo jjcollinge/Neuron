@@ -139,7 +139,7 @@ public class MqttAdapter extends Adapter implements MqttCallback {
 		}
 		
 		// default
-		String qos = "2";
+		String qos = "0";
 		qos = response.getHeader("qos");
 		String topic = response.getHeader("topic");
 		
