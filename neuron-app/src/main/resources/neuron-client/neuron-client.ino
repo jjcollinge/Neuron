@@ -19,16 +19,16 @@ IPStack ipstack(c);
 
 MQTT::Client<IPStack, Countdown, 140, 1> client = MQTT::Client<IPStack, Countdown, 140, 1>(ipstack);
 
-byte id;
 bool registered = false;
-//bool tempStream = false;
+bool tempStream = false;
 bool LEDon = false;
+const int sensorPin = A0;
 
 ////const PROGMEM char SENSOR_REQ_TOPIC_C[] = {"devices/0/sensors/0"};
 const PROGMEM char SENSOR_RES_TOPIC_C[] = {"devices/0/sensors/0/stream/response"};
 
 void messageArrived(MQTT::MessageData& md) {
-  Serial.println("Message Received");
+  Serial.println(F("Message Received"));
   
   MQTT::Message &message = md.message;  
   
@@ -61,19 +61,19 @@ void messageArrived(MQTT::MessageData& md) {
     
   if (strcmp(topic, "1234") == 0) {
     
-    Serial.println("Handling registration response");
-    StaticJsonBuffer<50> jsonBuffer;
+    Serial.println(F("Handling registration response"));
+    //StaticJsonBuffer<50> jsonBuffer;
 
-    JsonObject& root = jsonBuffer.parseObject(payload);
-    const char* cid = root["payload"];
-    id = atoi(cid);
-    Serial.print("Set id: ");
-    Serial.println(id);
-    Serial.println("Registered");
+    //JsonObject& root = jsonBuffer.parseObject(payload);
+    //const char* cid = root["payload"];
+    //id = atoi(cid);
+    //Serial.print("Set id: ");
+    //Serial.println(id);
+    Serial.println(F("Registered"));
     
   } else if (strcmp(topic, "devices/0/ping/request") == 0) {
     
-    Serial.println("Handling PING request");
+    Serial.println(F("Handling PING request"));
     char res[] = "{'sessionId':'0'}";
     MQTT::Message response;
     response.qos = MQTT::QOS0;
@@ -83,22 +83,37 @@ void messageArrived(MQTT::MessageData& md) {
     client.publish("devices/0/ping/response", message);
   } else if (strcmp(topic, "devices/0/actuators/0") == 0) {
     
-    Serial.println("Handling actuator request");
+    Serial.println(F("Handling LED command"));
     if(LEDon) {
-      Serial.println("Turning LED off");
+      Serial.println(F("Turning LED off"));
       LEDon = false;
+      digitalWrite(5, LOW);
     } else {
-      Serial.println("Turning LED on");
+      Serial.println(F("Turning LED on"));
       LEDon = true;
+      digitalWrite(5, HIGH);
+    }
+  } else if (strcmp(topic, "devices/0/sensors/0") == 0) {
+    
+    Serial.println(F("Handling sensor request"));
+    StaticJsonBuffer<30> jsonBuffer;
+    const JsonObject& root = jsonBuffer.parseObject(payload);
+    const char* cmd = root["payload"];
+    if(strcmp(cmd, "START_STREAM") == 0) {
+      tempStream = true;
+    } else if(strcmp(cmd, "STOP_STREAM") == 0) {
+      tempStream = false;
     }
   } else {
-    Serial.println("Unsupported topic");
+    
+    Serial.println(F("Unsupported topic"));
   }
 }
 
 void setup() {
   Serial.begin(9600);
   Ethernet.begin(mac);
+  pinMode(5, OUTPUT);
   delay(2000);
 }
 
@@ -106,7 +121,7 @@ void loop() {
   int rc = -1;
   // Connect
   if (!client.isConnected()) {
-    Serial.println("Connecting to Neuron");
+    Serial.println(F("Connecting to Neuron"));
     while (rc != 0) {
       rc = ipstack.connect("192.168.1.68", 1883);
     }
@@ -114,14 +129,15 @@ void loop() {
     data.MQTTVersion = 3;
     data.clientID.cstring = MQTT_CLIENTID;
     while ((rc = client.connect(data)) != 0);
-    Serial.println("Connected");
+    Serial.println(F("Connected"));
   }
 
+  // Register
   if (!registered) {
-    Serial.println("Registering profile...");
+    Serial.println(F("Registering profile..."));
     rc = client.subscribe("#", MQTT::QOS0, messageArrived);
     if (rc != 0) {
-      Serial.println("Failed to subscribe");
+      Serial.println(F("Failed to subscribe"));
       return;
     }
     char* registration = "{'regAddress':'1234','device':{'sensors':[{'sense':'tmp'}],'actuators':[{'desc':'LED','options':['ON','OFF']}]}}";
@@ -132,13 +148,28 @@ void loop() {
     message.payloadlen = strlen(registration);
     rc = client.publish("register", message);
     if (rc != 0) {
-      Serial.print("Registration publication failed with rc: ");
+      Serial.print(F("Registration publication failed with rc: "));
       Serial.println(rc);
     } else {
-      Serial.println("Registration published");
+      Serial.println(F("Registration published"));
       registered = true;
     }
   }
+  
+  // Stream
+  if(tempStream) { 
+    const int temperature = (((analogRead(sensorPin)/1024.0) * 5) -.5) * 100;
+    char msg[40];
+    sprintf(msg, "{\"sessionId\":\"0\",\"data\":%i}", temperature);
+    MQTT::Message message;
+    message.qos = MQTT::QOS0;
+    message.retained = false;
+    message.payload = msg;
+    message.payloadlen = strlen(msg);
+    client.publish("devices/0/sensors/0/stream/response", message);
+    delay(2000);
+  }
+  
   client.yield(1000);
 }
 
