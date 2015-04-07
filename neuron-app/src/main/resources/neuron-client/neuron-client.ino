@@ -19,18 +19,25 @@ IPStack ipstack(c);
 
 MQTT::Client<IPStack, Countdown, 140, 1> client = MQTT::Client<IPStack, Countdown, 140, 1>(ipstack);
 
+/**
+*  Many of the values in this application are hardcoded to save on memory usage.
+*  This is only for demonstration purposes. Some of the older commits contain
+*  more dynamic code to handle registraton but it required too much SRAM.
+**/
+
 bool registered = false;
 bool tempStream = false;
 bool LEDon = false;
 const int sensorPin = A0;
 
-////const PROGMEM char SENSOR_REQ_TOPIC_C[] = {"devices/0/sensors/0"};
 const PROGMEM char SENSOR_RES_TOPIC_C[] = {"devices/0/sensors/0/stream/response"};
 
 void messageArrived(MQTT::MessageData& md) {
   Serial.println(F("Message Received"));
   
   MQTT::Message &message = md.message;  
+  
+  /** Parse payload and topic **/
   
   byte payloadLen = message.payloadlen;
   byte topicLen = md.topicName.lenstring.len;
@@ -46,6 +53,7 @@ void messageArrived(MQTT::MessageData& md) {
      x++;
   }
   topic[topicLen] = '\0';
+  
   // payload next
   while(y < payloadLen) {
      payload[y] = md.topicName.lenstring.data[x + y];
@@ -59,16 +67,17 @@ void messageArrived(MQTT::MessageData& md) {
   Serial.print("Topic: ");
   Serial.println(topic);
     
+  /** Handle topics **/
   if (strcmp(topic, "1234") == 0) {
     
     Serial.println(F("Handling registration response"));
-    //StaticJsonBuffer<50> jsonBuffer;
-
-    //JsonObject& root = jsonBuffer.parseObject(payload);
-    //const char* cid = root["payload"];
-    //id = atoi(cid);
-    //Serial.print("Set id: ");
-    //Serial.println(id);
+    /* NOT NEEDED AS ID IS HARDCODED FOR DEMO
+    StaticJsonBuffer<50> jsonBuffer;
+    JsonObject& root = jsonBuffer.parseObject(payload);
+    const char* cid = root["payload"];
+    id = atoi(cid);
+    Serial.print("Set id: ");
+    Serial.println(id);*/
     Serial.println(F("Registered"));
     
   } else if (strcmp(topic, "devices/0/ping/request") == 0) {
@@ -119,6 +128,7 @@ void setup() {
 
 void loop() {
   int rc = -1;
+  
   // Connect
   if (!client.isConnected()) {
     Serial.println(F("Connecting to Neuron"));
