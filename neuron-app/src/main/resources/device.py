@@ -4,7 +4,7 @@ import sys
 import paho.mqtt.client as mqtt
 import time
 import json
-from random import randint
+import random
 
 #--------------------------------------------
 # VARIABLES
@@ -13,7 +13,7 @@ from random import randint
 HOST = "localhost"
 PORT = 1883
 REG_REQUEST = "register"
-REG_RESPONSE = str(randint(1000, 9999))
+REG_RESPONSE = str(random.randint(1000, 9999))
 
 #-------------------------------------------
 # MODEL
@@ -181,7 +181,7 @@ client.loop_start()
 while True:
 	for sensor in device.sensors:
 		if(sensor.streaming):
-			sensor.value = sensor.value + 0.1
+			sensor.value = sensor.value + random.randrange(-5, 5)
 			client.publish("devices/"+str(device.uuid)+"/sensors/"+str(sensor.uuid)+"/stream/response", "{ \"sessionId\":"+str(device.uuid)+", \"data\": "+str(sensor.value)+"}")
 	
 	# Delay cycle
