@@ -7,7 +7,7 @@
 #include <MQTTClient.h>
 
 
-#define MS_PROXY "192.168.1.68"
+#define MS_PROXY "10.108.196.24"
 #define MQTT_PORT 1883
 
 byte mac[] = { 0x00, 0xFF, 0xBB, 0xCC, 0xDE, 0x02 };
