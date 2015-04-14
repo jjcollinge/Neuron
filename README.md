@@ -1,54 +1,61 @@
-# Neuron (In development)
------------------------------------------------
-**Neuron** is a IOTs platform designed to expose a collection of devices, sensors and actuators in a standard format to downstream applications. The platform handles device registration, device activity management, bi-directional device communication and exposes them over a RESTful API.
+# Neuron
+---------------------
+**Neuron** is an IoT platform designed to expose a collection of devices, sensors and actuators in a standard format to downstream applications. The platform handles interfacing with the underlying smart objects and provides a single RESTful API describing the network.
 
-The project is a M2e (Maven to Eclipse) project and is distributed amongst several modular (although interdependent) jar files.
-
-###Features:
+###Features
 * Device management
-* Device, sensor and actuator discovery
-* Remote access to sensor and actuator functionality and data
-* Dynamic device filtration (No stale devices)
-* Asynchronous sensor streaming
-* Semantic RESTful API
+* Device, Sensor and Actuator discovery
+* Remote access to Sensor and Actuator functions and data
+* Dynamic session management (supporting timeouts)
+* Asynchrnous Sensor value streaming
+* Semantic API
 * Actuator control commands
-* Configuration driven
+* Configuration driven design
 
-###Setup:
 
-#####Pre:
-As mentioned above, this is an m2e project. This means that the m2e Eclipse plugin will be require to build the code from source.
-* Eclipse IDE (Kepler) - JavaEE edition
+###Setup
+
+#####Prerequisite
+The project is an m2e (Maven 2 Eclipse) project.
+* Eclipse IDE (Kepler) - JavaEE version
 * m2e Eclipse plugin
 * MongoDB server
 * JDK 1.8
 * Mosquitto 1.3.5
 * Maven
 
-#####Ports:
-9998 = Neuron web server
-27015 = MongoDB server
-1883 = Mosquitto server
+#####Ports
+9998: Neuron web server
+27015: MongoDB server
+1883: Mosquitto server
 
-#####Instructions:
+#####Instructions
 * Import the source code into a new m2e project
-* Build the project/source code
-* Run the project or jar files
+* Build the project / compile the source
+* Run the project / run the jar files
 
-#####API URLs
-localhost:9998/api/devices = all devices
-localhost:9998/api/devices/0/sensors = all sensors for device 0
-localhost:9998/api/devices/0/actuators = all actuators for device 0
-localhost:9998/api/devices/0/sensors/0 = sensor 0 on device 0
-localhost:9998/api/devices/0/actuators/0 (GET) = actuator 0 on device 0
-localhost:9998/api/devices/0/sensors/0/stream (GET) = start sensor 0 on device 0 streaming
-localhost:9998/api/devices/0/sensors/0/stream (POST) = stop sensor 0 on device 0 streaming
-localhost:9998/api/devices/0/actuators/0 (POST) = send command to actuator 0 on device 0
+#####API Urls
+
+######GET Method
+* __/api/devices:__ -> all devices
+*  __/api/devices/0:__ -> device 0
+*  __/api/devices/0/sensors:__ -> all sensors on device 0
+*  __/api/devices/0/actuators:__ -> all actuators on device 0
+*  __/api/devices/0/sensors/0:__ -> sensor 0 on device 0
+*  __/api/devices/0/actuators/0:__ -> actuator 0 on device 0
+*  __/api/devices/0/sensors/0/stream:__ -> START sensor 0 on device 0 streaming its data
+
+######POST Method
+*  __/api/devices/0/sensors/0/stream:__ -> STOP sensor 0 on device 0 streaming its data
 
 #####Devices
-An Arduino sketch is located at the path: neuron-app/src/main/resources/arduino-client
+A sample Arduino sketch is located at: neuron-app/src/main/resources/arduino-client
+A device simultator script is located at: neuron-app/src/main/resources/
+n.b. the script should be executed using the following command:
+>   python device.py [0,1,2]
 
-A device simulator script is located at the path: neuron-app/src/main/resources/
+#####Clients
+[ A sample client is hosted at this GitHub repository](https://github.com/jjcollinge/Neuron-management)
 
-#####Client
-[Please refer to this client repo for an example API client](https://github.com/jjcollinge/Neuron-management)
+
+
